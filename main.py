@@ -61,7 +61,7 @@ def main() -> int:
     for d, _, files in os.walk(sys.argv[1] if not len(sys.argv) <= 1 else '.'):
 
         for file in files:
-            if not file[-3] == '.lua':  # Just to make sure when you are in the `.` path, you don't analyze the main file :)
+            if not '.lua' in file:
                 continue
 
             with open(f'{d}/{file}', 'r') as f:
