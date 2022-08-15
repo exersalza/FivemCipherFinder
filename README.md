@@ -1,4 +1,4 @@
-# FivemCypherRemover
+# [CURRENTLY UNDER DEVELOPMENT] FivemCypherRemover
 This is an Fivem Cypher remover for those that dont want Cyphers in there scripts :D
 
 The idea behind this scripts are to remove a Cypher or more. Currently there is it only in Python availlable but I will soon add the C++ variant.
