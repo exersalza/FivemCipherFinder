@@ -52,7 +52,7 @@ def main() -> int:
         use the `.` as path (the current working directory).
 
     Advertisement:
-        Get your beautiful Cypher today, just smack the play button and find some.
+        Get your beautiful Cipher today, just smack the play button and find some.
         I hope you don't have any but always be sure to have none.
     """
 
@@ -74,15 +74,15 @@ def main() -> int:
                         log.append(f'File: {path}\nLineNumber: {ln}\nLine: \'{line}\'\n----------------\n')
 
     # Write log
-    with open(f'CypherLog-{dt.now():%H-%M-%S}.txt', 'w+') as f:
+    with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+') as f:
         f.writelines(log)
 
     if log:
         print('\033[91mOh no, the program find a spy in your files x.x '
-              'Check the CypherLog.txt file for location and trigger.'
+              'Check the CipherLog.txt file for location and trigger.'
               '\033[0m\n#staysafe')
     else:
-        print('\033[92mNice! There where no Cyphers found!\033[0m')
+        print('\033[92mNice! There where no Cipher\'s found!\033[0m')
 
     return 0
 
