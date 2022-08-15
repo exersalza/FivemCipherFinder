@@ -24,6 +24,7 @@ import os
 import re
 import sys
 
+from datetime import datetime as dt
 from typing import List, Tuple
 
 REGEX = r'((\\x)([a-fA-F0-9]{2}))'
@@ -73,7 +74,7 @@ def main() -> int:
                         log.append(f'File: {path}\nLineNumber: {ln}\nLine: \'{line}\'\n----------------\n')
 
     # Write log
-    with open('CypherLog.txt', 'w+') as f:
+    with open(f'CypherLog-{dt.now():%H-%M-%S}.txt', 'w+') as f:
         f.writelines(log)
 
     if log:
