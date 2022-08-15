@@ -16,4 +16,4 @@ Py-Version: 3.10 and above
 Clone or Download the latest release and unpack it.
 
 The `main.py` is your entry point, you can run it with `python3.10 main.py <Your Path>`
-When you don't add the `-k` option, the script with the Ciphers getting logged in a File (`CipherLog.txt`) that gets created.
+The script with the Ciphers getting logged in a File (`CipherLog.txt`) that gets created.
