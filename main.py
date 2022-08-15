@@ -39,7 +39,7 @@ def validate_lines(lines) -> List[Tuple]:
     ret = []
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
-        if re.findall(REGEX, line, re.MULTILINE | re.IGNORECASE):
+        if re.findall(REGEX, r'{line}'.format(line=line), re.MULTILINE | re.IGNORECASE):
             ret.append((ln, line))
 
     return ret
@@ -64,8 +64,12 @@ def main() -> int:
             if not '.lua' in file:
                 continue
 
-            with open(f'{d}/{file}', 'r') as f:
-                lines = f.readlines()
+            with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
+                try:
+                    lines = f.readlines()
+                except UnicodeDecodeError:
+                    continue
+
                 match = validate_lines(lines)
 
                 if match:
