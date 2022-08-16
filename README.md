@@ -1,4 +1,4 @@
-# [CURRENTLY UNDER DEVELOPMENT] FivemCipherRemover (v1.0.0)
+# [CURRENTLY UNDER DEVELOPMENT] FivemCipherRemover (v1.2.0)
 This is a Fivem Cipher remover for those that don't want Ciphers in their scripts :D
 
 The idea behind these scripts are to remove a Cipher or more. Currently, there is it only in Python available, but I will soon add the C++ variant.
