@@ -36,6 +36,7 @@ def validate_lines(lines) -> List[Tuple]:
     :param lines: Give a list with a filestream inside it.
     :return: [(ln, line)]
     """
+
     ret = []
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
@@ -57,8 +58,12 @@ def main() -> int:
     """
 
     log = []
+    count = 0
+    pattern = ''.join([i.replace(',', ')|(') for i in sys.argv[2:]])
 
     for d, _, files in os.walk(sys.argv[1] if not len(sys.argv) <= 1 else '.'):
+        if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE | re.IGNORECASE):
+            continue
 
         for file in files:
             if not '.lua' in file:
@@ -76,17 +81,19 @@ def main() -> int:
                     for ln, line in match:
                         path = d.replace('\\', '/') + f"/{file}"
                         log.append(f'File: {path}\nLineNumber: {ln}\nLine: \'{line}\'\n----------------\n')
+                        count += 1
 
     # Write log
-    with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+') as f:
-        f.writelines(log)
-
     if log:
+        with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+') as f:
+            f.writelines(log)
+
         print('\033[91mOh no, the program find a spy in your files x.x '
-              'Check the CipherLog.txt file for location and trigger.'
+              f'Check the CipherLog.txt file for location and trigger. {count} where found!'
               '\033[0m\n#staysafe')
-    else:
-        print('\033[92mNice! There where no Cipher\'s found!\033[0m')
+        return 0
+
+    print('\033[92mNice! There where no Cipher\'s found!\033[0m')
 
     return 0
 
