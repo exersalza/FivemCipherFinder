@@ -40,7 +40,7 @@ def validate_lines(lines) -> List[Tuple]:
     ret = []
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
-        if re.findall(REGEX, r'{line}'.format(line=line), re.MULTILINE | re.IGNORECASE):
+        if re.findall(REGEX, r'{line}'.format(line=line), re.MULTILINE and re.IGNORECASE):
             ret.append((ln, line))
 
     return ret
@@ -62,7 +62,7 @@ def main() -> int:
     pattern = ''.join([i.replace(',', ')|(') for i in sys.argv[2:]])
 
     for d, _, files in os.walk(sys.argv[1] if not len(sys.argv) <= 1 else '.'):
-        if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE | re.IGNORECASE):
+        if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
             continue
 
         for file in files:

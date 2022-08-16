@@ -11,11 +11,11 @@ Planed are Python (Currently in development) and C++ (Not started)
 
 
 ## Install instructions for Python
-Py-Version: 3.10 and above
+Py-Version: 3.7 and above
 
 Clone or Download the latest release and unpack it.
 
-The `main.py` is your entry point, you can run it with `python3.10 main.py <Your Path> <Exclude Path>`. 
+The `main.py` is your entry point, you can run it with `python3 main.py <Your Path> <Exclude Path>`. 
 You can also just use the file as `Exclude Path` to scan only one file.
 
 With the exclude path parameter, you can add one or more paths that shall be excluded (anticheat or anticheat, cars).
