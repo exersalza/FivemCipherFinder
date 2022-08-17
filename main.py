@@ -61,12 +61,12 @@ def main() -> int:
     count = 0
     pattern = ''.join([i.replace(',', ')|(') for i in sys.argv[2:]])
 
-    for d, _, files in os.walk(sys.argv[1] if not len(sys.argv) <= 1 else '.'):
+    for d, _, files in os.walk(sys.argv[1] if not len(sys.argv) <= 1 else '.'):  # I know its complex, but it works :)
         if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
             continue
 
         for file in files:
-            if not '.lua' in file:
+            if '.lua' not in file:
                 continue
 
             with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
