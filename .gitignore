@@ -130,3 +130,6 @@ dmypy.json
 
 # Custom
 test/
+.idea/
+__pycache__
+dummys/
