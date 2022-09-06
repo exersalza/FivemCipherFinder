@@ -19,28 +19,35 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
+from __future__ import annotations
 
 import os
 import re
 import sys
 
 from datetime import datetime as dt
-from typing import List, Tuple
 
 REGEX = r'((\\x)([a-fA-F0-9]{2}))'
 
 
-def validate_lines(lines) -> List[Tuple]:
-    """ Validate the lines that are given through the [:class:`list`]lines parameter.
+def validate_lines(lines) -> list[tuple]:
+    """ Validate the lines that are given through the 'lines' parameter.
 
-    :param lines: Give a list with a filestream inside it.
-    :return: [(ln, line)]
+    Parameters
+    ----------
+    lines : list
+        The lines from the current readed file.
+
+    Returns
+    -------
+    list[tuple]
+        A list with infected lines (or false positives by Anticheat or obfuscated code)
     """
 
     ret = []
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
-        if re.findall(REGEX, r'{line}'.format(line=line), re.MULTILINE and re.IGNORECASE):
+        if re.findall(REGEX, rf'{line}', re.MULTILINE and re.IGNORECASE):
             ret.append((ln, line))
 
     return ret
@@ -48,20 +55,28 @@ def validate_lines(lines) -> List[Tuple]:
 
 def main() -> int:
     """ Validates files.
+
     Usage:
-        Run the program: `python3.10 <path>`. path = give your fullpath to the files you want to scan, otherwise it will
-        use the `.` as path (the current working directory).
+    ------
+    Run the program: `python3.10 <path>`. path = give your fullpath to the files you want to scan, otherwise it will
+    use the `.` as path (the current working directory).
 
     Advertisement:
-        Get your beautiful Cipher today, just smack the play button and find some.
-        I hope you don't have any but always be sure to have none.
+    --------------
+    Get your beautiful Cipher today, just smack the play button and find some.
+    I hope you don't have any but always be sure to have none.
+
+    Returns
+    -------
+    int
+        Return code
     """
 
     log = []
     count = 0
     pattern = ''.join([i.replace(',', ')|(') for i in sys.argv[2:]])
 
-    for d, _, files in os.walk(sys.argv[1] if not len(sys.argv) <= 1 else '.'):
+    for d, _, files in os.walk(sys.argv[1] if len(sys.argv) > 1 else '.'):
         if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
             continue
 
@@ -79,13 +94,13 @@ def main() -> int:
 
                 if match:
                     for ln, line in match:
-                        path = d.replace('\\', '/') + f"/{file}"
+                        path = d.replace('\\', '/') + f'/{file}'
                         log.append(f'File: {path}\nLineNumber: {ln}\nLine: \'{line}\'\n----------------\n')
                         count += 1
 
     # Write log
     if log:
-        with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+') as f:
+        with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
             f.writelines(log)
 
         print('\033[91mOh no, the program find a spy in your files x.x '
@@ -99,4 +114,4 @@ def main() -> int:
 
 
 if __name__ == '__main__':
-    exit(main())
+    sys.exit(main())
