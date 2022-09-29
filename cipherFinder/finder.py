@@ -53,7 +53,7 @@ def validate_lines(lines) -> list[tuple]:
 
 
 def main() -> int:
-    """ Validates files.
+    """ Validates lua files.
 
     Usage:
     ------
@@ -70,6 +70,10 @@ def main() -> int:
     int
         Return code
     """
+
+    if '-h' in sys.argv:
+        print(main.__doc__)
+        return 0
 
     log = []
     count = 0
