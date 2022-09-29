@@ -24,7 +24,6 @@ from __future__ import annotations
 import os
 import re
 import sys
-
 from datetime import datetime as dt
 
 REGEX = r'((\\x)([a-fA-F0-9]{2}))'
@@ -81,7 +80,7 @@ def main() -> int:
             continue
 
         for file in files:
-            if not '.lua' in file:
+            if '.lua' not in file:
                 continue
 
             with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
