@@ -15,7 +15,7 @@ Py-Version: 3.7 and above
 
 Clone or Download the latest release and unpack it.
 
-The `main.py` is your entry point, you can run it with `find-cipher <Your Path> [Exclude Path]`. 
+The `finder.py` is your entry point, you can run it with `find-cipher <Your Path> [Exclude Path]`. 
 You can also just use the file as `Your Path` to scan only one file. `Exclude Path` is not requiered.
 
 With the exclude path parameter, you can add one or more paths that shall be excluded (anticheat or anticheat, cars).
