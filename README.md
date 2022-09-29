@@ -1,4 +1,4 @@
-# [CURRENTLY UNDER DEVELOPMENT] FivemCipherFinder (v1.3.0 Almosen)
+# [CURRENTLY UNDER DEVELOPMENT] FivemCipherFinder (v1.4.0 poggers)
 This is a Fivem Cipher remover for those that don't want Ciphers in their scripts :D
 
 The idea behind these scripts are to remove a Cipher or more. Currently, there is it only in Python available, but I will soon add the C++ variant.
@@ -15,7 +15,7 @@ Py-Version: 3.7 and above
 
 Clone or Download the latest release and unpack it.
 
-The `main.py` is your entry point, you can run it with `python3 main.py <Your Path> [Exclude Path]`. 
+The `main.py` is your entry point, you can run it with `find-cipher <Your Path> [Exclude Path]`. 
 You can also just use the file as `Your Path` to scan only one file. `Exclude Path` is not requiered.
 
 With the exclude path parameter, you can add one or more paths that shall be excluded (anticheat or anticheat, cars).
