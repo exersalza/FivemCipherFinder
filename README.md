@@ -1,4 +1,6 @@
-# [CURRENTLY UNDER DEVELOPMENT] FivemCipherFinder (v1.4.0 poggers)
+# FivemCipherFinder (v1.4.0 poggers)
+[![Pylint](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml)
+
 This is a Fivem Cipher remover for those that don't want Ciphers in their scripts :D
 
 The idea behind these scripts are to remove a Cipher or more. Currently, there is it only in Python available, but I will soon add the C++ variant.
