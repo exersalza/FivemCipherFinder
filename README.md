@@ -1,4 +1,4 @@
-# FivemCipherFinder (v1.4.0 poggers)
+# FivemCipherFinder (v1.5.0)
 [![Pylint](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml)
 
 This is a Fivem Cipher remover for those that don't want Ciphers in their scripts :D
@@ -9,7 +9,7 @@ Desc:
 The script will walk through your Servers directory's and scan for as example `\x41\x42\x43`. When it found something.
 
 ## Languages 
-Planed are Python (Currently in development) and C++ (Not started)
+Planed are Python (Finished so far) and C++ (Not started)
 
 
 ## Install instructions for Python
