@@ -26,7 +26,7 @@ import re
 import sys
 from datetime import datetime as dt
 
-REGEX = r'(((\\x)([a-fA-F0-9]{2})){2})'
+REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
 
 
 def validate_lines(lines) -> list[tuple]:
