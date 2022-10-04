@@ -15,7 +15,7 @@ Planed are Python (Finished so far) and C++ (Not started)
 ## Install instructions for Python
 Py-Version: 3.7 and above
 
-Clone or Download the latest release and unpack it.
+run `pip install FivemCipherFinder` or you can download the latest release and then upack it.
 
 The `finder.py` is your entry point, you can run it with `find-cipher <Your Path> [Exclude Path]`. 
 You can also just use the file as `Your Path` to scan only one file. `Exclude Path` is not requiered.
