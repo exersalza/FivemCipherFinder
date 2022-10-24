@@ -133,3 +133,4 @@ test/
 .idea/
 __pycache__
 dummys/
+cmake-build-debug/
