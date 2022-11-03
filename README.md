@@ -1,4 +1,9 @@
 # FivemCipherFinder (v1.5.0)
+<div align="center">
+  <h2> Visitors </h2>
+<img src="https://profile-counter.glitch.me/FivemCipherFinder/count.svg" />
+</div>
+
 [![Pylint](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml)
 
 This is a Fivem Cipher remover for those that don't want Ciphers in their scripts :D
