@@ -117,8 +117,8 @@ def main() -> int:
         with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
             f.writelines(log)
 
-        print('\033[91mOh no, the program find a spy in your files x.x '
-              f'Check the CipherLog.txt file for location and trigger. {count} where found!'
+        print('\033[91mOh no, the program found a spy in your files x.x '
+              f'Check the CipherLog.txt for location and trigger. {count} where found!'
               '\033[0m\n#staysafe')
         return 0
 
