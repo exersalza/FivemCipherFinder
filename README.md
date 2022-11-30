@@ -11,7 +11,7 @@ This is a Fivem Cipher remover for those that don't want Ciphers in their script
 The idea behind these scripts are to remove a Cipher or more. Currently, there is it only in Python available, but I will soon add the C++ variant.
 
 Desc:
-The script will walk through your Servers directory's and scan for as example `\x41\x42\x43`. When it found something.
+The script will walk through your Servers directory's and scan for as example `\x41\x42\x43`. When it found something it will write the line and trigger to a Log file.
 
 ## Languages 
 Planed are Python (Finished so far) and C++ (Not started)
