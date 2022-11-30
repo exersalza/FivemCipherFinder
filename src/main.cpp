@@ -2,31 +2,31 @@
 // Created by julian on 10/24/22.
 //
 
-#include <iostream>
-#include <fstream>
 #include <regex>
+#include <fstream>
+#include <iostream>
+#include <filesystem>
 
-using namespace std;
+using rdi = std::filesystem::recursive_directory_iterator;
 
-int main() {
-    string regex = R"((((\x|\u)([a-fA-F0-9]{2})){2}))";
+int main(int argc, char **argv) {
+    std::string regex = R"((((\x|\u)([a-fA-F0-9]{2})){2}))";
 
-    fstream file;
-    string line;
-    string foundCipher;
-    int count = 0;
+    std::fstream file;
+    std::string line;
 
-    file.open("../src/testFile.lua", ios::in | ios::app);
-    if (!file.is_open()) { file.close(); return 1;}
+    std::string search = "magic";
+    auto res = std::find_if(argv + 1, argv + argc, [&](char const * const arg){return arg == search;});
 
-    while (!file.eof()) {
-        count++;
-        getline(file, line, '\n');
-        if (line.empty())
-            continue;
+    for (const auto& entry : rdi(search)) {
+        /*std::cout << direntry << '\n';*/
     }
+
+    file.open("src/testFile.lua", std::ios::in);
+    if (!file.is_open()) { file.close(); printf("Can't open file: %s", "ff");}
+
+
     file.close();
-    cout << count << endl;
 
 
     return 0;
