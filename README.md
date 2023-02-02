@@ -14,7 +14,7 @@ Desc:
 The script will walk through your Servers directory's and scan for as example `\x41\x42\x43`. When it found something it will write the line and trigger to a Log file.
 
 ## Languages 
-Planed are Python (Finished so far) and C++ (Not started)
+Planed are Python (Finished so far)
 
 
 ## Install instructions for Python
