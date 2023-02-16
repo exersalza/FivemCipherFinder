@@ -28,3 +28,6 @@ You can also just use the file as `Your Path` to scan only one file. `Exclude Pa
 With the exclude path parameter, you can add one or more paths that shall be excluded (anticheat or anticheat, cars).
 
 The script with the Ciphers getting logged in a File (`CipherLog.txt`) that gets created.
+
+## Known false positives
+- `easy-admin`
