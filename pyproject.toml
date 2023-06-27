@@ -1,7 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=61.0",
-    "mysql-connector-python",
-    "pytz",
-    "wheel"
+    "wheel",
+    "gibberish-detector"
 ]
