@@ -29,8 +29,15 @@ With the exclude path parameter, you can add one or more paths that shall be exc
 
 The script with the Ciphers getting logged in a File (`CipherLog.txt`) that gets created.
 
+Should the installation with pip fail with the error code `externally-managed-environment`, add `--break-system-packages`. Pip changed something in their internals in the newer versions.
+
 ## Known false positives
 - `easy-admin`
+- `encrypted scripts`
+
+## ToDo
+- Detect cipher spreader
+- Find random generated character variable names
 
 ## Contact
 Discord: exersalza / exersalza[>'-']>#1337

@@ -24,10 +24,12 @@ from __future__ import annotations
 import os
 import re
 import sys
+import platform
+
 from datetime import datetime as dt
 
 REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
-
+COLORS = ['\033[0m', '\033[91m', '\033[92m']
 
 def validate_lines(lines) -> list[tuple]:
     """ Validate the lines that are given through the 'lines' parameter.
@@ -113,16 +115,24 @@ def main() -> int:
                         count += 1
 
     # Write log
+    
+    red = ''
+    green = ''
+    white = ''
+
+    if 'linux' in platform.platform().lower():
+        white, red, green = COLORS
+
     if log:
         with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
             f.writelines(log)
-
-        print('\033[91mOh no, the program found a spy in your files x.x '
+        
+        print(f'{red}Oh no, the program found a spy in your files x.x '
               f'Check the CipherLog.txt for location and trigger. {count} where found!'
-              '\033[0m\n#staysafe')
+              f'{white}\n#staysafe')
         return 0
-
-    print('\033[92mNice! There where no Cipher\'s found!\033[0m')
+    
+    print(f'{green}Nice! There where no Cipher\'s found!{white}')
 
     return 0
 
