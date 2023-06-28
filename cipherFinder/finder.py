@@ -25,10 +25,9 @@ import os
 import re
 import sys
 import platform
-from typing import List, Tuple
 
-from gibberish_detector import detector
 from datetime import datetime as dt
+from gibberish_detector import detector
 
 REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
@@ -61,7 +60,7 @@ def validate_lines(lines) -> list[tuple]:
     return ret
 
 
-def doGibberishCheck(lines) -> List[Tuple[str, int]]:
+def doGibberishCheck(lines) -> list[tuple[str, int]]:
     l_counter = 1
     matches = []
 
@@ -73,7 +72,7 @@ def doGibberishCheck(lines) -> List[Tuple[str, int]]:
     return matches
 
 
-def checkFile(d, file, count) -> Tuple[int, int]: 
+def checkFile(d, file, count) -> tuple[int, int]: 
     with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
         try:
             lines = f.readlines()
@@ -85,7 +84,6 @@ def checkFile(d, file, count) -> Tuple[int, int]:
         
         if '--v2' in sys.argv:
             match += doGibberishCheck(lines)
-
 
         if match:
             for ln, line in match:
@@ -133,7 +131,7 @@ def main() -> int:
     local_path = '.'
     count = 0 
 
-    if len(sys.argv) > 1 and not '--' in sys.argv[1]:
+    if len(sys.argv) > 1 and '--' not in sys.argv[1]:
         local_path = sys.argv[1]
     
     for d, _, files in os.walk(local_path):
