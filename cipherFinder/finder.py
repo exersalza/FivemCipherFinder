@@ -1,4 +1,4 @@
-#!/bin/python3.8
+#!/bin/python3.11
 
 #  Copyright (c) 2022. - exersalza
 #
@@ -25,15 +25,18 @@ import os
 import re
 import sys
 import platform
+from typing import List, Tuple
 
+from gibberish_detector import detector
 from datetime import datetime as dt
 
 REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
 
+det = detector.create_from_model('big.model')
 
 log = []
-count = 0
+
 
 def validate_lines(lines) -> list[tuple]:
     """ Validate the lines that are given through the 'lines' parameter.
@@ -58,15 +61,31 @@ def validate_lines(lines) -> list[tuple]:
     return ret
 
 
-def checkFile(d, file) -> int: 
+def doGibberishCheck(lines) -> List[Tuple[str, int]]:
+    l_counter = 1
+    matches = []
+
+    for i in lines:
+        if 'local' in i and det.is_gibberish(rf'{i}'):
+            matches.append((l_counter, i))
+
+        l_counter += 1
+    return matches
+
+
+def checkFile(d, file, count) -> Tuple[int, int]: 
     with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
         try:
             lines = f.readlines()
         except UnicodeDecodeError:
             print(f'Can\'t decode `{d}/{file}`.')
-            return 1
-
+            return 1, count
+        
         match = validate_lines(lines)
+        
+        if '--v2' in sys.argv:
+            match += doGibberishCheck(lines)
+
 
         if match:
             for ln, line in match:
@@ -76,10 +95,10 @@ def checkFile(d, file) -> int:
                 if '--verbose' in sys.argv:  # Log in console.
                     print(to_log)
 
-                log.append(to_log + f'Line: \'{line}\'\n----------------\n')
-                count += 1
-    return 0
 
+                log.append(to_log + f'Line: {line!r}\n----------------\n')
+                count += 1
+    return 0, count
 
 
 def main() -> int:
@@ -111,8 +130,13 @@ def main() -> int:
         return 0
 
     pattern = ''.join([(i.replace(',', ')|(') if '--' not in i else '') for i in sys.argv[2:]])
+    local_path = '.'
+    count = 0 
 
-    for d, _, files in os.walk(sys.argv[1] if len(sys.argv) > 1 else '.'):
+    if len(sys.argv) > 1 and not '--' in sys.argv[1]:
+        local_path = sys.argv[1]
+    
+    for d, _, files in os.walk(local_path):
         if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
             continue
 
@@ -120,8 +144,7 @@ def main() -> int:
             if '.lua' not in file:
                 continue
 
-            if checkFile(d, file):
-                continue
+            _, count = checkFile(d, file, count)
     # Write log
     
     red = ''

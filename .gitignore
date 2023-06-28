@@ -24,8 +24,7 @@ pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
-*.egg
-MANIFEST
+*.egg MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -129,6 +128,7 @@ dmypy.json
 .pyre/
 
 # Custom
+some.lua
 test/
 .idea/
 __pycache__
