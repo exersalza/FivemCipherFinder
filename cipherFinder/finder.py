@@ -48,7 +48,8 @@ def validate_lines(lines) -> list[tuple]:
     Returns
     -------
     list[tuple]
-        A list with infected lines (or false positives by AntiCheat or obfuscated code)
+        A list with infected lines 
+        (or false positives by AntiCheat or obfuscated code)
     """
 
     ret = []
@@ -60,7 +61,22 @@ def validate_lines(lines) -> list[tuple]:
     return ret
 
 
-def doGibberishCheck(lines) -> list[tuple[str, int]]:
+def do_gibberish_check(lines) -> list[tuple[str, int]]:
+    """ Do a check if the given lines are making any sens.
+    Can still throw false-positives
+
+    Parameters
+    ----------
+    lines : list
+        The lines from the current read file.
+
+    Returns
+    -------
+    list[tuple[str, int]]
+        A Tuple List with infected lines or false positives
+        as in `validate_lines`.
+
+    """
     l_counter = 1
     matches = []
 
@@ -72,7 +88,7 @@ def doGibberishCheck(lines) -> list[tuple[str, int]]:
     return matches
 
 
-def checkFile(d, file, count) -> tuple[int, int]: 
+def check_file(d, file, count) -> tuple[int, int]: 
     with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
         try:
             lines = f.readlines()
@@ -83,7 +99,7 @@ def checkFile(d, file, count) -> tuple[int, int]:
         match = validate_lines(lines)
         
         if '--v2' in sys.argv:
-            match += doGibberishCheck(lines)
+            match += do_gibberish_check(lines)
 
         if match:
             for ln, line in match:
@@ -142,7 +158,7 @@ def main() -> int:
             if '.lua' not in file:
                 continue
 
-            _, count = checkFile(d, file, count)
+            _, count = check_file(d, file, count)
     # Write log
     
     red = ''
