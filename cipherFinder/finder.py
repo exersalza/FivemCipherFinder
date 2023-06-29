@@ -1,6 +1,6 @@
 #!/bin/python3.11
 
-#  Copyright (c) 2022. - exersalza
+#  Copyright (c) 2022-2023 - exersalza
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ det = detector.create_from_model('big.model')
 log = []
 
 
-def validate_lines(lines) -> list[tuple]:
+def validate_lines(lines: list) -> list[tuple]:
     """ Validate the lines that are given through the 'lines' parameter.
 
     Parameters
@@ -61,7 +61,7 @@ def validate_lines(lines) -> list[tuple]:
     return ret
 
 
-def do_gibberish_check(lines) -> list[tuple[str, int]]:
+def do_gibberish_check(lines: list) -> list[tuple[str, int]]:
     """ Do a check if the given lines are making any sens.
     Can still throw false-positives
 
@@ -88,7 +88,24 @@ def do_gibberish_check(lines) -> list[tuple[str, int]]:
     return matches
 
 
-def check_file(d, file, count) -> tuple[int, int]: 
+def check_file(d: str, file: str, count: int) -> tuple[int, int]: 
+    """ Iterate over a file and check the lines
+
+    Parameters
+    ----------
+    d : str
+        Give the path to the file e.g "/home/wildCiphers"
+    file : str
+        Give a file name to scan e.g "wildCipherInHere.lua"
+    count: int
+        Give the current cipher count.
+    
+    Returns
+    -------
+    tuple[ret_code, count]
+        A Tuple with the return code and the current cipher count.
+    """
+
     with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
         try:
             lines = f.readlines()
@@ -120,13 +137,20 @@ def main() -> int:
 
     Usage:
     ------
-    Run the program: `find-cipher <path> [exclude path] [--verbose]`.
+    Run the program: `find-cipher [path] [exclude path] [OPTIONS...]`.
 
     args:
-        path : Give the path to search, when no path is given, the current working directory will be used `.` .
-        exclude path : Optional : Exclude directory's where you don't want to search.
-        --verbose : Optional : Print a Cipher directly to the Command line on found.
-
+        path : Optional : 
+            Give the path to search, when no path is given, the 
+            current working directory will be used `.`
+        exclude path : Optional : 
+            Exclude directory's where you don't want to search.
+        --verbose : Optional : 
+            Print a Cipher directly to the Command line on found.
+        --v2 : Optional : 
+            Uses an extra algorithm to find gibberish or randomly generated
+            variable/function/table names. It can introduce more palse-positiv
+            because of obfuscated scripts, but can help to find ciphers.
 
     Advertisement:
     --------------
@@ -139,7 +163,7 @@ def main() -> int:
         Return code
     """
 
-    if '-h' in sys.argv:
+    if '-h' in sys.argv or '--help' in sys.argv:
         print(main.__doc__)
         return 0
 
