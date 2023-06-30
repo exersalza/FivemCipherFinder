@@ -33,7 +33,6 @@ REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
 
 det = detector.create_from_model('big.model')
-
 log = []
 
 
@@ -131,6 +130,14 @@ def check_file(d: str, file: str, count: int) -> tuple[int, int]:
                 count += 1
     return 0, count
 
+def write_log_file(**kw) -> int: 
+    with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
+        f.writelines(log)
+        
+        print(f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
+          f'Check the CipherLog.txt for location and trigger. {kw.pop("count")} where found!'
+          f'{kw.pop("white")}\n#staysafe')
+    return 0
 
 def main() -> int:
     """ Validates lua files.
@@ -185,22 +192,14 @@ def main() -> int:
             _, count = check_file(d, file, count)
     # Write log
     
-    red = ''
-    green = ''
-    white = ''
+    red = green = white = ''
 
     if 'linux' in platform.platform().lower():
         white, red, green = COLORS
 
     if log:
-        with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
-            f.writelines(log)
-        
-        print(f'{red}Oh no, the program found a spy in your files x.x '
-              f'Check the CipherLog.txt for location and trigger. {count} where found!'
-              f'{white}\n#staysafe')
-        return 0
-    
+        return write_log_file(white=white, red=red, count=count)
+
     print(f'{green}Nice! There were no Cipher\'s found!{white}')
 
     return 0
