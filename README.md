@@ -1,4 +1,4 @@
-# FivemCipherFinder (v1.9.0)
+# FivemCipherFinder (v2.0.0)
 <div align="center">
   <h2> Visitors </h2>
 <img src="https://profile-counter.glitch.me/FivemCipherFinder/count.svg" />
