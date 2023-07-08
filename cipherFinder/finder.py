@@ -27,7 +27,6 @@ import re
 import sys
 import platform
 import requests
-import time
 
 from gibberish_detector import detector
 
