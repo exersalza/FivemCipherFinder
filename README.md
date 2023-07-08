@@ -33,7 +33,7 @@ As you can see in the last example, you can exclude Directories so can prevent f
 The script logs found Cipher in a file names `CipherLog-HH-MM-SS.txt` so can easily find your log files.
 
 ## Install instructions for Python
-Py-Version: 3.7 and above
+Py-Version: 3.8 and above
 
 run `pip install FivemCipherFinder` or download the latest release and unpack it.
 
