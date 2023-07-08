@@ -2,5 +2,4 @@
 requires = [
     "setuptools>=61.0",
     "wheel",
-    "gibberish-detector"
 ]
