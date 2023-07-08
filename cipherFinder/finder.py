@@ -27,6 +27,7 @@ import re
 import sys
 import platform
 import requests
+import time
 
 from gibberish_detector import detector
 
@@ -194,7 +195,7 @@ def main() -> int:
     local_path = '.'
     count = 0 
 
-    get_big_model_file()  # sure there are other ways, but python is down python stuff.
+    get_big_model_file()  # sure there are other ways, but python is doing python stuff.
 
     if len(sys.argv) > 1 and '--' not in sys.argv[1]:
         local_path = sys.argv[1]
@@ -215,6 +216,11 @@ def main() -> int:
 
     if 'linux' in platform.platform().lower():
         white, red, green = COLORS
+    
+    try:
+        os.remove('big.model')
+    except FileNotFoundError:
+        pass
 
     if log:
         return write_log_file(white=white, red=red, count=count)
