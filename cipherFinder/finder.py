@@ -20,20 +20,32 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 from __future__ import annotations
+from datetime import datetime as dt
 
 import os
 import re
 import sys
 import platform
+import requests
 
-from datetime import datetime as dt
 from gibberish_detector import detector
 
 REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
+RAW_BIG_MODEL = 'https://raw.githubusercontent.com/exersalza/FivemCipherFinder/main/big.model'
 
-det = detector.create_from_model('big.model')
 log = []
+
+def get_big_model_file() -> int:
+    # Check if the big.model file exists
+    if not os.path.exists('./big.model'):
+        with open('big.model', 'wb') as _file:
+            for chunk in requests.get(RAW_BIG_MODEL, stream=True, timeout=5) \
+                    .iter_content(chunk_size=8192):
+                if not chunk: continue
+                _file.write(chunk)
+
+    return 0
 
 
 def validate_lines(lines: list) -> list[tuple]:
@@ -76,6 +88,8 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int]]:
         as in `validate_lines`.
 
     """
+
+    det = detector.create_from_model('./big.model')  # should work for now
     l_counter = 1
     matches = []
 
@@ -130,6 +144,7 @@ def check_file(d: str, file: str, count: int) -> tuple[int, int]:
                 count += 1
     return 0, count
 
+
 def write_log_file(**kw) -> int: 
     with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
         f.writelines(log)
@@ -138,6 +153,7 @@ def write_log_file(**kw) -> int:
           f'Check the CipherLog.txt for location and trigger. {kw.pop("count")} where found!'
           f'{kw.pop("white")}\n#staysafe')
     return 0
+
 
 def main() -> int:
     """ Validates lua files.
@@ -178,11 +194,14 @@ def main() -> int:
     local_path = '.'
     count = 0 
 
+    get_big_model_file()  # sure there are other ways, but python is down python stuff.
+
     if len(sys.argv) > 1 and '--' not in sys.argv[1]:
         local_path = sys.argv[1]
     
     for d, _, files in os.walk(local_path):
-        if pattern and re.findall(f'{"(" + pattern + ")"}', fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
+        if pattern and re.findall(f'{"(" + pattern + ")"}', 
+                                  fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
             continue
 
         for file in files:
