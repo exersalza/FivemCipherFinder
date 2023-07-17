@@ -42,8 +42,8 @@ run `pip install FivemCipherFinder` or download the latest release and unpack it
 Should the installation with pip fail with the error code `externally-managed-environment`, add `--break-system-packages`. Pip changed something in their internals in the newer versions.
 
 ## Known false positives
-- `easy-admin`
-- `encrypted scripts`
+- `EasyAdmin`
+- `encrypted/obfuscated scripts`
 
 ## ToDo
 - Detect cipher spreader
