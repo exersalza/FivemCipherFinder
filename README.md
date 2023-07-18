@@ -16,7 +16,7 @@
 
 This is a Fivem Cipher finder for those that don't want Ciphers in their scripts :D
 
-The idea behind these scripts is to find one or more Cipher. 
+The idea behind these scripts is to find one or more Cipher in your script files. 
 Currently, there is only the Python version available, but I will soon add the C++ variant.
 
 Desc:
