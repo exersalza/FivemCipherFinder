@@ -1,4 +1,5 @@
 # FivemCipherFinder (v2.3.0)
+
 <div align="center">
   <h2> Visitors </h2>
 <img src="https://profile-counter.glitch.me/FivemCipherFinder/count.svg" />
@@ -28,6 +29,11 @@ run `pip install FivemCipherFinder` or download the latest release and unpack it
 
 Make sure to read the [Troubleshooting](#Troubleshooting) page first before you add me on Discord.
 
+## Install instructions for Python
+Py-Version: 3.8 and above
+
+run `pip install FivemCipherFinder` or download the latest release and unpack it.
+
 ## Usage
 
 Syntax: `find-cipher [-h] [-p [PATH]] [-x [EXCLUDE_PATH ...]] [-n] [-v] [--v2]`
@@ -55,8 +61,10 @@ Also make sure (on Windows) that you have your python scripts folder inside your
 
 
 ## Known-false-positives
+
 - `EasyAdmin`
-- `encrypted scripts`
+- `encrypted/obfuscated scripts`
+
 
 ## ToDo
 - Detect cipher spreader
