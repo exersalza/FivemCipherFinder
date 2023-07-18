@@ -31,8 +31,6 @@ import requests
 
 from gibberish_detector import detector
 
-from .deopfuscator import de_obfuscator
-
 REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
 RAW_BIG_MODEL = 'https://raw.githubusercontent.com/exersalza/FivemCipherFinder/main/big.model'
@@ -73,7 +71,7 @@ def validate_lines(lines: list) -> list[tuple]:
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         if re.findall(REGEX, rf'{line}', re.MULTILINE and re.IGNORECASE):
             ret.append((ln, line))
-    de_obfuscator(ret)
+
     return ret
 
 
