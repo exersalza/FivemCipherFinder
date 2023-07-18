@@ -16,6 +16,11 @@ The script will walk through your Server's directories and scan, for example, `\
 ## Languages 
 Planed are Python (Finished so far)
 
+## Install instructions for Python
+Py-Version: 3.8 and above
+
+run `pip install FivemCipherFinder` or download the latest release and unpack it.
+
 ## Usage
 
 Syntax: `find-cipher [search path] [exclude paths]... [OPTIONS]...`
@@ -31,11 +36,6 @@ Should you struggle with returning ciphers in your script, try using the
 As you can see in the last example, you can exclude Directories so can prevent false-positives like `\[cars\],\[mlos\],easy-admin` but make sure you add `\` before curly and square brackets, otherwise your terminal will throw an error.
 
 The script logs found Cipher in a file names `CipherLog-HH-MM-SS.txt` so can easily find your log files.
-
-## Install instructions for Python
-Py-Version: 3.8 and above
-
-run `pip install FivemCipherFinder` or download the latest release and unpack it.
 
 ### Troubleshooting
 
