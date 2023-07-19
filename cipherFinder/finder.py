@@ -188,6 +188,8 @@ def main() -> int:
     Advertisement:
     --------------
     Get your beautiful Cipher today, just smack the play button and find some.
+    Just for $9.99 you can get the Base edition, and just for anohter $49.99
+    you can get yourself access to the Version 2.
     I hope you don't have any but always be sure to have none.
 
     Returns
