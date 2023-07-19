@@ -211,7 +211,7 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    pattern = ''.join([(i.replace(',', ')|(') if '--' not in i else '') for i in args.exclude_path])
+    pattern = ''.join([(i.replace(',', ')|(') if '--' not in i else '') for i in args.exclude])
     local_path = args.path
     count = 0 
 
