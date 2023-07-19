@@ -26,6 +26,7 @@ import os
 import re
 import sys
 import platform
+import argparse
 import requests
 
 from gibberish_detector import detector
@@ -40,9 +41,11 @@ def get_big_model_file() -> int:
     # Check if the big.model file exists
     if not os.path.exists('./big.model'):
         with open('big.model', 'wb') as _file:
-            for chunk in requests.get(RAW_BIG_MODEL, stream=True, timeout=5) \
+            for chunk in requests.get(RAW_BIG_MODEL, 
+                                      stream=True, timeout=5) \
                     .iter_content(chunk_size=8192):
                 if not chunk: continue
+
                 _file.write(chunk)
 
     return 0
@@ -63,7 +66,7 @@ def validate_lines(lines: list) -> list[tuple]:
         (or false positives by AntiCheat or obfuscated code)
     """
 
-    ret = []
+    ret: list[tuple] = []
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         if re.findall(REGEX, rf'{line}', re.MULTILINE and re.IGNORECASE):
@@ -101,7 +104,7 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int]]:
     return matches
 
 
-def check_file(d: str, file: str, count: int) -> tuple[int, int]: 
+def check_file(d: str, file: str, count: int, args: argparse.Namespace) -> tuple[int, int]: 
     """ Iterate over a file and check the lines
 
     Parameters
@@ -112,6 +115,8 @@ def check_file(d: str, file: str, count: int) -> tuple[int, int]:
         Give a file name to scan e.g "wildCipherInHere.lua"
     count: int
         Give the current cipher count.
+    args: argparse.Namespace
+        Give the arguments delieverd from the Cmd line.
     
     Returns
     -------
@@ -128,7 +133,7 @@ def check_file(d: str, file: str, count: int) -> tuple[int, int]:
         
         match = validate_lines(lines)
         
-        if '--v2' in sys.argv:
+        if args.v2:
             match += do_gibberish_check(lines)
 
         if match:
@@ -136,7 +141,7 @@ def check_file(d: str, file: str, count: int) -> tuple[int, int]:
                 path = d.replace('\\', '/') + f'/{file}'
                 to_log = f'File: {path}\nLineNumber: {ln}\n'
 
-                if '--verbose' in sys.argv:  # Log in console.
+                if args.verbose:  # Log in console.
                     print(to_log)
 
 
@@ -146,6 +151,9 @@ def check_file(d: str, file: str, count: int) -> tuple[int, int]:
 
 
 def write_log_file(**kw) -> int: 
+    if kw.pop('args').no_log:
+        return 0
+
     with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
         f.writelines(log)
         
@@ -163,11 +171,13 @@ def main() -> int:
     Run the program: `find-cipher [path] [exclude path] [OPTIONS...]`.
 
     args:
-        path : Optional : 
+        --path : Optional : 
             Give the path to search, when no path is given, the 
             current working directory will be used `.`
-        exclude path : Optional : 
+        --exclude-path : Optional : 
             Exclude directory's where you don't want to search.
+        --no-log: Optional :
+            Don't create a log file, can be used hand in hand with --verbose
         --verbose : Optional : 
             Print a Cipher directly to the Command line on found.
         --v2 : Optional : 
@@ -178,6 +188,8 @@ def main() -> int:
     Advertisement:
     --------------
     Get your beautiful Cipher today, just smack the play button and find some.
+    Just for $9.99 you can get the Base edition, and just for anohter $49.99
+    you can get yourself access to the Version 2.
     I hope you don't have any but always be sure to have none.
 
     Returns
@@ -186,18 +198,26 @@ def main() -> int:
         Return code
     """
 
-    if '-h' in sys.argv or '--help' in sys.argv:
-        print(main.__doc__)
-        return 0
+    parser = argparse.ArgumentParser(description='Validates lua files.')
 
-    pattern = ''.join([(i.replace(',', ')|(') if '--' not in i else '') for i in sys.argv[2:]])
-    local_path = '.'
+    parser.add_argument('-p', '--path', nargs='?', default='.',
+                        help='Give the path to search, when no path is given, the current working directory will be used "."')
+    parser.add_argument('-x', '--exclude', nargs='*', default='',
+                        help='Exclude directories where you don\'t want to search.')
+    parser.add_argument('-n', '--no-log', action='store_true',
+                        help='Don\'t create a log file, can be used hand in hand with --verbose')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Print a Cipher directly to the Command line on found.')
+    parser.add_argument('--v2', action='store_true',
+                        help='Uses an extra algorithm to find gibberish or randomly generated variable/function/table names. It can introduce more false-positives because of obfuscated scripts but can help find ciphers.')
+
+    args = parser.parse_args()
+
+    pattern = ''.join([(i.replace(',', ')|(') if '--' not in i else '') for i in args.exclude])
+    local_path = args.path
     count = 0 
 
     get_big_model_file()  # sure there are other ways, but python is doing python stuff.
-
-    if len(sys.argv) > 1 and '--' not in sys.argv[1]:
-        local_path = sys.argv[1]
     
     for d, _, files in os.walk(local_path):
         if pattern and re.findall(f'{"(" + pattern + ")"}', 
@@ -208,7 +228,7 @@ def main() -> int:
             if '.lua' not in file:
                 continue
 
-            _, count = check_file(d, file, count)
+            _, count = check_file(d, file, count, args)
     # Write log
     
     red = green = white = ''
@@ -222,7 +242,8 @@ def main() -> int:
         pass
 
     if log:
-        return write_log_file(white=white, red=red, count=count)
+        return write_log_file(white=white, red=red, 
+                              count=count, args=args)
 
     print(f'{green}Nice! There were no Cipher\'s found!{white}')
 
