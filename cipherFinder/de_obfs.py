@@ -1,4 +1,4 @@
-def de_obfs(ret: list[tuple]) -> list[tuple]:
+def de_obfs(ret: list) -> list:
     """ De-Obfuscate the \x23... lines
 
     Parameters
