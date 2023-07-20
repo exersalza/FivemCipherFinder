@@ -31,13 +31,23 @@ import requests
 
 from gibberish_detector import detector
 
-REGEX = r'(((\\x|\\u)([a-fA-F0-9]{2})){2})'
+from cipherFinder.de_obfs import de_obfs
+
+REGEX = r'(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
 RAW_BIG_MODEL = 'https://raw.githubusercontent.com/exersalza/FivemCipherFinder/main/big.model'
 
 log = []
 
 def get_big_model_file() -> int:
+    """ Get the big.model file from GitHub.
+
+    Returns
+    -------
+    int :
+        status code
+
+    """
     # Check if the big.model file exists
     if not os.path.exists('./big.model'):
         with open('big.model', 'wb') as _file:
@@ -69,13 +79,15 @@ def validate_lines(lines: list) -> list[tuple]:
     ret: list[tuple] = []
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
-        if re.findall(REGEX, rf'{line}', re.MULTILINE and re.IGNORECASE):
-            ret.append((ln, line))
+        # get all the lines that match the regex
 
+        if x := re.findall(REGEX, rf'{line}',
+                           re.MULTILINE and re.IGNORECASE):
+            ret.append((ln, line, de_obfs(x)))
     return ret
 
 
-def do_gibberish_check(lines: list) -> list[tuple[str, int]]:
+def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
     """ Do a check if the given lines are making any sens.
     Can still throw false-positives
 
@@ -86,7 +98,7 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int]]:
 
     Returns
     -------
-    list[tuple[str, int]]
+    list[tuple[str, int, str]]
         A Tuple List with infected lines or false positives
         as in `validate_lines`.
 
@@ -98,7 +110,8 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int]]:
 
     for i in lines:
         if 'local' in i and det.is_gibberish(rf'{i}'):
-            matches.append((l_counter, i))
+            matches.append((l_counter, i, 
+                            "Can't decode due to use of --v2"))
 
         l_counter += 1
     return matches
@@ -132,34 +145,46 @@ def check_file(d: str, file: str, count: int, args: argparse.Namespace) -> tuple
             return 1, count
         
         match = validate_lines(lines)
-        
+        logged = {}
+
         if args.v2:
             match += do_gibberish_check(lines)
 
         if match:
-            for ln, line in match:
+            for ln, line, targets in match:
+                t = ''
                 path = d.replace('\\', '/') + f'/{file}'
-                to_log = f'File: {path}\nLineNumber: {ln}\n'
+                
+                if logged.get(path, -1) == ln:
+                    continue
+
+                for clear, obfs in targets:
+                    t += f'\t{clear}={obfs}\n' 
+
+                to_log = f'File: {path}\n' \
+                         f'LineNumber: {ln}\n' \
+                         f'DecodedLines: \n{t}' 
 
                 if args.verbose:  # Log in console.
                     print(to_log)
 
-
-                log.append(to_log + f'Line: {line!r}\n----------------\n')
+                log.append(to_log + f'\nTrigger Line: \n{line!r}\n----------------\n')
                 count += 1
+                logged[path] = ln
     return 0, count
 
 
 def write_log_file(**kw) -> int: 
+    print(f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
+          f'Check the CipherLog.txt for location and trigger. {kw.pop("count")} where found!'
+          f'{kw.pop("white")}\n#staysafe')
+    
     if kw.pop('args').no_log:
         return 0
 
     with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
         f.writelines(log)
         
-        print(f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
-          f'Check the CipherLog.txt for location and trigger. {kw.pop("count")} where found!'
-          f'{kw.pop("white")}\n#staysafe')
     return 0
 
 
@@ -210,18 +235,24 @@ def main() -> int:
                         help='Print a Cipher directly to the Command line on found.')
     parser.add_argument('--v2', action='store_true',
                         help='Uses an extra algorithm to find gibberish or randomly generated variable/function/table names. It can introduce more false-positives because of obfuscated scripts but can help find ciphers.')
+    parser.add_argument('--no-del', action='store_true',
+                        help='Debug command to not delete the big.model file after the script finishes.')
 
     args = parser.parse_args()
 
-    pattern = ''.join([(i.replace(',', ')|(') if '--' not in i else '') for i in args.exclude])
+    pattern = ''.join([(i.replace(',', ')|(') 
+                        if '--' not in i else '') 
+                        for i in args.exclude])
     local_path = args.path
     count = 0 
 
-    get_big_model_file()  # sure there are other ways, but python is doing python stuff.
+    if args.v2:
+        get_big_model_file()  # sure there are other ways, but python is doing python stuff.
     
     for d, _, files in os.walk(local_path):
         if pattern and re.findall(f'{"(" + pattern + ")"}', 
-                                  fr'{d}'.format(d=d), re.MULTILINE and re.IGNORECASE):
+                                  fr'{d}'.format(d=d), # don't ask me what this does
+                                  re.MULTILINE and re.IGNORECASE):
             continue
 
         for file in files:
@@ -237,7 +268,8 @@ def main() -> int:
         white, red, green = COLORS
     
     try:
-        os.remove('big.model')
+        if not args.no_del:
+            os.remove('big.model')
     except FileNotFoundError:
         pass
 
