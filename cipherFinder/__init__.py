@@ -1,5 +1,4 @@
-from .finder import *
-from .de_obfs import de_obfs
+from .finder import main
 
 if __name__ == '__main__':
-    finder.main()
+    main()
