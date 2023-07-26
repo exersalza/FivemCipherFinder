@@ -31,7 +31,7 @@ import requests
 
 from gibberish_detector import detector
 
-from cipherFinder.de_obfs import de_obfs
+from cipherFinder.de_obfs import de_obfs, do_regex
 
 REGEX = r'(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")'
 COLORS = ['\033[0m', '\033[91m', '\033[92m']
@@ -81,9 +81,8 @@ def validate_lines(lines: list) -> list[tuple]:
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         # get all the lines that match the regex
 
-        if x := re.findall(REGEX, rf'{line}',
-                           re.MULTILINE and re.IGNORECASE):
-            ret.append((ln, line, de_obfs(x)))
+        if x := do_regex(line, REGEX):
+            ret.append((ln, line, de_obfs(x, line)))
     return ret
 
 
