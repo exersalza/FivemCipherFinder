@@ -1,6 +1,6 @@
 import re
 import random
-from typing import Generator
+from collections.abc import Generator
 
 
 VAR_NAMES = [  # Just random names bc we the hell dont know what happens in that script
@@ -10,7 +10,11 @@ VAR_NAMES = [  # Just random names bc we the hell dont know what happens in that
     'rizz',
     'taco',
     'bell',
-    'uber'
+    'uber',
+    'deez',
+    'nuts',
+    'hell',
+    'towlie'
 ]
 
 REGEX = [    
@@ -43,8 +47,6 @@ def do_regex(_line: str, regex: str) -> list:
     
     Parameters
     ----------
-    _line : str,
-        Give me the str where me should search in for regex
     regex : str
         The regex to search for in _line
 
@@ -67,29 +69,33 @@ def do_list_addition(char_set: list) -> Generator:
     char_set : list
         Give a list to yield values from
 
-    Returns
-    -------
-    Generator
-        Yielding values
-
     """
     for i in char_set:
        yield i[1].strip('local ').split(',')
 
 
-def de_obfs_code(_line: str) -> str:
+def de_obfs_code(_line: str, _ret: list) -> str:
+    """ Trys to de De-Obfuscate the trigger line
+    
+    Returns
+    -------
+    str
+        the decoded string
+    """
     code = ''
     var = []
     names = VAR_NAMES
 
     for i in REGEX:
         if x := do_regex(_line, i): 
-            t = do_list_addition(x)
-            for j in t:
+            for j in do_list_addition(x):
                 var.extend(j)
     
     for i in var:
         _line = _line.replace(i.strip(), grap(names))
+    
+    for v, t in de_obfs_char(_ret):
+        _line = _line.replace(t.strip('"'), v)
 
     return code
 
@@ -122,11 +128,8 @@ def de_obfs_char(found: list) -> list[tuple]:
     return temp
 
 
-def de_obfs(_ret: list, _line: str) -> tuple:
-    chars = de_obfs_char(_ret)
-    code = de_obfs_code(_line)
-
-    return chars, code
+def de_obfs(_ret: list, _line: str) -> str:
+    return de_obfs_code(_line, _ret)
 
 
 if __name__ == '__main__':

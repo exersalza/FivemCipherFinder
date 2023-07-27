@@ -150,19 +150,15 @@ def check_file(d: str, file: str, count: int, args: argparse.Namespace) -> tuple
             match += do_gibberish_check(lines)
 
         if match:
-            for ln, line, targets in match:
-                t = ''
+            for ln, line, target in match:
                 path = d.replace('\\', '/') + f'/{file}'
                 
                 if logged.get(path, -1) == ln:
                     continue
 
-                for clear, obfs in targets:
-                    t += f'\t{clear}={obfs}\n' 
-
                 to_log = f'File: {path}\n' \
                          f'LineNumber: {ln}\n' \
-                         f'DecodedLines: \n{t}' 
+                         f'DecodedLines: \n{target}' 
 
                 if args.verbose:  # Log in console.
                     print(to_log)
