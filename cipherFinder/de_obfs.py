@@ -100,7 +100,7 @@ def de_obfs_code(_line: str, _ret: list) -> str:
     return code
 
 
-def de_obfs_char(found: list) -> list[tuple]: 
+def de_obfs_char(found: list) -> list: 
     """ De-Obfuscate the \x23... lines
 
     Parameters
