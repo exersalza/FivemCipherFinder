@@ -4,22 +4,22 @@ from collections.abc import Generator
 
 
 VAR_NAMES = [  # Just random names bc we the hell dont know what happens in that script
-    'gg',
-    'gyros',
-    'fries',
-    'rizz',
-    'taco',
-    'bell',
-    'uber',
-    'deez',
-    'nuts',
-    'hell',
-    'towlie'
+    "gg",
+    "gyros",
+    "fries",
+    "rizz",
+    "taco",
+    "bell",
+    "uber",
+    "deez",
+    "nuts",
+    "hell",
+    "towlie"
 ]
 
 REGEX = [    
-    r'(function\s*\(((\w+(,(\s?))?)*)\))',
-    r'((local(\s+)?(\w+)))'
+    r"((local(\s+)?(\w+)))",
+    r"(function\s*\(((\w+(,(\s?))?)*)\))",
 ]
 
 
@@ -56,7 +56,7 @@ def do_regex(_line: str, regex: str) -> list:
         The list with the found groups
 
     """
-    return re.findall(regex, rf'{_line}', 
+    return re.findall(regex, rf"{_line}", 
                       re.MULTILINE and re.IGNORECASE)
 
 
@@ -71,7 +71,7 @@ def do_list_addition(char_set: list) -> Generator:
 
     """
     for i in char_set:
-       yield i[1].strip('local ').split(',')
+       yield i[1].strip("local ").split(",")
 
 
 def de_obfs_code(_line: str, _ret: list) -> str:
@@ -82,7 +82,7 @@ def de_obfs_code(_line: str, _ret: list) -> str:
     str
         the decoded string
     """
-    code = ''
+    code = ""
     var = []
     names = VAR_NAMES
 
@@ -117,10 +117,10 @@ def de_obfs_char(found: list) -> list:
     temp = []
 
     for j in found:
-        t = ''
+        t = ""
         # Get rid of the x and backslashes.
-        for i in (j[0].strip('"').replace('\\', '')).split('x'):
-            if i == '':
+        for i in (j[0].strip('"').replace("\\", "")).split("x"):
+            if i == "":
                 continue
 
             t += chr(int(i, 16))
@@ -131,3 +131,7 @@ def de_obfs_char(found: list) -> list:
 def de_obfs(_ret: list, _line: str) -> str:
     return de_obfs_code(_line, _ret)
 
+
+if __name__ == "__main__":
+    ret = ""
+    line = ""

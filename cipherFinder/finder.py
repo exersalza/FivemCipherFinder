@@ -34,8 +34,8 @@ from gibberish_detector import detector
 from cipherFinder.de_obfs import de_obfs, do_regex
 
 REGEX = r'(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")'
-COLORS = ['\033[0m', '\033[91m', '\033[92m']
-RAW_BIG_MODEL = 'https://raw.githubusercontent.com/exersalza/FivemCipherFinder/main/big.model'
+COLORS = ["\033[0m", "\033[91m", "\033[92m"]
+RAW_BIG_MODEL = "https://raw.githubusercontent.com/exersalza/FivemCipherFinder/main/big.model"
 
 log = []
 
@@ -49,8 +49,8 @@ def get_big_model_file() -> int:
 
     """
     # Check if the big.model file exists
-    if not os.path.exists('./big.model'):
-        with open('big.model', 'wb') as _file:
+    if not os.path.exists("./big.model"):
+        with open("big.model", "wb") as _file:
             for chunk in requests.get(RAW_BIG_MODEL, 
                                       stream=True, timeout=5) \
                     .iter_content(chunk_size=8192):
@@ -103,12 +103,12 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
 
     """
 
-    det = detector.create_from_model('./big.model')  # should work for now
+    det = detector.create_from_model("./big.model")  # should work for now
     l_counter = 1
     matches = []
 
     for i in lines:
-        if 'local' in i and det.is_gibberish(rf'{i}'):
+        if "local" in i and det.is_gibberish(rf"{i}"):
             matches.append((l_counter, i, 
                             "Can't decode due to use of --v2"))
 
@@ -136,11 +136,11 @@ def check_file(d: str, file: str, count: int, args: argparse.Namespace) -> tuple
         A Tuple with the return code and the current cipher count.
     """
 
-    with open(f'{d}/{file}', 'r', encoding='utf-8') as f:
+    with open(f"{d}/{file}", "r", encoding="utf-8") as f:
         try:
             lines = f.readlines()
         except UnicodeDecodeError:
-            print(f'Can\'t decode `{d}/{file}`.')
+            print(f"Can't decode `{d}/{file}`. File is not utf-8")
             return 1, count
         
         match = validate_lines(lines)
@@ -151,19 +151,19 @@ def check_file(d: str, file: str, count: int, args: argparse.Namespace) -> tuple
 
         if match:
             for ln, line, target in match:
-                path = d.replace('\\', '/') + f'/{file}'
+                path = d.replace("\\", "/") + f"/{file}"
                 
                 if logged.get(path, -1) == ln:
                     continue
 
-                to_log = f'File: {path}\n' \
-                         f'LineNumber: {ln}\n' \
-                         f'DecodedLines: \n{target}' 
+                to_log = f"File: {path}\n" \
+                         f"LineNumber: {ln}\n" \
+                         f"DecodedLines: \n{target}"
 
                 if args.verbose:  # Log in console.
                     print(to_log)
 
-                log.append(to_log + f'\nTrigger Line: \n{line!r}\n----------------\n')
+                log.append(to_log + f"\nTrigger Line: \n{line!r}\n----------------\n")
                 count += 1
                 logged[path] = ln
     return 0, count
@@ -174,10 +174,10 @@ def write_log_file(**kw) -> int:
           f'Check the CipherLog.txt for location and trigger. {kw.pop("count")} where found!'
           f'{kw.pop("white")}\n#staysafe')
     
-    if kw.pop('args').no_log:
+    if kw.pop("args").no_log:
         return 0
 
-    with open(f'CipherLog-{dt.now():%H-%M-%S}.txt', 'w+', encoding='utf-8') as f:
+    with open(f"CipherLog-{dt.now():%H-%M-%S}.txt", "w+", encoding="utf-8") as f:
         f.writelines(log)
         
     return 0
@@ -218,25 +218,25 @@ def main() -> int:
         Return code
     """
 
-    parser = argparse.ArgumentParser(description='Validates lua files.')
+    parser = argparse.ArgumentParser(description="Validates lua files.")
 
-    parser.add_argument('-p', '--path', nargs='?', default='.',
-                        help='Give the path to search, when no path is given, the current working directory will be used "."')
-    parser.add_argument('-x', '--exclude', nargs='*', default='',
-                        help='Exclude directories where you don\'t want to search.')
-    parser.add_argument('-n', '--no-log', action='store_true',
-                        help='Don\'t create a log file, can be used hand in hand with --verbose')
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Print a Cipher directly to the Command line on found.')
-    parser.add_argument('--v2', action='store_true',
-                        help='Uses an extra algorithm to find gibberish or randomly generated variable/function/table names. It can introduce more false-positives because of obfuscated scripts but can help find ciphers.')
-    parser.add_argument('--no-del', action='store_true',
-                        help='Debug command to not delete the big.model file after the script finishes.')
+    parser.add_argument("-p", "--path", nargs="?", default=".",
+                        help="Give the path to search, when no path is given, the current working directory will be used \".\"")
+    parser.add_argument("-x", "--exclude", nargs="*", default="",
+                        help="Exclude directories where you don't want to search.")
+    parser.add_argument("-n", "--no-log", action="store_true",
+                        help="Don't create a log file, can be used hand in hand with --verbose")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="Print a Cipher directly to the Command line on found.")
+    parser.add_argument("--v2", action="store_true",
+                        help="Uses an extra algorithm to find gibberish or randomly generated variable/function/table names. It can introduce more false-positives because of obfuscated scripts but can help find ciphers.")
+    parser.add_argument("--no-del", action="store_true",
+                        help="Debug command to not delete the big.model file after the script finishes.")
 
     args = parser.parse_args()
 
-    pattern = ''.join([(i.replace(',', ')|(') 
-                        if '--' not in i else '') 
+    pattern = "".join([(i.replace(",", ")|(") 
+                        if "--" not in i else "") 
                         for i in args.exclude])
     local_path = args.path
     count = 0 
@@ -246,25 +246,25 @@ def main() -> int:
     
     for d, _, files in os.walk(local_path):
         if pattern and re.findall(f'{"(" + pattern + ")"}', 
-                                  fr'{d}'.format(d=d), # don't ask me what this does
+                                  rf"{d}".format(d=d), # don't ask me what this does
                                   re.MULTILINE and re.IGNORECASE):
             continue
 
         for file in files:
-            if '.lua' not in file:
+            if ".lua" not in file:
                 continue
 
             _, count = check_file(d, file, count, args)
     # Write log
     
-    red = green = white = ''
+    red = green = white = ""
 
-    if 'linux' in platform.platform().lower():
+    if "linux" in platform.platform().lower():
         white, red, green = COLORS
     
     try:
         if not args.no_del:
-            os.remove('big.model')
+            os.remove("big.model")
     except FileNotFoundError:
         pass
 
@@ -272,10 +272,10 @@ def main() -> int:
         return write_log_file(white=white, red=red, 
                               count=count, args=args)
 
-    print(f'{green}Nice! There were no Cipher\'s found!{white}')
+    print(f"{green}Nice! There were no Cipher's found!{white}")
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
