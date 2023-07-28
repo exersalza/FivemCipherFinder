@@ -23,16 +23,12 @@ Desc:
 The script will walk through your Server's directories and scan, for example, `\x41\x42\x43`. When it found something it will write the line and trigger it into a Log file.
 
 ## Installation
-Py-Version: 3.8 and above
+Py-Version: 3.8 and above [Newest python version](https://python.org/downloads/)
 
+**Please make sure, that when you're on Windows based system, that you've added Python to your environment variables. You can test that with simply typing `python --version` into your CMD or Terminal**
 run `pip install FivemCipherFinder` or download the latest release and unpack it.
 
 Make sure to read the [Troubleshooting](#Troubleshooting) page first before you add me on Discord.
-
-## Install instructions for Python
-Py-Version: 3.8 and above
-
-run `pip install FivemCipherFinder` or download the latest release and unpack it.
 
 ## Usage
 
