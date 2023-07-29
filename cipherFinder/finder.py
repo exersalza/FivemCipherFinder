@@ -31,7 +31,7 @@ import requests
 
 from gibberish_detector import detector
 
-from cipherFinder.de_obfs import de_obfs, do_regex
+from de_obfs import de_obfs, do_regex
 
 REGEX = r'(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")'
 COLORS = ["\033[0m", "\033[91m", "\033[92m"]
@@ -273,7 +273,6 @@ def main() -> int:
                               count=count, args=args)
 
     print(f"{green}Nice! There were no Cipher's found!{white}")
-
     return 0
 
 
