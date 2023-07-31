@@ -1,0 +1,10 @@
+name: Flake8
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: $PYTHON_VERSIONS
