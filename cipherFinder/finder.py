@@ -31,7 +31,7 @@ import requests
 
 from gibberish_detector import detector
 
-from de_obfs import de_obfs, do_regex
+from cipherFinder.de_obfs import de_obfs, do_regex
 
 REGEX = r'(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")'
 COLORS = ["\033[0m", "\033[91m", "\033[92m"]
@@ -70,7 +70,7 @@ def validate_lines(lines: list) -> list[tuple]:
     ----------
     lines : list
         The lines from the current read file.
-
+    
     Returns
     -------
     list[tuple]
@@ -160,7 +160,7 @@ def check_file(d: str, file: str, count: int, args: argparse.Namespace) -> tuple
 
                 to_log = f"File: {path}\n" \
                          f"LineNumber: {ln}\n" \
-                         f"DecodedLines: \n{target}"
+                         f"DecodedLines: \n{'-'*10} \n{target}\n{'-'*10}"
 
                 if args.verbose:  # Log in console.
                     print(to_log)

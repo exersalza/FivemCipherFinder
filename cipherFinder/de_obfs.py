@@ -1,3 +1,5 @@
+#!/bin/python3.11
+
 import re
 import random
 from collections.abc import Generator
@@ -17,10 +19,19 @@ VAR_NAMES = [  # Just random names bc we the hell dont know what happens in that
     "towlie"
 ]
 
-REGEX = [    
+TABLE_REGEX = r"(\{([^{}]+)\})"
+REGEX = [
     r"((local(\s+)?(\w+)))",
     r"(function\s*\(((\w+(,(\s?))?)*)\))",
 ]
+
+
+def is_int(_str: str) -> int:
+    try:
+        int(_str)
+    except ValueError:
+        return 1
+    return 0
 
 
 def grap(ls: list) -> str:
@@ -74,6 +85,15 @@ def do_list_addition(char_set: list) -> Generator:
        yield i[1].strip("local ").split(",")
 
 
+def get_table_contents(line: str) -> list:
+    _t = []
+    
+    for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
+        _t.append(i.strip())
+    
+    return _t
+
+
 def de_obfs_code(_line: str, _ret: list) -> str:
     """ Trys to de De-Obfuscate the trigger line
     
@@ -83,7 +103,8 @@ def de_obfs_code(_line: str, _ret: list) -> str:
         the decoded string
     """
     var = []
-    names = VAR_NAMES
+    names = []
+    grap_names = VAR_NAMES
 
     for i in REGEX:
         if x := do_regex(_line, i): 
@@ -91,10 +112,20 @@ def de_obfs_code(_line: str, _ret: list) -> str:
                 var.extend(j)
     
     for i in var:
-        _line = _line.replace(i.strip(), grap(names))
+        name = grap(grap_names)
+        names.append(name)
+        _line = _line.replace(i.strip(), name)
     
     for v, t in de_obfs_char(_ret):
         _line = _line.replace(t.strip('"'), v)
+    
+
+    table = get_table_contents(_line)
+    t_re = rf"({names[0]}\[\d+\])"
+    omfg = set(do_regex(_line, t_re))
+
+    for i, c in enumerate(sorted(omfg)):
+        _line = _line.replace(c, table[i])
 
     return _line
 
