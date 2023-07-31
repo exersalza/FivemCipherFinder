@@ -4,8 +4,9 @@ import re
 import random
 from collections.abc import Generator
 
-
-VAR_NAMES = [  # Just random names bc we the hell dont know what happens in that script
+# Just random names bc we the hell dont know what
+# happens in that script
+VAR_NAMES = [
     "gg",
     "gyros",
     "fries",
@@ -47,7 +48,7 @@ def grap(ls: list) -> str:
 
 def do_regex(line: str, regex: str) -> list:
     """ Do the regex template stuff
-    
+
     Parameters
     ----------
     line : str
@@ -61,7 +62,7 @@ def do_regex(line: str, regex: str) -> list:
         The list with the found groups
 
     """
-    return re.findall(regex, rf"{line}", 
+    return re.findall(regex, rf"{line}",
                       re.MULTILINE and re.IGNORECASE)
 
 
@@ -76,7 +77,7 @@ def do_list_addition(char_set: list) -> Generator:
 
     """
     for i in char_set:
-       yield i[1].strip("local ").split(",")
+        yield i[1].strip("local ").split(",")
 
 
 def get_table_contents(line: str) -> list:
@@ -89,21 +90,21 @@ def get_table_contents(line: str) -> list:
 
     Returns
     -------
-    list : 
+    list :
         Return the list with found values
 
     """
     _t = []
-    
+
     for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
         _t.append(i.strip())
-    
+
     return _t
 
 
 def de_obfs_code(line: str, ret: list) -> str:
     """ Trys to de De-Obfuscate the trigger line
-    
+
     Returns
     -------
     str
@@ -114,18 +115,17 @@ def de_obfs_code(line: str, ret: list) -> str:
     grap_names = VAR_NAMES
 
     for i in REGEX:
-        if x := do_regex(line, i): 
+        if x := do_regex(line, i):
             for j in do_list_addition(x):
                 var.extend(j)
-    
+
     for i in var:
         name = grap(grap_names)
         names.append(name)
         line = line.replace(i.strip(), name)
-    
+
     for v, t in de_obfs_char(ret):
         line = line.replace(t.strip('"'), v)
-    
 
     table = get_table_contents(line)
     t_re = rf"({names[0]}\[\d+\])"
@@ -137,7 +137,7 @@ def de_obfs_code(line: str, ret: list) -> str:
     return line
 
 
-def de_obfs_char(found: list) -> list: 
+def de_obfs_char(found: list) -> list:
     """ De-Obfuscate the \x23... lines
 
     Parameters
@@ -172,7 +172,7 @@ def de_obfs(ret: list, line: str) -> str:
     ----------
     ret : list
         Give the ret list
-    
+
     line : str
         Give the line to do stuff on
 
@@ -182,4 +182,3 @@ def de_obfs(ret: list, line: str) -> str:
         Returns the de obfuscated code
     """
     return de_obfs_code(line, ret)
-

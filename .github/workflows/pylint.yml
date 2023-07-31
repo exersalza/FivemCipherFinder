@@ -1,4 +1,4 @@
-name: Pylint
+name: Code Checks (Pylint, Flake8)
 
 on: [push]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: $PYTHON_VERSIONS
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -21,3 +21,6 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
+    - name: Analysing the code with flake8
+      run: |
+        flake8 --statistics $(git ls-files '*.py')
