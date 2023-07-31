@@ -49,14 +49,16 @@ def get_big_model_file() -> int:
 
     """
     # Check if the big.model file exists
-    if not os.path.exists("./big.model"):
-        with open("big.model", "wb") as _file:
-            for chunk in requests.get(RAW_BIG_MODEL, 
-                                      stream=True, timeout=5) \
-                    .iter_content(chunk_size=8192):
-                if not chunk: continue
+    if os.path.exists("./big.model"):
+        return 1
 
-                _file.write(chunk)
+    with open("big.model", "wb") as _file:
+        for chunk in requests.get(RAW_BIG_MODEL, 
+                                  stream=True, timeout=5) \
+                .iter_content(chunk_size=8192):
+            if not chunk: continue
+
+            _file.write(chunk)
 
     return 0
 
