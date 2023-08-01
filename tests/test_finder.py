@@ -29,7 +29,7 @@ def test_do_gibberish_check():
         (
             2,
             "local jflkdsajlkfndsajiewajnucdisan = {'jdkfsa'}",
-            "Can't decode due to use of --v2",
+            "Can't de obfuscate due to use of --v2",
         )
     ]
     os.remove("./big.model")
