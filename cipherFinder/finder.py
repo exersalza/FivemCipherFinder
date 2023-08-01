@@ -115,7 +115,9 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
 
     for i in lines:
         if "local" in i and det.is_gibberish(rf"{i}"):
-            matches.append((l_counter, i, "Can't de obfuscate due to use of --v2"))
+            matches.append((l_counter,
+                            i,
+                            "Can't de obfuscate due to use of --v2"))
 
         l_counter += 1
     return matches

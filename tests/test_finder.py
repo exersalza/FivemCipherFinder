@@ -1,7 +1,9 @@
 import os
-import pytest
 
-from cipherFinder.finder import *
+from cipherFinder.finder import (
+    get_big_model_file,
+    do_gibberish_check,
+)
 
 
 def test_get_big_model_file():

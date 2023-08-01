@@ -1,6 +1,13 @@
 import pytest
 
-from cipherFinder.de_obfs import *
+from cipherFinder.de_obfs import (
+    do_regex,
+    do_list_addition,
+    grap,
+    get_table_contents,
+    TABLE_REGEX,
+    REGEX,
+)
 
 
 @pytest.fixture
@@ -21,7 +28,7 @@ def test_grap():
     assert len(test_list) != 1
 
 
-def test_do_regex(table_fixture):
+def test_do_regex(table_fixture):  # pylint: disable=redefined-outer-name
     table_found = do_regex(table_fixture, TABLE_REGEX)
     variable_found = do_regex(table_fixture, REGEX[0])
     function_found = do_regex(table_fixture, REGEX[1])
@@ -46,6 +53,8 @@ def test_do_list_addition():
     assert out_list == ["foobar", "foo", "bar"]
 
 
-def test_get_table_contents(table_fixture):
+def test_get_table_contents(
+    table_fixture,
+):  # pylint: disable=redefined-outer-name
     contents = get_table_contents(table_fixture)
     assert contents == ["'foo'", "'bar'"]
