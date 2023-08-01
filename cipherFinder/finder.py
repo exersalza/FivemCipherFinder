@@ -163,7 +163,7 @@ def check_file(
 
         for ln, line, target in match:
             path = d.replace("\\", "/") + f"/{file}"
-            
+
             # prevent printing stuff twice to the log file
             if logged.get(path, -1) == ln:
                 continue
@@ -325,8 +325,8 @@ def main() -> int:
                 continue
 
             _, count = check_file(d, file, count, args)
-    # Write log
 
+    # Write log
     red = green = white = ""
 
     if "linux" in platform.platform().lower():
