@@ -29,6 +29,8 @@ Py-Version: 3.8 and above [Newest python version](https://python.org/downloads/)
 **Please make sure, that when you're on Windows based system, that you've added Python to your environment variables. You can test that with simply typing `python --version` into your CMD or Terminal**
 run `pip install FivemCipherFinder` or download the latest release and unpack it.
 
+Also please consider using the pip way to install except **you know what you're doing**
+
 Make sure to read the [Troubleshooting](#Troubleshooting) page first before you add me on Discord.
 
 ## Usage
