@@ -33,7 +33,7 @@ from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
 
-REGEX = r"(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")"
+REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 COLORS = ["\033[0m", "\033[91m", "\033[92m"]
 RAW_BIG_MODEL = (
     "https://raw.githubusercontent.com/exersalza/"
@@ -54,14 +54,12 @@ def get_big_model_file() -> int:
     """
     # Check if the big.model file exists
     if os.path.exists("./big.model"):
-        return 1
+        os.remove("./big.model")
 
     with open("big.model", "wb") as _file:
-        for chunk in requests.get(RAW_BIG_MODEL,
-                                  stream=True,
-                                  timeout=5).iter_content(
-                chunk_size=8192
-        ):
+        for chunk in requests.get(
+            RAW_BIG_MODEL, stream=True, timeout=5
+        ).iter_content(chunk_size=8192):
             if not chunk:
                 continue
 
@@ -89,7 +87,6 @@ def validate_lines(lines: list) -> list[tuple]:
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         # get all the lines that match the regex
-
         if x := do_regex(line, REGEX):
             ret.append((ln, line, de_obfs(x, line)))
     return ret
@@ -118,7 +115,7 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
 
     for i in lines:
         if "local" in i and det.is_gibberish(rf"{i}"):
-            matches.append((l_counter, i, "Can't decode due to use of --v2"))
+            matches.append((l_counter, i, "Can't de obfuscate due to use of --v2"))
 
         l_counter += 1
     return matches
@@ -194,8 +191,9 @@ def write_log_file(**kw) -> int:
     if kw.pop("args").no_log:
         return 0
 
-    with open(f"CipherLog-{dt.now():%H-%M-%S}.txt", "w+",
-              encoding="utf-8") as f:
+    with open(
+        f"CipherLog-{dt.now():%H-%M-%S}.txt", "w+", encoding="utf-8"
+    ) as f:
         f.writelines(log)
 
     return 0
@@ -286,11 +284,23 @@ def main() -> int:
         "file after the script finishes.",
     )
 
+    parser.add_argument(
+        "--get-train-file",
+        action="store_true",
+        help="Debug command to get the big.model file"
+    )
+
     args = parser.parse_args()
 
+    if args.get_train_file:
+        get_big_model_file()
+        return 0
+
     pattern = "".join(
-        [(i.replace(",", ")|(") if "--" not in i else "")
-            for i in args.exclude]
+        [
+            (i.replace(",", ")|(") if "--" not in i else "")
+            for i in args.exclude
+        ]
     )
     local_path = args.path
     count = 0

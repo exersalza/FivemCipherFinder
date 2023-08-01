@@ -116,10 +116,6 @@ def de_obfs_code(line: str, ret: list) -> str:
     names = []
     grap_names = VAR_NAMES
 
-    print(line)
-    print()
-    print(ret)
-
     for i in REGEX:
         if x := do_regex(line, i):
             for j in do_list_addition(x):
