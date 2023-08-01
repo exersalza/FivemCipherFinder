@@ -13,7 +13,7 @@ jobs:
           python-version: 3.11
       - name: Get deps
         run: |
-          python -m pip insatll --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r req
           python -m build . && pip install .
       - name: Analysing da code with da pytest
