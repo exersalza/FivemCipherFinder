@@ -33,16 +33,18 @@ from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
 
-REGEX = r'(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")'
+REGEX = r"(\"((\\x|\\u)([a-fA-F0-9]{2}))+\")"
 COLORS = ["\033[0m", "\033[91m", "\033[92m"]
-RAW_BIG_MODEL = "https://raw.githubusercontent.com/exersalza/" \
-                "FivemCipherFinder/main/big.model"
+RAW_BIG_MODEL = (
+    "https://raw.githubusercontent.com/exersalza/"
+    "FivemCipherFinder/main/big.model"
+)
 
 log = []
 
 
 def get_big_model_file() -> int:
-    """ Get the big.model file from GitHub.
+    """Get the big.model file from GitHub.
 
     Returns
     -------
@@ -56,8 +58,10 @@ def get_big_model_file() -> int:
 
     with open("big.model", "wb") as _file:
         for chunk in requests.get(RAW_BIG_MODEL,
-                                  stream=True, timeout=5) \
-                .iter_content(chunk_size=8192):
+                                  stream=True,
+                                  timeout=5).iter_content(
+                chunk_size=8192
+        ):
             if not chunk:
                 continue
 
@@ -67,7 +71,7 @@ def get_big_model_file() -> int:
 
 
 def validate_lines(lines: list) -> list[tuple]:
-    """ Validate the lines that are given through the 'lines' parameter.
+    """Validate the lines that are given through the 'lines' parameter.
 
     Parameters
     ----------
@@ -92,7 +96,7 @@ def validate_lines(lines: list) -> list[tuple]:
 
 
 def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
-    """ Do a check if the given lines are making any sens.
+    """Do a check if the given lines are making any sens.
     Can still throw false-positives
 
     Parameters
@@ -114,18 +118,16 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
 
     for i in lines:
         if "local" in i and det.is_gibberish(rf"{i}"):
-            matches.append((l_counter, i,
-                            "Can't decode due to use of --v2"))
+            matches.append((l_counter, i, "Can't decode due to use of --v2"))
 
         l_counter += 1
     return matches
 
 
-def check_file(d: str,
-               file: str,
-               count: int,
-               args: argparse.Namespace) -> tuple[int, int]:
-    """ Iterate over a file and check the lines
+def check_file(
+    d: str, file: str, count: int, args: argparse.Namespace
+) -> tuple[int, int]:
+    """Iterate over a file and check the lines
 
     Parameters
     ----------
@@ -157,31 +159,37 @@ def check_file(d: str,
         if args.v2:
             match += do_gibberish_check(lines)
 
-        if match:
-            for ln, line, target in match:
-                path = d.replace("\\", "/") + f"/{file}"
+        if not match:
+            return 0, count
 
-                if logged.get(path, -1) == ln:
-                    continue
+        for ln, line, target in match:
+            path = d.replace("\\", "/") + f"/{file}"
 
-                to_log = f"File: {path}\n" \
-                         f"LineNumber: {ln}\n" \
-                         f"DecodedLines: \n{'-'*10} \n{target}\n{'-'*10}"
+            if logged.get(path, -1) == ln:
+                continue
 
-                if args.verbose:  # Log in console.
-                    print(to_log)
+            to_log = (
+                f"File: {path}\n"
+                f"LineNumber: {ln}\n"
+                f"DecodedLines: \n{'-'*10} \n{target}\n{'-'*10}"
+            )
 
-                log.append(to_log + f"\nTrigger Line: \n{line!r}\n{'-'*15}\n")
-                count += 1
-                logged[path] = ln
+            if args.verbose:  # Log in console.
+                print(to_log)
+
+            log.append(to_log + f"\nTrigger Line: \n{line!r}\n{'-'*15}\n")
+            count += 1
+            logged[path] = ln
     return 0, count
 
 
 def write_log_file(**kw) -> int:
-    print(f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
-          f"Check the CipherLog.txt for location and trigger. "
-          f'{kw.pop("count")} where found!'
-          f'{kw.pop("white")}\n#staysafe')
+    print(
+        f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
+        f"Check the CipherLog.txt for location and trigger. "
+        f'{kw.pop("count")} where found!'
+        f'{kw.pop("white")}\n#staysafe'
+    )
 
     if kw.pop("args").no_log:
         return 0
@@ -194,7 +202,7 @@ def write_log_file(**kw) -> int:
 
 
 def main() -> int:
-    """ Validates lua files.
+    """Validates lua files.
 
     Usage:
     ------
@@ -230,37 +238,60 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(description="Validates lua files.")
 
-    parser.add_argument("-p", "--path", nargs="?", default=".",
-                        help="Give the path to search, when no path is given"
-                        ', the current working directory will be used "."')
+    parser.add_argument(
+        "-p",
+        "--path",
+        nargs="?",
+        default=".",
+        help="Give the path to search, when no path is given"
+        ', the current working directory will be used "."',
+    )
 
-    parser.add_argument("-x", "--exclude", nargs="*", default="",
-                        help="Exclude directories where you don't want to"
-                        " search.")
+    parser.add_argument(
+        "-x",
+        "--exclude",
+        nargs="*",
+        default="",
+        help="Exclude directories where you don't want to" " search.",
+    )
 
-    parser.add_argument("-n", "--no-log", action="store_true",
-                        help="Don't create a log file, can be used hand in "
-                        "hand with --verbose")
+    parser.add_argument(
+        "-n",
+        "--no-log",
+        action="store_true",
+        help="Don't create a log file, can be used hand in hand with -v",
+    )
 
-    parser.add_argument("-v", "--verbose", action="store_true",
-                        help="Print a Cipher directly to the Command line "
-                        " on found.")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Print a Cipher directly to the Command line " " on found.",
+    )
 
-    parser.add_argument("--v2", action="store_true",
-                        help="Uses an extra algorithm to find gibberish "
-                        "or randomly generated variable/function/table "
-                        "names. It can introduce more false-positives "
-                        "because of obfuscated scripts but "
-                        "can help find ciphers.")
+    parser.add_argument(
+        "--v2",
+        action="store_true",
+        help="Uses an extra algorithm to find gibberish "
+        "or randomly generated variable/function/table "
+        "names. It can introduce more false-positives "
+        "because of obfuscated scripts but "
+        "can help find ciphers.",
+    )
 
-    parser.add_argument("--no-del", action="store_true",
-                        help="Debug command to not delete the big.model "
-                        "file after the script finishes.")
+    parser.add_argument(
+        "--no-del",
+        action="store_true",
+        help="Debug command to not delete the big.model "
+        "file after the script finishes.",
+    )
 
     args = parser.parse_args()
 
-    pattern = "".join([(i.replace(",", ")|(")
-                        if "--" not in i else "") for i in args.exclude])
+    pattern = "".join(
+        [(i.replace(",", ")|(") if "--" not in i else "")
+            for i in args.exclude]
+    )
     local_path = args.path
     count = 0
 
@@ -269,9 +300,11 @@ def main() -> int:
         get_big_model_file()
 
     for d, _, files in os.walk(local_path):
-        if pattern and re.findall(f'{"(" + pattern + ")"}',
-                                  rf"{d}".format(d=d),
-                                  re.MULTILINE and re.IGNORECASE):
+        if pattern and re.findall(
+            f'{"(" + pattern + ")"}',
+            rf"{d}".format(d=d),
+            re.MULTILINE and re.IGNORECASE,
+        ):
             continue
 
         for file in files:
@@ -293,8 +326,7 @@ def main() -> int:
         pass
 
     if log:
-        return write_log_file(white=white, red=red,
-                              count=count, args=args)
+        return write_log_file(white=white, red=red, count=count, args=args)
 
     print(f"{green}Nice! There were no Cipher's found!{white}")
     return 0

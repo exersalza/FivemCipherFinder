@@ -1,7 +1,7 @@
 #!/bin/python3.11
 
-import re
 import random
+import re
 from collections.abc import Generator
 
 # Just random names bc we the hell dont know what
@@ -17,7 +17,7 @@ VAR_NAMES = [
     "deez",
     "nuts",
     "hell",
-    "towlie"
+    "towlie",
 ]
 
 TABLE_REGEX = r"(\{([^{}]+)\})"
@@ -28,7 +28,7 @@ REGEX = [
 
 
 def grap(ls: list) -> str:
-    """ Get Random And Pop (grap)
+    """Get Random And Pop (grap)
 
     Parameters
     ----------
@@ -47,7 +47,7 @@ def grap(ls: list) -> str:
 
 
 def do_regex(line: str, regex: str) -> list:
-    """ Do the regex template stuff
+    """Do the regex template stuff
 
     Parameters
     ----------
@@ -62,12 +62,11 @@ def do_regex(line: str, regex: str) -> list:
         The list with the found groups
 
     """
-    return re.findall(regex, rf"{line}",
-                      re.MULTILINE and re.IGNORECASE)
+    return re.findall(regex, rf"{line}", re.MULTILINE and re.IGNORECASE)
 
 
 def do_list_addition(char_set: list) -> Generator:
-    """ Does not directly adds stuff to the list BUT it yields content
+    """Does not directly adds stuff to the list BUT it yields content
     to create one
 
     Parameters
@@ -79,13 +78,13 @@ def do_list_addition(char_set: list) -> Generator:
     for i in char_set:
         # prepare string
         _t = i[1].strip("local").strip()
-        
+
         # put string in a list for multiuse on function arguments
         yield [w.strip() for w in _t.split(",")]
 
 
 def get_table_contents(line: str) -> list:
-    """ Get the values inside the lua table
+    """Get the values inside the lua table
 
     Parameters
     ----------
@@ -99,7 +98,6 @@ def get_table_contents(line: str) -> list:
 
     """
     _t = []
-
     for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
         _t.append(i.strip())
 
@@ -107,7 +105,7 @@ def get_table_contents(line: str) -> list:
 
 
 def de_obfs_code(line: str, ret: list) -> str:
-    """ Trys to de De-Obfuscate the trigger line
+    """Trys to De-Obfuscate the trigger line
 
     Returns
     -------
@@ -117,6 +115,10 @@ def de_obfs_code(line: str, ret: list) -> str:
     var = []
     names = []
     grap_names = VAR_NAMES
+
+    print(line)
+    print()
+    print(ret)
 
     for i in REGEX:
         if x := do_regex(line, i):
@@ -142,7 +144,7 @@ def de_obfs_code(line: str, ret: list) -> str:
 
 
 def de_obfs_char(found: list) -> list:
-    """ De-Obfuscate the \x23... lines
+    """De-Obfuscate the \x23... lines
 
     Parameters
     ----------
@@ -166,11 +168,12 @@ def de_obfs_char(found: list) -> list:
 
             t += chr(int(i, 16))
         temp.append((t, j[0]))
+
     return temp
 
 
 def de_obfs(ret: list, line: str) -> str:
-    """ Just another way to entry the de obfuscation
+    """Just another way to entry the de obfuscation
 
     Parameters
     ----------
