@@ -22,7 +22,7 @@ def test_do_gibberish_check():
     test = [
         "fjdlksajkfdnvjndjsaiheiruahn",
         "local jflkdsajlkfndsajiewajnucdisan = {'jdkfsa'}",
-        "local someRandomString = {'validate', 'the', 'HYPTNOTOAD'}",
+        "local someRandomString = {'validate', 'the', 'HYPNOTOAD'}",
     ]
 
     get_big_model_file()
