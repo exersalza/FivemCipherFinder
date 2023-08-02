@@ -52,7 +52,6 @@ def get_big_model_file() -> int:
         status code
 
     """
-    # Check if the big.model file exists
     if os.path.exists("./big.model"):
         os.remove("./big.model")
 
@@ -64,7 +63,6 @@ def get_big_model_file() -> int:
                 continue
 
             _file.write(chunk)
-
     return 0
 
 
@@ -115,12 +113,54 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
 
     for i in lines:
         if "local" in i and det.is_gibberish(rf"{i}"):
-            matches.append((l_counter,
-                            i,
-                            "Can't de obfuscate due to use of --v2"))
+            matches.append(
+                (l_counter, i, "Can't de obfuscate due to use of --v2")
+            )
 
         l_counter += 1
     return matches
+
+
+def prepare_log_line(**kw) -> int:
+    """Prepares the string for the logging
+
+    Parameters
+    ----------
+    kw : dict
+        Somevalues listed below
+
+    Returns
+    -------
+    int
+        Returns the current count
+    """
+    d = kw.pop("d", ".")
+    ln = kw.pop("ln", "")
+    file = kw.pop("file", "poggers.lua")
+    line = kw.pop("line", "")
+    count = kw.pop("count", 0)
+    target = kw.pop("target", "")
+    logged = kw.pop("logged", {})
+
+    path = d.replace("\\", "/") + f"/{file}"
+
+    # prevent printing stuff twice to the log file
+    if logged.get(path, -1) == ln:
+        return count
+
+    to_log = (
+        f"File: {path}\n"
+        f"LineNumber: {ln}\n"
+        f"DecodedLines: \n{'-'*10}\n{target}\n{'-'*10}"
+    )
+
+    if kw.pop("verbose", False):  # Log in console.
+        print(to_log)
+
+    log.append(to_log + f"\nTrigger Line: \n{line!r}\n{'-'*15}\n")
+    count += 1
+    logged[path] = ln
+    return count
 
 
 def check_file(
@@ -162,28 +202,34 @@ def check_file(
             return 0, count
 
         for ln, line, target in match:
-            path = d.replace("\\", "/") + f"/{file}"
-
-            # prevent printing stuff twice to the log file
-            if logged.get(path, -1) == ln:
-                continue
-
-            to_log = (
-                f"File: {path}\n"
-                f"LineNumber: {ln}\n"
-                f"DecodedLines: \n{'-'*10} \n{target}\n{'-'*10}"
+            count = prepare_log_line(
+                d=d,
+                ln=ln,
+                file=file,
+                line=line,
+                count=count,
+                target=target,
+                logged=logged,
+                verbose=args.verbose,
             )
-
-            if args.verbose:  # Log in console.
-                print(to_log)
-
-            log.append(to_log + f"\nTrigger Line: \n{line!r}\n{'-'*15}\n")
-            count += 1
-            logged[path] = ln
     return 0, count
 
 
 def write_log_file(**kw) -> int:
+    """Writes the logfile
+
+    Parameters
+    ----------
+    kw : dict
+        red : str : Colorcode for red
+        white : str : Colorcode for white
+        count : int : The found cipher count
+
+    Returns
+    -------
+    int
+        Statuscode
+    """
     print(
         f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
         f"Check the CipherLog.txt for location and trigger. "
@@ -290,7 +336,7 @@ def main() -> int:
     parser.add_argument(
         "--get-train-file",
         action="store_true",
-        help="Debug command to get the big.model file"
+        help="Debug command to get the big.model file",
     )
 
     args = parser.parse_args()
