@@ -43,13 +43,13 @@ def test_prepare_log_line():
     count = 68
     logged = {}
     count = prepare_log_line(count=count, logged=logged)
-    
+
     assert count == 69
     assert log == [
         "File: ./poggers.lua\nLineNumber: \nDecodedLines: "
         "\n----------\n\n----------\nTrigger Line: \n''\n---------------\n"
     ]
-    assert logged == {'./poggers.lua': ''}
+    assert logged == {"./poggers.lua": ""}
 
 
 if __name__ == "__main__":
