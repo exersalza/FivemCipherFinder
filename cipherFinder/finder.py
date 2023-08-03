@@ -23,7 +23,6 @@ from __future__ import annotations
 from datetime import datetime as dt
 
 import os
-import re
 import sys
 import platform
 import argparse
@@ -368,11 +367,7 @@ def main() -> int:
         get_big_model_file()
 
     for d, _, files in os.walk(local_path):
-        if pattern and re.findall(
-            f'{"(" + pattern + ")"}',
-            rf"{d}".format(d=d),
-            re.MULTILINE and re.IGNORECASE,
-        ):
+        if pattern and do_regex(rf"{d}", f'{"(" + pattern + ")"}'):
             continue
 
         for file in files:

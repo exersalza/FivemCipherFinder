@@ -1,7 +1,7 @@
 #!/bin/python3.11
 
-import random
 import re
+import random
 
 from collections.abc import Generator
 
