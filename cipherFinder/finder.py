@@ -147,7 +147,10 @@ def prepare_log_line(**kw) -> int:
     logged = kw.pop("logged", {})
 
     path = d.replace("\\", "/") + f"/{file}"
-    url = do_regex(target, URL_REGEX)[0][0]
+    url = ""
+
+    if x := do_regex(target, URL_REGEX):
+        url = x[0][0]
 
     # prevent printing stuff twice to the log file
     if logged.get(path, -1) == ln:

@@ -46,8 +46,11 @@ def test_prepare_log_line():
 
     assert count == 69
     assert log == [
-        "File: ./poggers.lua\nLineNumber: \nDecodedLines: "
-        "\n----------\n\n----------\nTrigger Line: \n''\n---------------\n"
+        (
+            "File: ./poggers.lua\nLineNumber: \nAttacker URL:"
+            " \nDecodedLines: \n----------\n\n----------\nTrigger "
+            "Line:\n''\n---------------\n"
+        )
     ]
     assert logged == {"./poggers.lua": ""}
 
