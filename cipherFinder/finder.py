@@ -34,6 +34,10 @@ from gibberish_detector import detector
 from cipherFinder.de_obfs import de_obfs, do_regex
 
 REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
+URL_REGEX = (
+    r"(https?://(www\.)?[-\w@:%.\+~#=]{2,256}\."
+    r"[a-z]{2,4}\b([-\w@:%\+.~#?&//=]*))"
+)
 COLORS = ["\033[0m", "\033[91m", "\033[92m"]
 RAW_BIG_MODEL = (
     "https://raw.githubusercontent.com/exersalza/"
@@ -143,6 +147,7 @@ def prepare_log_line(**kw) -> int:
     logged = kw.pop("logged", {})
 
     path = d.replace("\\", "/") + f"/{file}"
+    url = do_regex(target, URL_REGEX)[0][0]
 
     # prevent printing stuff twice to the log file
     if logged.get(path, -1) == ln:
@@ -151,13 +156,14 @@ def prepare_log_line(**kw) -> int:
     to_log = (
         f"File: {path}\n"
         f"LineNumber: {ln}\n"
+        f"Attacker URL: {url}\n"
         f"DecodedLines: \n{'-'*10}\n{target}\n{'-'*10}"
     )
 
     if kw.pop("verbose", False):  # Log in console.
         print(to_log)
 
-    log.append(to_log + f"\nTrigger Line: \n{line!r}\n{'-'*15}\n")
+    log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
     count += 1
     logged[path] = ln
     return count

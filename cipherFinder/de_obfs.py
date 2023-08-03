@@ -8,8 +8,6 @@ from collections.abc import Generator
 # happens in that script
 VAR_NAMES = [
     "gg",
-    "gyros",
-    "fries",
     "rizz",
     "taco",
     "bell",
@@ -17,6 +15,8 @@ VAR_NAMES = [
     "deez",
     "nuts",
     "hell",
+    "gyros",
+    "fries",
     "towlie",
 ]
 
