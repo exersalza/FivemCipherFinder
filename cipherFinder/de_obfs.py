@@ -2,6 +2,7 @@
 
 import random
 import re
+
 from collections.abc import Generator
 
 # Just random names bc we the hell dont know what

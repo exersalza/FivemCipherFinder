@@ -130,7 +130,7 @@ def prepare_log_line(**kw) -> int:
 
     Parameters
     ----------
-    kw : dict
+    kw : str, Any
         Somevalues listed below
 
     Returns
