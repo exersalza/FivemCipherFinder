@@ -1,16 +1,19 @@
 # FivemCipherFinder (v2.3.0)
 
 <div align="center">
-  <h2> Visitors </h2>
-<img src="https://profile-counter.glitch.me/FivemCipherFinder/count.svg" />
+    <h2> Visitors </h2>
+    <img src="https://profile-counter.glitch.me/FivemCipherFinder/count.svg" />
 </div>
 
-[![Pylint](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml)
+[![Pylint and Flake8](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml)
+[![PyTest](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pytest.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pytest.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 - [Installation](#installation)
 - [Usage](#Usage)
 - [Troubleshooting](#Troubleshooting)
 - [Known false-positives](#known-false-positives)
+- [Contributing](#Contributing)
 - [Todo](#todo)
 - [Contact](#Contact)
 
@@ -28,7 +31,18 @@ Py-Version: 3.8 and above [Newest python version](https://python.org/downloads/)
 **Please make sure, that when you're on Windows based system, that you've added Python to your environment variables. You can test that with simply typing `python --version` into your CMD or Terminal**
 run `pip install FivemCipherFinder` or download the latest release and unpack it.
 
+Also please consider using the pip way to install except **you know what you're doing**
+
 Make sure to read the [Troubleshooting](#Troubleshooting) page first before you add me on Discord.
+
+
+### For manual installation
+
+I just put the commands here
+- `git clone https://github.com/exersalza/FivemCipherFinder.git && cd FivemCipherFinder`
+- `pip install -r req`
+- `python3 -m build . && pip install .`
+Then you can just type `find-cipher` in your server resources directory.
 
 ## Usage
 
@@ -51,6 +65,8 @@ The script logs found Cipher in a file names `CipherLog-HH-MM-SS.txt` so can eas
 
 ### Troubleshooting
 
+**First things first, read the error/warning message**
+
 Should the installation with pip fail with the error code `externally-managed-environment`, add `--break-system-packages`. Pip changed something in their internals in the newer versions.
 
 Also make sure (on Windows) that you have your python scripts folder inside your path variable. Should the folder be missing, it shows at the pip installation as a warning. [how to add something to the path variable](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
@@ -61,10 +77,16 @@ Also make sure (on Windows) that you have your python scripts folder inside your
 - `EasyAdmin`
 - `encrypted/obfuscated scripts`
 
+## Contributing
+
+Feel free to open a PR with your changes, as every PR the checks should run without a fail
+to run workflows localy please consider using [act](https://github.com/nektos/act)
+
+Use the manual installation guide for getting the project. [Installation](#Installation)
 
 ## ToDo
 - Detect cipher spreader
-- Add de obfuscator for detectet cipher
+- ~~Add de obfuscator for detectet cipher~~
 - ~~Find random generated character variable names~~
 
 ## Contact

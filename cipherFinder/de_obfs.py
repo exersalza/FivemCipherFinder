@@ -1,30 +1,35 @@
+#!/bin/python3.11
+
 import re
 import random
+
 from collections.abc import Generator
 
-
-VAR_NAMES = [  # Just random names bc we the hell dont know what happens in that script
-    'gg',
-    'gyros',
-    'fries',
-    'rizz',
-    'taco',
-    'bell',
-    'uber',
-    'deez',
-    'nuts',
-    'hell',
-    'towlie'
+# Just random names bc we the hell dont know what
+# happens in that script
+VAR_NAMES = [
+    "gg",
+    "rizz",
+    "taco",
+    "bell",
+    "uber",
+    "deez",
+    "nuts",
+    "hell",
+    "gyros",
+    "fries",
+    "towlie",
 ]
 
-REGEX = [    
-    r'(function\s*\(((\w+(,(\s?))?)*)\))',
-    r'((local(\s+)?(\w+)))'
+TABLE_REGEX = r"(\{([^{}]+)\})"
+REGEX = [
+    r"((local(\s+)?(\w+)))",
+    r"(function\s*\(((\w+(,(\s?))?)*)\))",
 ]
 
 
 def grap(ls: list) -> str:
-    """ Get Random And Pop (grap)
+    """Get Random And Pop (grap)
 
     Parameters
     ----------
@@ -42,13 +47,15 @@ def grap(ls: list) -> str:
     return f
 
 
-def do_regex(_line: str, regex: str) -> list:
-    """ Do the regex template stuff
-    
+def do_regex(line: str, regex: str) -> list:
+    """Do the regex template stuff
+
     Parameters
     ----------
+    line : str
+        Give the line to check to regex on
     regex : str
-        The regex to search for in _line
+        The regex to search for in line
 
     Returns
     -------
@@ -56,12 +63,11 @@ def do_regex(_line: str, regex: str) -> list:
         The list with the found groups
 
     """
-    return re.findall(regex, rf'{_line}', 
-                      re.MULTILINE and re.IGNORECASE)
+    return re.findall(regex, rf"{line}", re.MULTILINE and re.IGNORECASE)
 
 
 def do_list_addition(char_set: list) -> Generator:
-    """ Does not directly adds stuff to the list BUT it yields content
+    """Does not directly adds stuff to the list BUT it yields content
     to create one
 
     Parameters
@@ -71,37 +77,71 @@ def do_list_addition(char_set: list) -> Generator:
 
     """
     for i in char_set:
-       yield i[1].strip('local ').split(',')
+        # prepare string
+        _t = i[1].strip("local").strip()
+
+        # put string in a list for multiuse on function arguments
+        yield [w.strip() for w in _t.split(",")]
 
 
-def de_obfs_code(_line: str, _ret: list) -> str:
-    """ Trys to de De-Obfuscate the trigger line
-    
+def get_table_contents(line: str) -> list:
+    """Get the values inside the lua table
+
+    Parameters
+    ----------
+    line : str
+        Give the line to find the table and get it's content
+
+    Returns
+    -------
+    list :
+        Return the list with found values
+
+    """
+    _t = []
+    for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
+        _t.append(i.strip())
+
+    return _t
+
+
+def de_obfs_code(line: str, ret: list) -> str:
+    """Trys to De-Obfuscate the trigger line
+
     Returns
     -------
     str
         the decoded string
     """
-    code = ''
     var = []
-    names = VAR_NAMES
+    names = []
+    grap_names = VAR_NAMES
 
     for i in REGEX:
-        if x := do_regex(_line, i): 
+        if x := do_regex(line, i):
             for j in do_list_addition(x):
                 var.extend(j)
-    
+
     for i in var:
-        _line = _line.replace(i.strip(), grap(names))
-    
-    for v, t in de_obfs_char(_ret):
-        _line = _line.replace(t.strip('"'), v)
+        name = grap(grap_names)
+        names.append(name)
+        line = line.replace(i.strip(), name)
 
-    return code
+    for v, t in de_obfs_char(ret):
+        line = line.replace(t.strip('"'), v)
+
+    table = get_table_contents(line)
+    t_re = rf"({names[0]}\[\d+\])"
+    omfg = set(do_regex(line, t_re))
+
+    for i, c in enumerate(sorted(omfg)):
+        line = line.replace(c, table[i])
+
+    return line
 
 
-def de_obfs_char(found: list) -> list: 
-    """ De-Obfuscate the \x23... lines
+def de_obfs_char(found: list) -> list:
+    """De-Obfuscate the \x23... lines
 
     Parameters
     ----------
@@ -117,17 +157,32 @@ def de_obfs_char(found: list) -> list:
     temp = []
 
     for j in found:
-        t = ''
+        t = ""
         # Get rid of the x and backslashes.
-        for i in (j[0].strip('"').replace('\\', '')).split('x'):
-            if i == '':
+        for i in (j[0].strip('"').replace("\\", "")).split("x"):
+            if i == "":
                 continue
 
             t += chr(int(i, 16))
         temp.append((t, j[0]))
+
     return temp
 
 
-def de_obfs(_ret: list, _line: str) -> str:
-    return de_obfs_code(_line, _ret)
+def de_obfs(ret: list, line: str) -> str:
+    """Just another way to entry the de obfuscation
 
+    Parameters
+    ----------
+    ret : list
+        Give the ret list
+
+    line : str
+        Give the line to do stuff on
+
+    Returns
+    -------
+    str
+        Returns the de obfuscated code
+    """
+    return de_obfs_code(line, ret)
