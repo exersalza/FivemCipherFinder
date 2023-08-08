@@ -12,82 +12,86 @@
 - [Installation](#installation)
 - [Usage](#Usage)
 - [Troubleshooting](#Troubleshooting)
-- [Known false-positives](#known-false-positives)
 - [Contributing](#Contributing)
 - [Todo](#todo)
 - [Contact](#Contact)
 
-This is a Fivem Cipher finder for those that don't want Ciphers in their scripts :D
 
-The idea behind these scripts is to find one or more Cipher in your script files. 
-Currently, there is only the Python version available, but I will soon add the C++ variant.
-
-Desc:
-The script will walk through your Server's directories and scan, for example, `\x41\x42\x43`. When it found something it will write the line and trigger it into a Log file.
+FivemCipherFinder is a tool designed to assist in the removal of Ciphers from your scripts. It is a console-based tool that can be used by anyone, regardless of their coding experience. The main purpose of FivemCipherFinder is to find and identify Ciphers in your script files.
 
 ## Installation
-Py-Version: 3.8 and above [Newest python version](https://python.org/downloads/)
 
-**Please make sure, that when you're on Windows based system, that you've added Python to your environment variables. You can test that with simply typing `python --version` into your CMD or Terminal**
-run `pip install FivemCipherFinder` or download the latest release and unpack it.
+To install FivemCipherFinder, follow these steps:
 
-Also please consider using the pip way to install except **you know what you're doing**
+1. Make sure you have Python 3.8 or above installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
 
-Make sure to read the [Troubleshooting](#Troubleshooting) page first before you add me on Discord.
+2. Open your command prompt or terminal and run the following command to install FivemCipherFinder using pip:
 
+   ```
+   pip install FivemCipherFinder
+   ```
 
-### For manual installation
+   Alternatively, you can download the latest release of FivemCipherFinder from the GitHub repository [here](https://github.com/exersalza/FivemCipherFinder/releases) and unpack it manually.
 
-I just put the commands here
-- `git clone https://github.com/exersalza/FivemCipherFinder.git && cd FivemCipherFinder`
-- `pip install -r req`
-- `python3 -m build . && pip install .`
-Then you can just type `find-cipher` in your server resources directory.
+   **Note:** If you are using a Windows-based system, make sure you have added Python to your environment variables. You can test this by typing `python --version` into your command prompt or terminal. If Python is not recognized, you may need to add it to your system's PATH variable. You can find instructions on how to do this [here](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+
+3. Once installed, you can use the `find-cipher` command in your server's resources directory to start using FivemCipherFinder.
 
 ## Usage
 
-Syntax: `find-cipher [-h] [-p [PATH]] [-x [EXCLUDE_PATH ...]] [-n] [-v] [--v2]`
-Options are:
-- `-p|--path` -> Redirect the search from the current path `.` to another one.
-- `-x|--exclude` -> Exclude paths that you dont want to scan. 
-- `-n|--no-log` -> Prevents that an logfile is being written. Works hand in hand with `-v`
-- `-v|--verbose` -> To show the found ciphers inside the Console as soon as they were found.
-- `--v2` -> For the gibberish search. Like `local fjdlsajfdsancu = ...`
+To use FivemCipherFinder, you can run the `find-cipher` command with various options. Here are the available options:
 
-It's a console tool so you can use `find-cipher` just like that in your `Resources` folder or you can specifiy you folder with `find-cipher ~/FiveM/server-data/resources` as example.
+- `-p|--path`: Redirect the search from the current path `.` to another one.
+- `-x|--exclude`: Exclude paths that you don't want to scan.
+- `-n|--no-log`: Prevents the creation of a log file.
+- `-v|--verbose`: Show the found ciphers in the console as soon as they are found.
+- `--v2`: Enable the gibberish search mode, which can detect ciphers like `local fjdlsajfdsancu = ...`.
 
-Should you struggle with returning ciphers in your script, try using the
-`--v2` flag behind the command like `find-cipher . --v2 cars,mlos`.
+You can run the `find-cipher` command in your server's resources folder, or you can specify a different folder by providing the path as an argument. For example:
 
-As you can see in the last example, you can exclude Directories so can prevent false-positives like `\[cars\],\[mlos\],easy-admin` but make sure you add `\` before curly and square brackets, otherwise your terminal will throw an error.
+```
+find-cipher ~/FiveM/server-data/resources
+```
 
-The script logs found Cipher in a file names `CipherLog-HH-MM-SS.txt` so can easily find your log files.
+If you are having trouble with returning ciphers in your script, you can try using the `--v2` flag to enable the gibberish search mode. For example:
 
-### Troubleshooting
+```
+find-cipher . --v2 cars,mlos
+```
 
-**First things first, read the error/warning message**
+In the above example, the directories `cars` and `mlos` are excluded from the search to prevent false positives. Make sure to add a backslash `\` before curly and square brackets to avoid errors in the terminal.
 
-Should the installation with pip fail with the error code `externally-managed-environment`, add `--break-system-packages`. Pip changed something in their internals in the newer versions.
+FivemCipherFinder logs the found ciphers in a file named `CipherLog-HH-MM-SS.txt`, making it easy to review the results.
 
-Also make sure (on Windows) that you have your python scripts folder inside your path variable. Should the folder be missing, it shows at the pip installation as a warning. [how to add something to the path variable](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
+## Troubleshooting
 
+If you encounter any issues with FivemCipherFinder, here are some troubleshooting steps you can follow:
 
-## Known-false-positives
+1. Read the error or warning message carefully to understand the problem.
+
+2. If you are installing FivemCipherFinder using pip and encounter the error code `externally-managed-environment`, try adding the `--break-system-packages` flag to the pip command. This is a change in pip's internals in newer versions.
+
+3. On Windows, make sure that your Python scripts folder is added to your system's PATH variable. If the folder is missing, it will be shown as a warning during the pip installation. You can find instructions on how to add something to the PATH variable [here](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+
+## Known False Positives
 
 - `EasyAdmin`
-- `encrypted/obfuscated scripts`
+- Encrypted/obfuscated scripts
 
 ## Contributing
 
-Feel free to open a PR with your changes, as every PR the checks should run without a fail
-to run workflows localy please consider using [act](https://github.com/nektos/act)
+If you would like to contribute to FivemCipherFinder, you can open a pull request with your changes. The project has checks in place to ensure that the pull request passes without any issues. You can use the manual installation guide provided in the [Installation](#Installation) section to set up the project locally.
 
-Use the manual installation guide for getting the project. [Installation](#Installation)
+## Todo
 
-## ToDo
-- Detect cipher spreader
-- ~~Add de obfuscator for detectet cipher~~
-- ~~Find random generated character variable names~~
+- [ ] Detect cipher spreader
+- [x] Add deobfuscator for detected ciphers
+- [x] Find randomly generated character variable names
 
 ## Contact
-Discord: exersalza / exersalza[>'-']>#1337 | [DE/EN]
+
+If you have any questions or need assistance with FivemCipherFinder, you can reach out on Discord:
+
+- Discord: exersalza / exersalza[>'-']>#1337 | [DE/EN]
+
+Feel free to contact me for any inquiries or support related to FivemCipherFinder.
