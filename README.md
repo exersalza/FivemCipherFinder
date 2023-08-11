@@ -50,7 +50,7 @@ To use FivemCipherFinder, you can run the `find-cipher` command with various opt
 You can run the `find-cipher` command in your server's resources folder, or you can specify a different folder by providing the path as an argument. For example:
 
 ```
-find-cipher ~/FiveM/server-data/resources
+find-cipher -p ~/FiveM/server-data/resources
 ```
 
 If you are having trouble with returning ciphers in your script, you can try using the `--v2` flag to enable the gibberish search mode. For example:
