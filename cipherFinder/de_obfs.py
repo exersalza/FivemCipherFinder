@@ -99,12 +99,11 @@ def get_table_contents(line: str) -> list:
 
     """
     _t = []
-    _f = do_regex(line, TABLE_REGEX)
 
-    if not _f:
+    if not (_f := do_regex(line, TABLE_REGEX)):
         return _t
 
-    for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
+    for i in _f[0][1].split(","):
         _t.append(i.strip())
 
     return _t
@@ -135,10 +134,8 @@ def de_obfs_code(line: str, ret: list) -> str:
     for v, t in de_obfs_char(ret):
         line = line.replace(t.strip('"'), v)
 
-    table = get_table_contents(line)
-
     # Prevent false positives, hopefully
-    if not table:
+    if not (table := get_table_contents(line)):
         return line
 
     t_re = rf"({names[0]}\[\d+\])"
