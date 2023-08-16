@@ -99,6 +99,11 @@ def get_table_contents(line: str) -> list:
 
     """
     _t = []
+    _f = do_regex(line, TABLE_REGEX)
+
+    if not _f:
+        return _t
+
     for i in do_regex(line, TABLE_REGEX)[0][1].split(","):
         _t.append(i.strip())
 
