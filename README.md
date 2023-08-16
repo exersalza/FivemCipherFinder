@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.4.0)
+# FivemCipherFinder (v2.4.1)
 
 <div align="center">
     <h2> Visitors </h2>
