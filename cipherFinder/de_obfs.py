@@ -136,6 +136,11 @@ def de_obfs_code(line: str, ret: list) -> str:
         line = line.replace(t.strip('"'), v)
 
     table = get_table_contents(line)
+
+    # Prevent false positives, hopefully
+    if not table:
+        return line
+
     t_re = rf"({names[0]}\[\d+\])"
     omfg = set(do_regex(line, t_re))
 
