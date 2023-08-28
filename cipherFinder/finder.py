@@ -205,7 +205,7 @@ def check_file(
 
         if args.v2:
             match += do_gibberish_check(lines)
-
+   
         if not match:
             return 0, count
 
