@@ -32,7 +32,7 @@ from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
 
-REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}){2})+)"
+REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 URL_REGEX = (
     r"(https?://(www\.)?[-\w@:%.\+~#=]{2,256}\."
     r"[a-z]{2,4}\b([-\w@:%\+.~#?&//=]*))"
