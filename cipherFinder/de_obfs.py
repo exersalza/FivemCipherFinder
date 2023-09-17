@@ -40,11 +40,9 @@ def grap(ls: list) -> str:
     -------
     str
         the popped string
-    """ 
-    
+    """
 
     if not ls:
-        print(VAR_NAMES)
         return random.choice(VAR_NAMES)
 
     f = random.choice(ls)
@@ -135,7 +133,7 @@ def de_obfs_code(line: str, ret: list) -> str:
                 var.extend(j)
 
     for i in var:
-        # get a new name for functions or variables 
+        # get a new name for functions or variables
         name = grap(grap_names)
         names.append(name)
         line = line.replace(i.strip(), name)
