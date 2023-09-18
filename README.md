@@ -63,6 +63,11 @@ In the above example, the directories `cars` and `mlos` are excluded from the se
 
 FivemCipherFinder logs the found ciphers in a file named `CipherLog-HH-MM-SS.txt`, making it easy to review the results.
 
+**Keep in mind**
+- The CipherFinder can't find 100% of maybe placed ciphers.
+- Should you use a Code Formatter, it's possible when you use the Deletion function, that your scripts can fail to start bc of syntax errors.
+
+
 ## Troubleshooting
 
 If you encounter any issues with FivemCipherFinder, here are some troubleshooting steps you can follow:
