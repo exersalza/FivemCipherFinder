@@ -20,7 +20,7 @@ def deleter_main(del_lines: list) -> int:
     int
         Return code
     """
-    
+
     # Loop over found ciphers and ask the user if they
     # want to remove the line
     for cipher, ln, path in del_lines:
