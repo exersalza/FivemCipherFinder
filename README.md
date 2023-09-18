@@ -65,7 +65,7 @@ FivemCipherFinder logs the found ciphers in a file named `CipherLog-HH-MM-SS.txt
 
 **Keep in mind**
 - The CipherFinder can't find 100% of maybe placed ciphers.
-- Should you use a Code Formatter, it's possible when you use the Deletion function, that your scripts can fail to start bc of syntax errors.
+- Should you use a Code Formatter, it's possible when you use the Eraser function, that your scripts can fail to start because of syntax errors.
 
 
 ## Troubleshooting
