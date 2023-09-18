@@ -31,6 +31,7 @@ import requests
 from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
+from cipherFinder.deleter import deleter_main, y_n_validator
 
 REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 URL_REGEX = (
@@ -43,7 +44,9 @@ RAW_BIG_MODEL = (
     "FivemCipherFinder/main/big.model"
 )
 
+
 log = []
+del_lines = []
 
 
 def get_big_model_file() -> int:
@@ -55,6 +58,8 @@ def get_big_model_file() -> int:
         status code
 
     """
+
+    # Get a fresh file
     if os.path.exists("./big.model"):
         os.remove("./big.model")
 
@@ -137,13 +142,13 @@ def prepare_log_line(**kw) -> int:
     int
         Returns the current count
     """
-    d = kw.pop("d", ".")
-    ln = kw.pop("ln", "")
-    file = kw.pop("file", "poggers.lua")
-    line = kw.pop("line", "")
-    count = kw.pop("count", 0)
-    target = kw.pop("target", "")
-    logged = kw.pop("logged", {})
+    d = kw.pop("d", ".")  # Directory
+    ln = kw.pop("ln", "")  # Triggered line number
+    file = kw.pop("file", "poggers.lua")  # filename
+    line = kw.pop("line", "")  # Trigger line
+    count = kw.pop("count", 0)  # global trigger count
+    target = kw.pop("target", "")  # Decoded lines
+    logged = kw.pop("logged", {})  # dont print stuff twice
 
     path = d.replace("\\", "/") + f"/{file}"
     url = ""
@@ -166,6 +171,9 @@ def prepare_log_line(**kw) -> int:
         print(to_log)
 
     log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
+
+    del_lines.append((line, ln, path))
+
     count += 1
     logged[path] = ln
     return count
@@ -241,11 +249,11 @@ def write_log_file(**kw) -> int:
     print(
         f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
         f"Check the CipherLog.txt for location and trigger. "
-        f'{kw.pop("count")} where found!'
+        f'{kw.pop("count")} were found!'
         f'{kw.pop("white")}\n#staysafe'
     )
 
-    if kw.pop("args").no_log:
+    if kw.pop("args").no_log:  # if the user types -n
         return 0
 
     with open(
@@ -367,6 +375,7 @@ def main() -> int:
         get_big_model_file()
 
     for d, _, files in os.walk(local_path):
+        # skip excluded directorys
         if pattern and do_regex(rf"{d}", f'{"(" + pattern + ")"}'):
             continue
 
@@ -389,7 +398,13 @@ def main() -> int:
         pass
 
     if log:
-        return write_log_file(white=white, red=red, count=count, args=args)
+        write_log_file(white=white, red=red, count=count, args=args)
+
+        if y_n_validator(input(  # pylint: disable=bad-builtin
+                "Do you want to start the Deletion wizard? [y/N] ")):
+            deleter_main(del_lines)
+
+        return 0
 
     print(f"{green}Nice! There were no Cipher's found!{white}")
     return 0
