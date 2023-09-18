@@ -15,10 +15,12 @@ VAR_NAMES = [
     "uber",
     "deez",
     "nuts",
+    "jugz",
     "hell",
     "gyros",
     "fries",
     "towlie",
+    "things",
 ]
 
 TABLE_REGEX = r"(\{([^{}]+)\})"
