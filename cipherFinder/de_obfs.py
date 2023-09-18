@@ -144,8 +144,8 @@ def de_obfs_code(line: str, ret: list) -> str:
     if not (table := get_table_contents(line)):
         return line
 
-    t_re = rf"({names[0]}\[\d+\])"
-    omfg = set(do_regex(line, t_re))
+    t_re = rf"({names[0]}\[\d+\])"  # temp regex
+    omfg = set(do_regex(line, t_re))  # as the name tells, it was annoying
 
     for i, c in enumerate(sorted(omfg)):
         line = line.replace(c, table[i])
