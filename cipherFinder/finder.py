@@ -58,6 +58,8 @@ def get_big_model_file() -> int:
         status code
 
     """
+
+    # Get a fresh file
     if os.path.exists("./big.model"):
         os.remove("./big.model")
 
@@ -170,11 +172,7 @@ def prepare_log_line(**kw) -> int:
 
     log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
 
-    del_lines.append((
-        line,
-        ln,
-        path
-    ))
+    del_lines.append((line, ln, path))
 
     count += 1
     logged[path] = ln
@@ -255,7 +253,7 @@ def write_log_file(**kw) -> int:
         f'{kw.pop("white")}\n#staysafe'
     )
 
-    if kw.pop("args").no_log:
+    if kw.pop("args").no_log:  # if the user types -n
         return 0
 
     with open(
@@ -377,6 +375,7 @@ def main() -> int:
         get_big_model_file()
 
     for d, _, files in os.walk(local_path):
+        # skip excluded directorys
         if pattern and do_regex(rf"{d}", f'{"(" + pattern + ")"}'):
             continue
 
