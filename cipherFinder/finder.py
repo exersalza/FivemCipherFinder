@@ -241,7 +241,7 @@ def write_log_file(**kw) -> int:
     print(
         f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
         f"Check the CipherLog.txt for location and trigger. "
-        f'{kw.pop("count")} where found!'
+        f'{kw.pop("count")} were found!'
         f'{kw.pop("white")}\n#staysafe'
     )
 
