@@ -31,6 +31,7 @@ import requests
 from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
+from cipherFinder.deleter import deleter_main 
 
 REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 URL_REGEX = (
@@ -43,7 +44,10 @@ RAW_BIG_MODEL = (
     "FivemCipherFinder/main/big.model"
 )
 
+Y_N_VALIDATOR = lambda x: x.lower() in ["y", "yes"]
+
 log = []
+del_lines = []
 
 
 def get_big_model_file() -> int:
@@ -137,13 +141,13 @@ def prepare_log_line(**kw) -> int:
     int
         Returns the current count
     """
-    d = kw.pop("d", ".")
-    ln = kw.pop("ln", "")
-    file = kw.pop("file", "poggers.lua")
-    line = kw.pop("line", "")
-    count = kw.pop("count", 0)
-    target = kw.pop("target", "")
-    logged = kw.pop("logged", {})
+    d = kw.pop("d", ".") # Directory
+    ln = kw.pop("ln", "") # Triggered line number
+    file = kw.pop("file", "poggers.lua") # filename
+    line = kw.pop("line", "") # Trigger line
+    count = kw.pop("count", 0) # global trigger count
+    target = kw.pop("target", "") # Decoded lines
+    logged = kw.pop("logged", {}) # dont print stuff twice
 
     path = d.replace("\\", "/") + f"/{file}"
     url = ""
@@ -166,6 +170,13 @@ def prepare_log_line(**kw) -> int:
         print(to_log)
 
     log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
+    
+    del_lines.append((
+        line,
+        ln,
+        path
+    ))
+
     count += 1
     logged[path] = ln
     return count
@@ -389,7 +400,15 @@ def main() -> int:
         pass
 
     if log:
-        return write_log_file(white=white, red=red, count=count, args=args)
+        for i in del_lines:
+            print(i)
+
+        write_log_file(white=white, red=red, count=count, args=args)
+
+        if Y_N_VALIDATOR(input("Do you want to start the Deletion wizard? [y/N]")):
+            print("HE SAID YES")
+
+        return 0
 
     print(f"{green}Nice! There were no Cipher's found!{white}")
     return 0
