@@ -1,4 +1,13 @@
-def y_n_validator(x): return x.lower() in {"y", "yes"}
+def y_n_validator(x: str) -> bool:
+    """Validates input if it is y or yes
+
+    Parameters
+    ----------
+    x : str
+        the input string to test
+
+    """
+    return x.lower() in {"y", "yes"}
 
 # plan
 # Getting a list of all potential cipher lines, so we can remove them.
