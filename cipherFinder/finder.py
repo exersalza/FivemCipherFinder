@@ -41,7 +41,7 @@ URL_REGEX = (
 COLORS = ["\033[0m", "\033[91m", "\033[92m"]
 RAW_BIG_MODEL = (
     "https://raw.githubusercontent.com/exersalza/"
-    "FivemCipherFinder/main/big.model"
+    "FivemCipherFinder/bd1c3898ca2617005c58cbd465fd8e2a0c3d5fad/big.model"
 )
 
 
