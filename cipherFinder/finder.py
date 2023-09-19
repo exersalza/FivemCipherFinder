@@ -408,6 +408,13 @@ def main() -> int:
     )
 
     parser.add_argument(
+        "-o",
+        "--output",
+        nargs=1,
+        help="Define the output path of the Logfile"
+    )
+
+    parser.add_argument(
         "--no-del",
         action="store_true",
         help="Debug command to not delete the big.model "
