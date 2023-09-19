@@ -2,9 +2,8 @@ from cipherFinder.plugins import PluginInterface
 
 
 class Init(PluginInterface):
-    """ This hook gets called when the program starts
+    """This hook gets called when the program starts"""
 
-    """
     def __init__(self):
         pass
 

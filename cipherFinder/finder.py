@@ -52,7 +52,7 @@ hooks = {"__blanc": _PluginDummy()}
 
 
 def __update_hooks(new_hooks: dict) -> int:
-    """ Update the Hook dict because of python can't
+    """Update the Hook dict because of python can't
     do it itself without setting something global
 
     Parameters
@@ -73,7 +73,7 @@ def __update_hooks(new_hooks: dict) -> int:
 
 
 def __execute_hook(hook_name: str, *args, **kw) -> int:
-    """ Just executes the given hook name
+    """Just executes the given hook name
 
     Parameters
     ----------
@@ -211,14 +211,17 @@ def prepare_log_line(**kw) -> int:
     if logged.get(path, -1) == ln:
         return count
 
-    __execute_hook("GetLoggingValues", {
-        "dir": d,
-        "ln": ln,
-        "file": file,
-        "line": line,
-        "count": count,
-        "decoded": target
-    })
+    __execute_hook(
+        "GetLoggingValues",
+        {
+            "dir": d,
+            "ln": ln,
+            "file": file,
+            "line": line,
+            "count": count,
+            "decoded": target,
+        },
+    )
 
     to_log = (
         f"File: {path}\n"
@@ -422,7 +425,7 @@ def main() -> int:
         nargs=1,
         help="Give a directory that stores plugins for the cipherfinder."
         "Read the documentation or inside the cipherFinder/plugins.py"
-        " on how to write custom plugins."
+        " on how to write custom plugins.",
     )
 
     args = parser.parse_args()
@@ -475,8 +478,11 @@ def main() -> int:
     if log:
         write_log_file(white=white, red=red, count=count, args=args)
 
-        if y_n_validator(input(  # pylint: disable=bad-builtin
-                "Do you want to start the eraser wizard? [y/N] ")):
+        if y_n_validator(
+            input(  # pylint: disable=bad-builtin
+                "Do you want to start the eraser wizard? [y/N] "
+            )
+        ):
             deleter_main(del_lines)
 
         return 0

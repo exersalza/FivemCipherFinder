@@ -4,7 +4,7 @@ import importlib
 
 
 class PluginInterface:
-    """ Use this class to create plugins
+    """Use this class to create plugins
     You have to Implment the execute method to catch stuff.
 
     Here comes a list of all hooks you can implement:
@@ -18,9 +18,9 @@ class PluginInterface:
     GetLogFilename(filename: str)
 
     """
+
     def execute(self, *args, **kw):
-        raise NotImplementedError(
-            "Plugins must implement an 'execute' method")
+        raise NotImplementedError("Plugins must implement an 'execute' method")
 
 
 class _PluginDummy(PluginInterface):
@@ -30,7 +30,7 @@ class _PluginDummy(PluginInterface):
 
 
 def load_plugs(plug_dir: str = ".") -> dict:
-    """ Load plugs (plugins) from a folder to create
+    """Load plugs (plugins) from a folder to create
     some hooks or get data
 
     Parameters
@@ -59,8 +59,7 @@ def load_plugs(plug_dir: str = ".") -> dict:
             if (item := getattr(module, item_name)) == PluginInterface:
                 continue
 
-            if isinstance(item, type) and issubclass(
-                                            item, PluginInterface):
+            if isinstance(item, type) and issubclass(item, PluginInterface):
                 _hooks[item.__name__] = item()
 
     return _hooks
