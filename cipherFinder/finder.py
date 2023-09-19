@@ -15,9 +15,7 @@
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, # noqa
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE # noqa
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, # noqa OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE # noqa
 #  SOFTWARE.
 from __future__ import annotations
 from datetime import datetime as dt
@@ -47,7 +45,9 @@ RAW_BIG_MODEL = (
 
 
 log = []
+shadow_log = []
 del_lines = []
+_counter = {"failed": 0}
 hooks = {"__blanc": _PluginDummy()}
 
 
@@ -210,18 +210,18 @@ def prepare_log_line(**kw) -> int:
     # prevent printing stuff twice to the log file
     if logged.get(path, -1) == ln:
         return count
-
-    __execute_hook(
-        "GetLoggingValues",
-        {
-            "dir": d,
-            "ln": ln,
-            "file": file,
-            "line": line,
-            "count": count,
-            "decoded": target,
-        },
-    )
+    
+    _shadow = {
+        "dir": d,
+        "ln": ln,
+        "file": file,
+        "line": line,
+        "count": count + 1,
+        "decoded": target,
+        "path": path
+    }
+    
+    __execute_hook("GetLoggingValues", _shadow)
 
     to_log = (
         f"File: {path}\n"
@@ -234,7 +234,7 @@ def prepare_log_line(**kw) -> int:
         print(to_log)
 
     log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
-
+    shadow_log.append(_shadow)
     del_lines.append((line, ln, path))
 
     count += 1
@@ -268,6 +268,7 @@ def check_file(
         try:
             lines = f.readlines()
         except UnicodeDecodeError:
+            _counter["failed"] += 1
             print(f"Can't decode `{d}/{file}`. File is not utf-8")
             return 1, count
 
@@ -335,6 +336,11 @@ def write_log_file(**kw) -> int:
         f'{kw.pop("white")}\n#staysafe'
     )
     args = kw.pop("args")
+
+    # we want them to print before the no_log bc of reasons
+    __execute_hook("GetFileContents", log)
+    __execute_hook("GetRawFileContents", 
+                   shadow_log, failed=_counter.get("failed", 0))
 
     if args.no_log:  # if the user types -n
         return 0
