@@ -464,6 +464,13 @@ def main() -> int:
         " on how to write custom plugins.",
     )
 
+    parser.add_argument(
+        "-w",
+        "--no_wizard",
+        action="store_true",
+        help="don't start the eraser wizard after the script finishes.",
+    )
+
     args = parser.parse_args()
 
     if args.plug_dir:
@@ -513,6 +520,9 @@ def main() -> int:
 
     if log:
         write_log_file(white=white, red=red, count=count, args=args)
+
+        if args.no_wizard:
+            return 0
 
         if y_n_validator(
             input(  # pylint: disable=bad-builtin
