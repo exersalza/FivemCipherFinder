@@ -295,7 +295,7 @@ def check_file(
 
 
 def get_filename(output) -> str:
-    """ Get the filename of args, when set.
+    """Get the filename of args, when set.
 
     Parameters
     ----------
@@ -308,7 +308,7 @@ def get_filename(output) -> str:
 
     if _t.endswith("/"):
         return _t + filename
-        
+
     return _t
 
 
@@ -432,9 +432,9 @@ def main() -> int:
         "--output",
         nargs=1,
         help="define the output path/filename of the logfile. "
-            "syntax: path/[filename]. please note to add an / "
-            "to the end of the path when you don't want to use"
-            " a custom filename."
+        "syntax: path/[filename]. please note to add an / "
+        "to the end of the path when you don't want to use"
+        " a custom filename.",
     )
 
     parser.add_argument(

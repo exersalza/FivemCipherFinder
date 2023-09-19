@@ -5,6 +5,7 @@ from cipherFinder.finder import (
     do_gibberish_check,
     prepare_log_line,
     log,
+    get_filename
 )
 
 
@@ -18,6 +19,10 @@ def test_get_big_model_file():
 def test_validate_lines():
     ...
     # can't test due to random value inside string that can't be determined
+
+
+def test_get_filename():
+    assert get_filename(["someRandom/file.txt"]) == "someRandom/file.txt"
 
 
 def test_do_gibberish_check():
