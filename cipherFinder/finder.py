@@ -52,7 +52,7 @@ hooks = {"__blanc": _PluginDummy()}
 
 
 def __update_hooks(new_hooks: dict) -> int:
-    """ Update the Hook dict because of python can't 
+    """ Update the Hook dict because of python can't
     do it itself without setting something global
 
     Parameters
@@ -62,13 +62,13 @@ def __update_hooks(new_hooks: dict) -> int:
 
     Returns
     -------
-    int : 
+    int :
         Return code
     """
-    
-    global hooks  # ueah, first and hopefully last time I need to
-    hooks = new_hooks
-    hooks["__blanc"] = _PluginDummy()  # set default
+
+    for k, v in new_hooks.items():
+        hooks[k] = v
+
     return 0
 
 
@@ -83,9 +83,12 @@ def __execute_hook(hook_name: str, *args, **kw) -> int:
     args : any
         Give a list of values to the hook
 
+    kw : any
+        Give a dict of values to the hook
+
     Returns
     -------
-    int : 
+    int :
         Return code
     """
     hooks.get(hook_name, hooks["__blanc"]).execute(*args, **kw)
@@ -312,9 +315,9 @@ def write_log_file(**kw) -> int:
 
     if kw.pop("args").no_log:  # if the user types -n
         return 0
-        
+
     filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
-    
+
     __execute_hook("GetLogFilename", filename)
 
     with open(filename, "w+", encoding="utf-8") as f:
@@ -423,15 +426,15 @@ def main() -> int:
     )
 
     args = parser.parse_args()
-    
+
     if args.plug_dir:
-        __update_hooks(load_plugs(args.plug_dir))
+        __update_hooks(load_plugs(args.plug_dir[0]))
 
     if args.get_train_file:
         get_big_model_file()
         return 0
 
-    __execute_hook("init")
+    __execute_hook("Init")
 
     pattern = "".join(
         [

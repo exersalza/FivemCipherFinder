@@ -8,7 +8,7 @@ class PluginInterface:
     You have to Implment the execute method to catch stuff.
 
     Here comes a list of all hooks you can implement:
-    
+
     Init
     GetValidatedLines(list[tuple])
     GetGibberishCheckMatches(list[tuple[str, int, str]])
@@ -20,7 +20,7 @@ class PluginInterface:
     """
     def execute(self, *args, **kw):
         raise NotImplementedError(
-            f"Plugins must implement an 'execute' method")
+            "Plugins must implement an 'execute' method")
 
 
 class _PluginDummy(PluginInterface):
@@ -30,9 +30,9 @@ class _PluginDummy(PluginInterface):
 
 
 def load_plugs(plug_dir: str = ".") -> dict:
-    """ Load plugs (plugins) from a folder to create 
+    """ Load plugs (plugins) from a folder to create
     some hooks or get data
-    
+
     Parameters
     ----------
     plug_dir : str : default "."
@@ -40,7 +40,7 @@ def load_plugs(plug_dir: str = ".") -> dict:
 
     Returns
     -------
-    list : 
+    list :
         The list of loaded plugins
     """
 
@@ -55,8 +55,8 @@ def load_plugs(plug_dir: str = ".") -> dict:
         module = importlib.import_module(f[:-3], package=plug_dir)
         for item_name in dir(module):
             item = getattr(module, item_name)
-            
-            if item == PluginInterface:
+
+            if (item := getattr(module, item_name)) == PluginInterface:
                 continue
 
             if isinstance(item, type) and issubclass(
@@ -64,4 +64,3 @@ def load_plugs(plug_dir: str = ".") -> dict:
                 _hooks[item.__name__] = item()
 
     return _hooks
-
