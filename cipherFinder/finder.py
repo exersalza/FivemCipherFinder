@@ -210,7 +210,7 @@ def prepare_log_line(**kw) -> int:
     # prevent printing stuff twice to the log file
     if logged.get(path, -1) == ln:
         return count
-    
+
     _shadow = {
         "dir": d,
         "ln": ln,
@@ -220,7 +220,7 @@ def prepare_log_line(**kw) -> int:
         "decoded": target,
         "path": path
     }
-    
+
     __execute_hook("GetLoggingValues", _shadow)
 
     to_log = (
@@ -339,7 +339,7 @@ def write_log_file(**kw) -> int:
 
     # we want them to print before the no_log bc of reasons
     __execute_hook("GetFileContents", log)
-    __execute_hook("GetRawFileContents", 
+    __execute_hook("GetRawFileContents",
                    shadow_log, failed=_counter.get("failed", 0))
 
     if args.no_log:  # if the user types -n

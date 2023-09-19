@@ -13,7 +13,7 @@ class PluginInterface:
     GetValidatedLines(list[tuple])
     GetGibberishCheckMatches(list[tuple[str, int, str]])
     GetLoggingValues(
-        {dir: str, ln: int, file: str, 
+        {dir: str, ln: int, file: str,
         line: int, count: int, decoded: str, path: str}
     )
     GetLogFilename(filename: str)
