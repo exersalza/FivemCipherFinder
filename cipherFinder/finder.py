@@ -32,6 +32,7 @@ from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
 from cipherFinder.deleter import deleter_main, y_n_validator
+from cipherFinder.plugins import load_plugs, _PluginDummy
 
 REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 URL_REGEX = (
@@ -47,6 +48,49 @@ RAW_BIG_MODEL = (
 
 log = []
 del_lines = []
+hooks = {"__blanc": _PluginDummy()}
+
+
+def __update_hooks(new_hooks: dict) -> int:
+    """ Update the Hook dict because of python can't 
+    do it itself without setting something global
+
+    Parameters
+    ----------
+    new_hooks : dict
+        give the new hooks
+
+    Returns
+    -------
+    int : 
+        Return code
+    """
+    
+    global hooks  # ueah, first and hopefully last time I need to
+    hooks = new_hooks
+    hooks["__blanc"] = _PluginDummy()  # set default
+    return 0
+
+
+def __execute_hook(hook_name: str, *args, **kw) -> int:
+    """ Just executes the given hook name
+
+    Parameters
+    ----------
+    hook_name : str
+        Give a hook name to execute
+
+    args : any
+        Give a list of values to the hook
+
+    Returns
+    -------
+    int : 
+        Return code
+    """
+    hooks.get(hook_name, hooks["__blanc"]).execute(*args, **kw)
+
+    return 0
 
 
 def get_big_model_file() -> int:
@@ -95,6 +139,8 @@ def validate_lines(lines: list) -> list[tuple]:
         # get all the lines that match the regex
         if x := do_regex(line, REGEX):
             ret.append((ln, line, de_obfs(x, line)))
+
+    __execute_hook("GetValidatedLines", ret)
     return ret
 
 
@@ -126,6 +172,8 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
             )
 
         l_counter += 1
+
+    __execute_hook("GetGibberishCheckMatches", matches)
     return matches
 
 
@@ -159,6 +207,15 @@ def prepare_log_line(**kw) -> int:
     # prevent printing stuff twice to the log file
     if logged.get(path, -1) == ln:
         return count
+
+    __execute_hook("GetLoggingValues", {
+        "dir": d,
+        "ln": ln,
+        "file": file,
+        "line": line,
+        "count": count,
+        "decoded": target
+    })
 
     to_log = (
         f"File: {path}\n"
@@ -255,10 +312,12 @@ def write_log_file(**kw) -> int:
 
     if kw.pop("args").no_log:  # if the user types -n
         return 0
+        
+    filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
+    
+    __execute_hook("GetLogFilename", filename)
 
-    with open(
-        f"CipherLog-{dt.now():%H-%M-%S}.txt", "w+", encoding="utf-8"
-    ) as f:
+    with open(filename, "w+", encoding="utf-8") as f:
         f.writelines(log)
 
     return 0
@@ -355,11 +414,24 @@ def main() -> int:
         help="Debug command to get the big.model file",
     )
 
+    parser.add_argument(
+        "--plug_dir",
+        nargs=1,
+        help="Give a directory that stores plugins for the cipherfinder."
+        "Read the documentation or inside the cipherFinder/plugins.py"
+        " on how to write custom plugins."
+    )
+
     args = parser.parse_args()
+    
+    if args.plug_dir:
+        __update_hooks(load_plugs(args.plug_dir))
 
     if args.get_train_file:
         get_big_model_file()
         return 0
+
+    __execute_hook("init")
 
     pattern = "".join(
         [
@@ -401,7 +473,7 @@ def main() -> int:
         write_log_file(white=white, red=red, count=count, args=args)
 
         if y_n_validator(input(  # pylint: disable=bad-builtin
-                "Do you want to start the Deletion wizard? [y/N] ")):
+                "Do you want to start the eraser wizard? [y/N] ")):
             deleter_main(del_lines)
 
         return 0
