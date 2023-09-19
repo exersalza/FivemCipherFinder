@@ -294,32 +294,52 @@ def check_file(
     return 0, count
 
 
-def write_log_file(**kw) -> int:
-    """Writes the logfile
+def get_filename(output) -> str:
+    """ Get the filename of args, when set.
 
     Parameters
     ----------
-    kw : dict
-        red : str : Colorcode for red
-        white : str : Colorcode for white
-        count : int : The found cipher count
+    output : str
+        The string that is given when someone puts the -o switch
 
-    Returns
+    """
+    filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
+    _t: str = output[0] or filename
+
+    if _t.endswith("/"):
+        return _t + filename
+        
+    return _t
+
+
+def write_log_file(**kw) -> int:
+    """writes the logfile
+
+    parameters
+    ----------
+    kw : dict
+        path : str : path and or filename
+        red : str : colorcode for red
+        white : str : colorcode for white
+        count : int : the found cipher count
+
+    returns
     -------
     int
-        Statuscode
+        statuscode
     """
     print(
-        f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
-        f"Check the CipherLog.txt for location and trigger. "
+        f'{kw.pop("red")}oh no, the program found a spy in your files x.x '
+        f"check the cipherlog.txt for location and trigger. "
         f'{kw.pop("count")} were found!'
         f'{kw.pop("white")}\n#staysafe'
     )
+    args = kw.pop("args")
 
-    if kw.pop("args").no_log:  # if the user types -n
+    if args.no_log:  # if the user types -n
         return 0
 
-    filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
+    filename = get_filename(args.output)
 
     __execute_hook("GetLogFilename", filename)
 
@@ -330,48 +350,48 @@ def write_log_file(**kw) -> int:
 
 
 def main() -> int:
-    """Validates lua files.
+    """validates lua files.
 
-    Usage:
+    usage:
     ------
-    Run the program: `find-cipher [path] [exclude path] [OPTIONS...]`.
+    run the program: `find-cipher [path] [exclude path] [options...]`.
 
     args:
-        --path : Optional :
-            Give the path to search, when no path is given, the
+        --path : optional :
+            give the path to search, when no path is given, the
             current working directory will be used `.`
-        --exclude-path : Optional :
-            Exclude directory's where you don't want to search.
-        --no-log: Optional :
-            Don't create a log file, can be used hand in hand with --verbose
-        --verbose : Optional :
-            Print a Cipher directly to the Command line on found.
-        --v2 : Optional :
-            Uses an extra algorithm to find gibberish or randomly generated
-            variable/function/table names. It can introduce more palse-positiv
+        --exclude-path : optional :
+            exclude directory's where you don't want to search.
+        --no-log: optional :
+            don't create a log file, can be used hand in hand with --verbose
+        --verbose : optional :
+            print a cipher directly to the command line on found.
+        --v2 : optional :
+            uses an extra algorithm to find gibberish or randomly generated
+            variable/function/table names. it can introduce more palse-positiv
             because of obfuscated scripts, but can help to find ciphers.
 
-    Advertisement:
+    advertisement:
     --------------
-    Get your beautiful Cipher today, just smack the play button and find some.
-    Just for $9.99 you can get the Base edition, and just for anohter $49.99
-    you can get yourself access to the Version 2.
-    I hope you don't have any but always be sure to have none.
+    get your beautiful cipher today, just smack the play button and find some.
+    just for $9.99 you can get the base edition, and just for anohter $49.99
+    you can get yourself access to the version 2.
+    i hope you don't have any but always be sure to have none.
 
-    Returns
+    returns
     -------
     int
-        Return code
+        return code
     """
 
-    parser = argparse.ArgumentParser(description="Validates lua files.")
+    parser = argparse.ArgumentParser(description="validates lua files.")
 
     parser.add_argument(
         "-p",
         "--path",
         nargs="?",
         default=".",
-        help="Give the path to search, when no path is given"
+        help="give the path to search, when no path is given"
         ', the current working directory will be used "."',
     )
 
@@ -380,29 +400,29 @@ def main() -> int:
         "--exclude",
         nargs="*",
         default="",
-        help="Exclude directories where you don't want to" " search.",
+        help="exclude directories where you don't want to" " search.",
     )
 
     parser.add_argument(
         "-n",
         "--no-log",
         action="store_true",
-        help="Don't create a log file, can be used hand in hand with -v",
+        help="don't create a log file, can be used hand in hand with -v",
     )
 
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Print a Cipher directly to the Command line " " on found.",
+        help="print a cipher directly to the command line " " on found.",
     )
 
     parser.add_argument(
         "--v2",
         action="store_true",
-        help="Uses an extra algorithm to find gibberish "
+        help="uses an extra algorithm to find gibberish "
         "or randomly generated variable/function/table "
-        "names. It can introduce more false-positives "
+        "names. it can introduce more false-positives "
         "because of obfuscated scripts but "
         "can help find ciphers.",
     )
@@ -411,27 +431,30 @@ def main() -> int:
         "-o",
         "--output",
         nargs=1,
-        help="Define the output path of the Logfile"
+        help="define the output path/filename of the logfile. "
+            "syntax: path/[filename]. please note to add an / "
+            "to the end of the path when you don't want to use"
+            " a custom filename."
     )
 
     parser.add_argument(
         "--no-del",
         action="store_true",
-        help="Debug command to not delete the big.model "
+        help="debug command to not delete the big.model "
         "file after the script finishes.",
     )
 
     parser.add_argument(
         "--get-train-file",
         action="store_true",
-        help="Debug command to get the big.model file",
+        help="debug command to get the big.model file",
     )
 
     parser.add_argument(
         "--plug_dir",
         nargs=1,
-        help="Give a directory that stores plugins for the cipherfinder."
-        "Read the documentation or inside the cipherFinder/plugins.py"
+        help="give a directory that stores plugins for the cipherfinder."
+        "read the documentation or inside the cipherfinder/plugins.py"
         " on how to write custom plugins.",
     )
 
