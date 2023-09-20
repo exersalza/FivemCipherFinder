@@ -106,6 +106,9 @@ def get_big_model_file() -> int:
 
     """
 
+    if os.path.exists("./big.model"):
+        return 0
+
     with open("big.model", "wb") as _file:
         for chunk in requests.get(
             _RAW_BIG_MODEL, stream=True, timeout=5
@@ -137,6 +140,10 @@ def validate_lines(lines: list) -> list[tuple]:
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         # get all the lines that match the regex
         if x := do_regex(line, _REGEX):
+            # hopefully prevent false positives
+            if not do_gibberish_check([line]):
+                continue
+
             ret.append((ln, line, de_obfs(x, line)))
 
     __execute_hook("GetValidatedLines", ret)
@@ -182,7 +189,7 @@ def prepare_log_line(**kw) -> int:
     Parameters
     ----------
     kw : str, Any
-        Somevalues listed below
+        Some values listed below
 
     Returns
     -------
@@ -226,7 +233,7 @@ def prepare_log_line(**kw) -> int:
         f"DecodedLines: \n{'-'*10}\n{target}\n{'-'*10}"
     )
 
-    if kw.pop("verbose", False):  # Log in console.
+    if kw.pop("verbose", 0):  # Log in console.
         print(to_log)
 
     _log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
@@ -518,6 +525,7 @@ def main() -> int:
         if not args.no_del:
             os.remove("big.model")
     except FileNotFoundError:
+        # Silent dropping the error because it's not a user caused one
         pass
 
     if _log:
