@@ -9,13 +9,23 @@ class PluginInterface:
 
     Here comes a list of all hooks you can implement:
 
+    # Gets called when the program starts
     Init
+    # Get the lines that got validated by a file
     GetValidatedLines(list[tuple])
+    # Same as above just with the Gibberishchecker
     GetGibberishCheckMatches(list[tuple[str, int, str]])
+    # Get the values used for creating the log file. Gets triggered
+    # for each entry in the logfile
     GetLoggingValues(
         {dir: str, ln: int, file: str,
         line: int, count: int, decoded: str, path: str}
     )
+    # gets the contents printed later into a logfile
+    GetFileContents(log: list)
+    # the same as the one above, just not formatted
+    GetRawFileContents(log: list)
+    # get the name of the logfile
     GetLogFilename(filename: str)
 
     """
@@ -25,8 +35,14 @@ class PluginInterface:
 
 
 class _PluginDummy(PluginInterface):
+    """PluginDummy, this class is for the case that you dont have hooks
+    implemented or you wrote a hook wrong.
+
+    You can just copy paste it and write your code into the execute function
+    """
+
     def execute(self, *args, **kw):
-        # Enter code here
+        # Enter code here, I mean here here, but should you copy it
         ...
 
 
@@ -45,6 +61,10 @@ def load_plugs(plug_dir: str = ".") -> dict:
         The list of loaded plugins
     """
 
+    if not os.path.exists(plug_dir) and not os.path.isdir(plug_dir):
+        print("Given path is not a Directory or does not exist.")
+        return {"error": 1}
+
     sys.path.append(os.path.abspath(plug_dir))
 
     _hooks = {}
@@ -57,6 +77,7 @@ def load_plugs(plug_dir: str = ".") -> dict:
         for item_name in dir(module):
             item = getattr(module, item_name)
 
+            # Check if the Hook is inhereting the PluginInterface class
             if (item := getattr(module, item_name)) == PluginInterface:
                 continue
 

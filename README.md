@@ -46,6 +46,11 @@ To use FivemCipherFinder, you can run the `find-cipher` command with various opt
 - `-n|--no-log`: Prevents the creation of a log file.
 - `-v|--verbose`: Show the found ciphers in the console as soon as they are found.
 - `--v2`: Enable the gibberish search mode, which can detect ciphers like `local fjdlsajfdsancu = ...`.
+- `--no-del`: Don't remove the training file.
+- `--plug-dir`: Specify a Plugin directory. See the `plugins` directory for further information. Keep in mind, that the Script needs to be able to access the choosen directory.
+- `-w|--no-wizard`: Don't run the eraser wizard after the program ran.
+
+Example Command: `find-cipher -v --plug-dir ~/cipherfinderPlugins`
 
 You can run the `find-cipher` command in your server's resources folder, or you can specify a different folder by providing the path as an argument. For example:
 

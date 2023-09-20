@@ -67,5 +67,5 @@ class GetRawFileContents(PluginInterface):
             WEBHOOL_URL,
             data=json.dumps(webhook_content),
             headers=WEBHOOK_HEADERS,
-            timeout=30
+            timeout=30,
         )

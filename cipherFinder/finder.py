@@ -106,10 +106,6 @@ def get_big_model_file() -> int:
 
     """
 
-    # Get a fresh file
-    if os.path.exists("./big.model"):
-        os.remove("./big.model")
-
     with open("big.model", "wb") as _file:
         for chunk in requests.get(
             _RAW_BIG_MODEL, stream=True, timeout=5
@@ -475,7 +471,12 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.plug_dir:
-        __update_hooks(load_plugs(args.plug_dir[0]))
+        _plugs = load_plugs(args.plug_dir[0])
+
+        if _plugs.get("error", 0):
+            return 1
+
+        __update_hooks(_plugs)
 
     if args.get_train_file:
         get_big_model_file()
