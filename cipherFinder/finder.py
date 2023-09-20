@@ -32,23 +32,23 @@ from cipherFinder.de_obfs import de_obfs, do_regex
 from cipherFinder.deleter import deleter_main, y_n_validator
 from cipherFinder.plugins import load_plugs, _PluginDummy
 
-REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
-URL_REGEX = (
+_REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
+_URL_REGEX = (
     r"(https?://(www\.)?[-\w@:%.\+~#=]{2,256}\."
     r"[a-z]{2,4}\b([-\w@:%\+.~#?&//=]*))"
 )
-COLORS = ["\033[0m", "\033[91m", "\033[92m"]
-RAW_BIG_MODEL = (
+_COLORS = ["\033[0m", "\033[91m", "\033[92m"]
+_RAW_BIG_MODEL = (
     "https://raw.githubusercontent.com/exersalza/"
     "FivemCipherFinder/bd1c3898ca2617005c58cbd465fd8e2a0c3d5fad/big.model"
 )
 
 
-log = []
-shadow_log = []
-del_lines = []
+_log = []
+_shadow_log = []
+_del_lines = []
 _counter = {"failed": 0}
-hooks = {"__blanc": _PluginDummy()}
+_hooks = {"__blanc": _PluginDummy()}
 
 
 def __update_hooks(new_hooks: dict) -> int:
@@ -67,7 +67,7 @@ def __update_hooks(new_hooks: dict) -> int:
     """
 
     for k, v in new_hooks.items():
-        hooks[k] = v
+        _hooks[k] = v
 
     return 0
 
@@ -91,7 +91,7 @@ def __execute_hook(hook_name: str, *args, **kw) -> int:
     int :
         Return code
     """
-    hooks.get(hook_name, hooks["__blanc"]).execute(*args, **kw)
+    _hooks.get(hook_name, _hooks["__blanc"]).execute(*args, **kw)
 
     return 0
 
@@ -112,7 +112,7 @@ def get_big_model_file() -> int:
 
     with open("big.model", "wb") as _file:
         for chunk in requests.get(
-            RAW_BIG_MODEL, stream=True, timeout=5
+            _RAW_BIG_MODEL, stream=True, timeout=5
         ).iter_content(chunk_size=8192):
             if not chunk:
                 continue
@@ -140,7 +140,7 @@ def validate_lines(lines: list) -> list[tuple]:
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         # get all the lines that match the regex
-        if x := do_regex(line, REGEX):
+        if x := do_regex(line, _REGEX):
             ret.append((ln, line, de_obfs(x, line)))
 
     __execute_hook("GetValidatedLines", ret)
@@ -204,7 +204,7 @@ def prepare_log_line(**kw) -> int:
     path = d.replace("\\", "/") + f"/{file}"
     url = ""
 
-    if x := do_regex(target, URL_REGEX):
+    if x := do_regex(target, _URL_REGEX):
         url = x[0][0]
 
     # prevent printing stuff twice to the log file
@@ -218,7 +218,7 @@ def prepare_log_line(**kw) -> int:
         "line": line,
         "count": count + 1,
         "decoded": target,
-        "path": path
+        "path": path,
     }
 
     __execute_hook("GetLoggingValues", _shadow)
@@ -233,9 +233,9 @@ def prepare_log_line(**kw) -> int:
     if kw.pop("verbose", False):  # Log in console.
         print(to_log)
 
-    log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
-    shadow_log.append(_shadow)
-    del_lines.append((line, ln, path))
+    _log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
+    _shadow_log.append(_shadow)
+    _del_lines.append((line, ln, path))
 
     count += 1
     logged[path] = ln
@@ -338,9 +338,10 @@ def write_log_file(**kw) -> int:
     args = kw.pop("args")
 
     # we want them to print before the no_log bc of reasons
-    __execute_hook("GetFileContents", log)
-    __execute_hook("GetRawFileContents",
-                   shadow_log, failed=_counter.get("failed", 0))
+    __execute_hook("GetFileContents", _log)
+    __execute_hook(
+        "GetRawFileContents", _shadow_log, failed=_counter.get("failed", 0)
+    )
 
     if args.no_log:  # if the user types -n
         return 0
@@ -350,7 +351,7 @@ def write_log_file(**kw) -> int:
     __execute_hook("GetLogFilename", filename)
 
     with open(filename, "w+", encoding="utf-8") as f:
-        f.writelines(log)
+        f.writelines(_log)
 
     return 0
 
@@ -510,7 +511,7 @@ def main() -> int:
     red = green = white = ""
 
     if "linux" in platform.platform().lower():
-        white, red, green = COLORS
+        white, red, green = _COLORS
 
     try:
         if not args.no_del:
@@ -518,7 +519,7 @@ def main() -> int:
     except FileNotFoundError:
         pass
 
-    if log:
+    if _log:
         write_log_file(white=white, red=red, count=count, args=args)
 
         if args.no_wizard:
@@ -529,7 +530,7 @@ def main() -> int:
                 "Do you want to start the eraser wizard? [y/N] "
             )
         ):
-            deleter_main(del_lines)
+            deleter_main(_del_lines)
 
         return 0
 

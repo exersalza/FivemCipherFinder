@@ -4,8 +4,8 @@ from cipherFinder.finder import (
     get_big_model_file,
     do_gibberish_check,
     prepare_log_line,
-    log,
-    get_filename
+    _log,
+    get_filename,
 )
 
 
@@ -50,7 +50,7 @@ def test_prepare_log_line():
     count = prepare_log_line(count=count, logged=logged)
 
     assert count == 69
-    assert log == [
+    assert _log == [
         (
             "File: ./poggers.lua\nLineNumber: \nAttacker URL:"
             " \nDecodedLines: \n----------\n\n----------\nTrigger "
