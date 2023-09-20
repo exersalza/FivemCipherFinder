@@ -458,7 +458,7 @@ def main() -> int:
     )
 
     parser.add_argument(
-        "--plug_dir",
+        "--plug-dir",
         nargs=1,
         help="give a directory that stores plugins for the cipherfinder."
         "read the documentation or inside the cipherfinder/plugins.py"
@@ -467,7 +467,7 @@ def main() -> int:
 
     parser.add_argument(
         "-w",
-        "--no_wizard",
+        "--no-wizard",
         action="store_true",
         help="don't start the eraser wizard after the script finishes.",
     )

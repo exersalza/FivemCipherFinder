@@ -16,8 +16,13 @@ WEBHOOL_URL = (
 
 
 def prepare_webhook_content(count: int, failed: int) -> dict:
+    content = None
+
+    if role_id := ALERT_ROLE_ID:
+        content = f"<@&{role_id}>"
+
     webhook_content = {
-        "content": None,
+        "content": content,
         "embeds": [
             {
                 "title": "Cipherfinder results",
@@ -54,8 +59,8 @@ class GetRawFileContents(PluginInterface):
     # The following function is REQUIRED, it will be run by the
     # hook trigger
     def execute(self, *args, **kw):
-        values = args[0]
-        failed = kw.pop("failed")
+        values = args[0]  # just isolate the values from the args
+        failed = kw.pop("failed")  # failed files to open
         webhook_content = prepare_webhook_content(values[0]["count"], failed)
 
         requests.post(
