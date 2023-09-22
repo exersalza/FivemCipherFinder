@@ -6,13 +6,9 @@ from cipherFinder.plugins import PluginInterface
 
 # The file gets completely executed, so be aware to not overwrite
 # global variabls in the finder.py file
-ALERT_ROLE_ID = "763180971083431988"
+ALERT_ROLE_ID = ""  # Enter member to ping, can be left empty
 WEBHOOK_HEADERS = {"Content-Type": "application/json"}
-WEBHOOL_URL = (
-    "https://discord.com/api/webhooks/"
-    "1153729449003597834/"
-    "15Lr5juK-Wtxbl3HqKgbLioaOr2iGl99wk3l7JFhuzej65pStqOX-r0VPdKy1nNHIu88"
-)
+WEBHOOL_URL = ""  # Enter webhook here
 
 
 def prepare_webhook_content(count: int, failed: int) -> dict:

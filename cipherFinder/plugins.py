@@ -42,7 +42,7 @@ class _PluginDummy(PluginInterface):
     """
 
     def execute(self, *args, **kw):
-        # Enter code here, I mean here here, but should you copy it
+        # Enter code here, I mean not here here, but should you copy it
         ...
 
 
@@ -64,7 +64,8 @@ def load_plugs(plug_dir: str = ".") -> dict:
     if not os.path.exists(plug_dir) and not os.path.isdir(plug_dir):
         print("Given path is not a Directory or does not exist.")
         return {"error": 1}
-
+    
+    # add the Plugins path so we can import it
     sys.path.append(os.path.abspath(plug_dir))
 
     _hooks = {}
@@ -77,10 +78,11 @@ def load_plugs(plug_dir: str = ".") -> dict:
         for item_name in dir(module):
             item = getattr(module, item_name)
 
-            # Check if the Hook is inhereting the PluginInterface class
-            if (item := getattr(module, item_name)) == PluginInterface:
+            # Make sure we dont add the PluginInterface to the hook list
+            if getattr(module, item_name) == PluginInterface:
                 continue
-
+            
+            # Check if the Hook is inhereting the PluginInterface class
             if isinstance(item, type) and issubclass(item, PluginInterface):
                 _hooks[item.__name__] = item()
 
