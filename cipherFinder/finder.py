@@ -308,7 +308,10 @@ def get_filename(output) -> str:
 
     """
     filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
-    _t: str = output[0] or filename
+    _t = filename
+
+    if output:
+        _t = output[0]
 
     if _t.endswith("/"):
         return _t + filename
@@ -359,7 +362,7 @@ def write_log_file(**kw) -> int:
     return 0
 
 
-def main() -> int:
+def main(arg_list: list) -> int:
     """validates lua files.
 
     usage:
@@ -475,7 +478,7 @@ def main() -> int:
         help="don't start the eraser wizard after the script finishes.",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(arg_list)
 
     if args.plug_dir:
         _plugs = load_plugs(args.plug_dir[0])
@@ -548,4 +551,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
