@@ -64,7 +64,7 @@ def load_plugs(plug_dir: str = ".") -> dict:
     if not os.path.exists(plug_dir) and not os.path.isdir(plug_dir):
         print("Given path is not a Directory or does not exist.")
         return {"error": 1}
-    
+
     # add the Plugins path so we can import it
     sys.path.append(os.path.abspath(plug_dir))
 
@@ -81,7 +81,7 @@ def load_plugs(plug_dir: str = ".") -> dict:
             # Make sure we dont add the PluginInterface to the hook list
             if getattr(module, item_name) == PluginInterface:
                 continue
-            
+
             # Check if the Hook is inhereting the PluginInterface class
             if isinstance(item, type) and issubclass(item, PluginInterface):
                 _hooks[item.__name__] = item()
