@@ -9,6 +9,7 @@ def y_n_validator(x: str) -> bool:
     """
     return x.lower() in {"y", "yes"}
 
+
 # plan
 # Getting a list of all potential cipher lines, so we can remove them.
 
@@ -16,7 +17,7 @@ def y_n_validator(x: str) -> bool:
 
 
 def deleter_main(del_lines: list) -> int:
-    """ This function works as the entry point for the
+    """This function works as the entry point for the
     cipher deletion process.
 
     Parameters
@@ -33,9 +34,12 @@ def deleter_main(del_lines: list) -> int:
     # Loop over found ciphers and ask the user if they
     # want to remove the line
     for cipher, ln, path in del_lines:
-        if not y_n_validator(input(  # pylint: disable=bad-builtin
+        if not y_n_validator(
+            input(  # pylint: disable=bad-builtin
                 f"Do you want to delete the following line?: "
-                f"\n{cipher}\n[y/N]: ")):
+                f"\n{cipher}\n[y/N]: "
+            )
+        ):
             continue
 
         with open(path, "r", encoding="utf-8") as f:

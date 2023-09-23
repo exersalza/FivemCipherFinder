@@ -15,9 +15,7 @@
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, # noqa
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE # noqa
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, # noqa OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE # noqa
 #  SOFTWARE.
 from __future__ import annotations
 from datetime import datetime as dt
@@ -32,21 +30,70 @@ from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
 from cipherFinder.deleter import deleter_main, y_n_validator
+from cipherFinder.plugins import load_plugs, _PluginDummy
 
-REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
-URL_REGEX = (
+_REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
+_URL_REGEX = (
     r"(https?://(www\.)?[-\w@:%.\+~#=]{2,256}\."
     r"[a-z]{2,4}\b([-\w@:%\+.~#?&//=]*))"
 )
-COLORS = ["\033[0m", "\033[91m", "\033[92m"]
-RAW_BIG_MODEL = (
+_COLORS = ["\033[0m", "\033[91m", "\033[92m"]
+_RAW_BIG_MODEL = (
     "https://raw.githubusercontent.com/exersalza/"
     "FivemCipherFinder/bd1c3898ca2617005c58cbd465fd8e2a0c3d5fad/big.model"
 )
 
 
-log = []
-del_lines = []
+_log = []
+_shadow_log = []
+_del_lines = []
+_counter = {"failed": 0}
+_hooks = {"__blanc": _PluginDummy()}
+
+
+def __update_hooks(new_hooks: dict) -> int:
+    """Update the Hook dict because of python can't
+    do it itself without setting something global
+
+    Parameters
+    ----------
+    new_hooks : dict
+        give the new hooks
+
+    Returns
+    -------
+    int :
+        Return code
+    """
+
+    for k, v in new_hooks.items():
+        _hooks[k] = v
+
+    return 0
+
+
+def __execute_hook(hook_name: str, *args, **kw) -> int:
+    """Just executes the given hook name
+
+    Parameters
+    ----------
+    hook_name : str
+        Give a hook name to execute
+
+    args : any
+        Give a list of values to the hook
+
+    kw : any
+        Give a dict of values to the hook
+
+    Returns
+    -------
+    int :
+        Return code
+    """
+    _hooks.get(hook_name, _hooks["__blanc"]).execute(*args, **kw)
+
+    return 0
 
 
 def get_big_model_file() -> int:
@@ -59,13 +106,12 @@ def get_big_model_file() -> int:
 
     """
 
-    # Get a fresh file
     if os.path.exists("./big.model"):
-        os.remove("./big.model")
+        return 0
 
     with open("big.model", "wb") as _file:
         for chunk in requests.get(
-            RAW_BIG_MODEL, stream=True, timeout=5
+            _RAW_BIG_MODEL, stream=True, timeout=5
         ).iter_content(chunk_size=8192):
             if not chunk:
                 continue
@@ -93,8 +139,14 @@ def validate_lines(lines: list) -> list[tuple]:
 
     for ln, line in enumerate(lines, start=1):  # ln: lineNumber
         # get all the lines that match the regex
-        if x := do_regex(line, REGEX):
+        if x := do_regex(line, _REGEX):
+            # hopefully prevent false positives
+            if not do_gibberish_check([line]):
+                continue
+
             ret.append((ln, line, de_obfs(x, line)))
+
+    __execute_hook("GetValidatedLines", ret)
     return ret
 
 
@@ -126,6 +178,8 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
             )
 
         l_counter += 1
+
+    __execute_hook("GetGibberishCheckMatches", matches)
     return matches
 
 
@@ -135,7 +189,7 @@ def prepare_log_line(**kw) -> int:
     Parameters
     ----------
     kw : str, Any
-        Somevalues listed below
+        Some values listed below
 
     Returns
     -------
@@ -153,12 +207,24 @@ def prepare_log_line(**kw) -> int:
     path = d.replace("\\", "/") + f"/{file}"
     url = ""
 
-    if x := do_regex(target, URL_REGEX):
+    if x := do_regex(target, _URL_REGEX):
         url = x[0][0]
 
     # prevent printing stuff twice to the log file
     if logged.get(path, -1) == ln:
         return count
+
+    _shadow = {
+        "dir": d,
+        "ln": ln,
+        "file": file,
+        "line": line,
+        "count": count + 1,
+        "decoded": target,
+        "path": path,
+    }
+
+    __execute_hook("GetLoggingValues", _shadow)
 
     to_log = (
         f"File: {path}\n"
@@ -167,12 +233,12 @@ def prepare_log_line(**kw) -> int:
         f"DecodedLines: \n{'-'*10}\n{target}\n{'-'*10}"
     )
 
-    if kw.pop("verbose", False):  # Log in console.
+    if kw.pop("verbose", 0):  # Log in console.
         print(to_log)
 
-    log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
-
-    del_lines.append((line, ln, path))
+    _log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
+    _shadow_log.append(_shadow)
+    _del_lines.append((line, ln, path))
 
     count += 1
     logged[path] = ln
@@ -205,6 +271,7 @@ def check_file(
         try:
             lines = f.readlines()
         except UnicodeDecodeError:
+            _counter["failed"] += 1
             print(f"Can't decode `{d}/{file}`. File is not utf-8")
             return 1, count
 
@@ -231,82 +298,113 @@ def check_file(
     return 0, count
 
 
-def write_log_file(**kw) -> int:
-    """Writes the logfile
+def get_filename(output) -> str:
+    """Get the filename of args, when set.
 
     Parameters
     ----------
-    kw : dict
-        red : str : Colorcode for red
-        white : str : Colorcode for white
-        count : int : The found cipher count
+    output : str
+        The string that is given when someone puts the -o switch
 
-    Returns
+    """
+    filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
+    _t = filename
+
+    if output:
+        _t = output[0]
+
+    if _t.endswith("/"):
+        return _t + filename
+
+    return _t
+
+
+def write_log_file(**kw) -> int:
+    """writes the logfile
+
+    parameters
+    ----------
+    kw : dict
+        path : str : path and or filename
+        red : str : colorcode for red
+        white : str : colorcode for white
+        count : int : the found cipher count
+
+    returns
     -------
     int
-        Statuscode
+        statuscode
     """
     print(
-        f'{kw.pop("red")}Oh no, the program found a spy in your files x.x '
-        f"Check the CipherLog.txt for location and trigger. "
+        f'{kw.pop("red")}oh no, the program found a spy in your files x.x '
+        f"check the cipherlog.txt for location and trigger. "
         f'{kw.pop("count")} were found!'
         f'{kw.pop("white")}\n#staysafe'
     )
+    args = kw.pop("args")
 
-    if kw.pop("args").no_log:  # if the user types -n
+    # we want them to print before the no_log bc of reasons
+    __execute_hook("GetFileContents", _log)
+    __execute_hook(
+        "GetRawFileContents", _shadow_log, failed=_counter.get("failed", 0)
+    )
+
+    if args.no_log:  # if the user types -n
         return 0
 
-    with open(
-        f"CipherLog-{dt.now():%H-%M-%S}.txt", "w+", encoding="utf-8"
-    ) as f:
-        f.writelines(log)
+    filename = get_filename(args.output)
+
+    __execute_hook("GetLogFilename", filename)
+
+    with open(filename, "w+", encoding="utf-8") as f:
+        f.writelines(_log)
 
     return 0
 
 
-def main() -> int:
-    """Validates lua files.
+def main(arg_list: list) -> int:
+    """validates lua files.
 
-    Usage:
+    usage:
     ------
-    Run the program: `find-cipher [path] [exclude path] [OPTIONS...]`.
+    run the program: `find-cipher [path] [exclude path] [options...]`.
 
     args:
-        --path : Optional :
-            Give the path to search, when no path is given, the
+        --path : optional :
+            give the path to search, when no path is given, the
             current working directory will be used `.`
-        --exclude-path : Optional :
-            Exclude directory's where you don't want to search.
-        --no-log: Optional :
-            Don't create a log file, can be used hand in hand with --verbose
-        --verbose : Optional :
-            Print a Cipher directly to the Command line on found.
-        --v2 : Optional :
-            Uses an extra algorithm to find gibberish or randomly generated
-            variable/function/table names. It can introduce more palse-positiv
+        --exclude-path : optional :
+            exclude directory's where you don't want to search.
+        --no-log: optional :
+            don't create a log file, can be used hand in hand with --verbose
+        --verbose : optional :
+            print a cipher directly to the command line on found.
+        --v2 : optional :
+            uses an extra algorithm to find gibberish or randomly generated
+            variable/function/table names. it can introduce more palse-positiv
             because of obfuscated scripts, but can help to find ciphers.
 
-    Advertisement:
+    advertisement:
     --------------
-    Get your beautiful Cipher today, just smack the play button and find some.
-    Just for $9.99 you can get the Base edition, and just for anohter $49.99
-    you can get yourself access to the Version 2.
-    I hope you don't have any but always be sure to have none.
+    get your beautiful cipher today, just smack the play button and find some.
+    just for $9.99 you can get the base edition, and just for anohter $49.99
+    you can get yourself access to the version 2.
+    i hope you don't have any but always be sure to have none.
 
-    Returns
+    returns
     -------
     int
-        Return code
+        return code
     """
 
-    parser = argparse.ArgumentParser(description="Validates lua files.")
+    parser = argparse.ArgumentParser(description="validates lua files.")
 
     parser.add_argument(
         "-p",
         "--path",
         nargs="?",
         default=".",
-        help="Give the path to search, when no path is given"
+        help="give the path to search, when no path is given"
         ', the current working directory will be used "."',
     )
 
@@ -315,51 +413,86 @@ def main() -> int:
         "--exclude",
         nargs="*",
         default="",
-        help="Exclude directories where you don't want to" " search.",
+        help="exclude directories where you don't want to" " search.",
     )
 
     parser.add_argument(
         "-n",
         "--no-log",
         action="store_true",
-        help="Don't create a log file, can be used hand in hand with -v",
+        help="don't create a log file, can be used hand in hand with -v",
     )
 
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Print a Cipher directly to the Command line " " on found.",
+        help="print a cipher directly to the command line " " on found.",
     )
 
     parser.add_argument(
         "--v2",
         action="store_true",
-        help="Uses an extra algorithm to find gibberish "
+        help="uses an extra algorithm to find gibberish "
         "or randomly generated variable/function/table "
-        "names. It can introduce more false-positives "
+        "names. it can introduce more false-positives "
         "because of obfuscated scripts but "
         "can help find ciphers.",
     )
 
     parser.add_argument(
+        "-o",
+        "--output",
+        nargs=1,
+        help="define the output path/filename of the logfile. "
+        "syntax: path/[filename]. please note to add an / "
+        "to the end of the path when you don't want to use"
+        " a custom filename.",
+    )
+
+    parser.add_argument(
         "--no-del",
         action="store_true",
-        help="Debug command to not delete the big.model "
+        help="debug command to not delete the big.model "
         "file after the script finishes.",
     )
 
     parser.add_argument(
         "--get-train-file",
         action="store_true",
-        help="Debug command to get the big.model file",
+        help="debug command to get the big.model file",
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "--plug-dir",
+        nargs=1,
+        help="give a directory that stores plugins for the cipherfinder."
+        "read the documentation or inside the cipherfinder/plugins.py"
+        " on how to write custom plugins.",
+    )
+
+    parser.add_argument(
+        "-w",
+        "--no-wizard",
+        action="store_true",
+        help="don't start the eraser wizard after the script finishes.",
+    )
+
+    args = parser.parse_args(arg_list)
+
+    if args.plug_dir:
+        _plugs = load_plugs(args.plug_dir[0])
+
+        if _plugs.get("error", 0):
+            return 1
+
+        __update_hooks(_plugs)
 
     if args.get_train_file:
         get_big_model_file()
         return 0
+
+    __execute_hook("Init")
 
     pattern = "".join(
         [
@@ -389,20 +522,27 @@ def main() -> int:
     red = green = white = ""
 
     if "linux" in platform.platform().lower():
-        white, red, green = COLORS
+        white, red, green = _COLORS
 
     try:
         if not args.no_del:
             os.remove("big.model")
     except FileNotFoundError:
+        # Silent dropping the error because it's not a user caused one
         pass
 
-    if log:
+    if _log:
         write_log_file(white=white, red=red, count=count, args=args)
 
-        if y_n_validator(input(  # pylint: disable=bad-builtin
-                "Do you want to start the Deletion wizard? [y/N] ")):
-            deleter_main(del_lines)
+        if args.no_wizard:
+            return 0
+
+        if y_n_validator(
+            input(  # pylint: disable=bad-builtin
+                "Do you want to start the eraser wizard? [y/N] "
+            )
+        ):
+            deleter_main(_del_lines)
 
         return 0
 
@@ -411,4 +551,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

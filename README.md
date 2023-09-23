@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.4.4)
+# FivemCipherFinder (v2.5.0)
 
 <div align="center">
     <h2> Visitors </h2>
@@ -46,6 +46,11 @@ To use FivemCipherFinder, you can run the `find-cipher` command with various opt
 - `-n|--no-log`: Prevents the creation of a log file.
 - `-v|--verbose`: Show the found ciphers in the console as soon as they are found.
 - `--v2`: Enable the gibberish search mode, which can detect ciphers like `local fjdlsajfdsancu = ...`.
+- `--no-del`: Don't remove the training file.
+- `--plug-dir`: Specify a Plugin directory. See the `plugins` directory for further information. Keep in mind, that the Script needs to be able to access the choosen directory.
+- `-w|--no-wizard`: Don't run the eraser wizard after the program ran.
+
+Example Command: `find-cipher -v --plug-dir ~/cipherfinderPlugins`
 
 You can run the `find-cipher` command in your server's resources folder, or you can specify a different folder by providing the path as an argument. For example:
 
@@ -66,7 +71,7 @@ FivemCipherFinder logs the found ciphers in a file named `CipherLog-HH-MM-SS.txt
 **Keep in mind**
 - The CipherFinder can't find 100% of maybe placed ciphers.
 - Should you use a Code Formatter, it's possible when you use the Eraser function, that your scripts can fail to start because of syntax errors.
-
+- Cipher spreader can hide everywhere, consider reinstalling yarn and webpack, also make sure you changed your default ports like ssh and rdp.
 
 ## Troubleshooting
 
