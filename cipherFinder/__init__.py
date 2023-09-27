@@ -1,6 +1,1 @@
-import sys
-
-from .finder import main
-
-if __name__ == "__main__":
-    main(sys.argv)
+from .finder import entry_point

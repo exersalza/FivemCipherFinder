@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.5.0)
+# FivemCipherFinder (v2.5.1)
 
 <div align="center">
     <h2> Visitors </h2>
@@ -63,8 +63,10 @@ find-cipher -p ~/FiveM/server-data/resources
 If you are having trouble with returning ciphers in your script, you can try using the `--v2` flag to enable the gibberish search mode. For example:
 
 ```
-find-cipher . --v2 cars,mlos
+find-cipher --v2 -x cars,mlos
 ```
+This line also excludes the two directories called cars and mlos
+
 
 In the above example, the directories `cars` and `mlos` are excluded from the search to prevent false positives. Make sure to add a backslash `\` before curly and square brackets to avoid errors in the terminal.
 

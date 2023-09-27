@@ -413,7 +413,7 @@ def main(arg_list: list) -> int:
         "--exclude",
         nargs="*",
         default="",
-        help="exclude directories where you don't want to" " search.",
+        help="exclude directories where you don't want to search.",
     )
 
     parser.add_argument(
@@ -502,10 +502,9 @@ def main(arg_list: list) -> int:
     )
     local_path = args.path
     count = 0
-
-    if args.v2:
-        # sure there are other ways, but python is doing python stuff.
-        get_big_model_file()
+    
+    # get the file everytime bc of new thingi
+    get_big_model_file()
 
     for d, _, files in os.walk(local_path):
         # skip excluded directorys
@@ -550,5 +549,8 @@ def main(arg_list: list) -> int:
     return 0
 
 
+def entry_point() -> int:
+    return main(sys.argv[1:])
+
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(entry_point())
