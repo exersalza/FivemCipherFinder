@@ -502,7 +502,7 @@ def main(arg_list: list) -> int:
     )
     local_path = args.path
     count = 0
-    
+
     # get the file everytime bc of new thingi
     get_big_model_file()
 
@@ -551,6 +551,7 @@ def main(arg_list: list) -> int:
 
 def entry_point() -> int:
     return main(sys.argv[1:])
+
 
 if __name__ == "__main__":
     sys.exit(entry_point())
