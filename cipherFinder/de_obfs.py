@@ -5,7 +5,7 @@ import random
 
 from collections.abc import Generator
 
-# Just random names bc we the hell dont know what
+# Just random names bc we dont know what
 # happens in that script
 VAR_NAMES = [
     "gg",
@@ -43,7 +43,7 @@ def grap(ls: list) -> str:
     str
         the popped string
     """
-
+    # WHY PYTHON WHY
     if not ls:
         return random.choice(VAR_NAMES)
 
@@ -82,10 +82,8 @@ def do_list_addition(char_set: list) -> Generator:
 
     """
     for i in char_set:
-        # prepare string
         _t = i[1].strip("local").strip()
 
-        # put string in a list for multiuse on function arguments
         yield [w.strip() for w in _t.split(",")]
 
 
@@ -132,7 +130,6 @@ def de_obfs_code(line: str, ret: list) -> str:
                 var.extend(j)
 
     for i in var:
-        # get a new name for functions or variables
         name = grap(grap_names)
         names.append(name)
         line = line.replace(i.strip(), name)
@@ -140,11 +137,11 @@ def de_obfs_code(line: str, ret: list) -> str:
     for v, t in de_obfs_char(ret):
         line = line.replace(t.strip('"'), v)
 
-    # Prevent false positives, hopefully
+    # Prevent false positives, at least we hope it does
     if not (table := get_table_contents(line)):
         return line
 
-    t_re = rf"({names[0]}\[\d+\])"  # temp regex
+    t_re = rf"({names[0]}\[\d+\])"
     omfg = set(do_regex(line, t_re))  # as the name tells, it was annoying
 
     for i, c in enumerate(sorted(omfg)):
@@ -173,7 +170,7 @@ def de_obfs_char(found: list) -> list:
         t = ""
         # Get rid of the x and backslashes.
         for i in (j[0].strip('"').replace("\\", "")).split("x"):
-            if i == "":
+            if not i:
                 continue
 
             t += chr(int(i, 16))
@@ -183,7 +180,7 @@ def de_obfs_char(found: list) -> list:
 
 
 def de_obfs(ret: list, line: str) -> str:
-    """Just another way to entry the de obfuscation
+    """Just another way to entry the de-obfuscation
 
     Parameters
     ----------
