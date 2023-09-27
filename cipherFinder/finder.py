@@ -22,10 +22,10 @@ from datetime import datetime as dt
 
 import os
 import sys
-import chardet
 import platform
 import argparse
 import requests
+import chardet
 
 from gibberish_detector import detector
 
@@ -98,9 +98,9 @@ def __execute_hook(hook_name: str, *args, **kw) -> int:
 
 
 def detect_encoding(file_path):
-    with open(file_path, 'rb') as f:
+    with open(file_path, "rb") as f:
         result = chardet.detect(f.read())
-    return result['encoding']
+    return result["encoding"]
 
 
 def get_big_model_file() -> int:
@@ -272,7 +272,7 @@ def check_file(
     tuple[ret_code, count]
         A Tuple with the return code and the current cipher count.
     """
-    
+
     file_encoding = detect_encoding(f"{d}/{file}")
     with open(f"{d}/{file}", "r", encoding=file_encoding) as f:
         try:
