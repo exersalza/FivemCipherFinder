@@ -13,7 +13,7 @@ def y_n_validator(x: str) -> bool:
 # plan
 # Getting a list of all potential cipher lines, so we can remove them.
 
-# did we execute the plan? I think we did.
+# did we execute the plan? maybe.
 
 
 def deleter_main(del_lines: list) -> int:
@@ -31,8 +31,6 @@ def deleter_main(del_lines: list) -> int:
         Return code
     """
 
-    # Loop over found ciphers and ask the user if they
-    # want to remove the line
     for cipher, ln, path in del_lines:
         if not y_n_validator(
             input(  # pylint: disable=bad-builtin

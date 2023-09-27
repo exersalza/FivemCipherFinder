@@ -30,7 +30,7 @@ from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
 from cipherFinder.deleter import deleter_main, y_n_validator
-from cipherFinder.plugins import load_plugs, _PluginDummy
+from cipherFinder.plugins import load_plugs, _PluginDummy, get_remote_plugins
 
 _REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 _URL_REGEX = (
@@ -43,7 +43,7 @@ _RAW_BIG_MODEL = (
     "FivemCipherFinder/bd1c3898ca2617005c58cbd465fd8e2a0c3d5fad/big.model"
 )
 
-
+# Prevent accidental overwrites through plugins
 _log = []
 _shadow_log = []
 _del_lines = []
@@ -137,8 +137,7 @@ def validate_lines(lines: list) -> list[tuple]:
 
     ret: list[tuple] = []
 
-    for ln, line in enumerate(lines, start=1):  # ln: lineNumber
-        # get all the lines that match the regex
+    for ln, line in enumerate(lines, start=1):
         if x := do_regex(line, _REGEX):
             # hopefully prevent false positives
             if not do_gibberish_check([line]):
@@ -166,8 +165,8 @@ def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
         as in `validate_lines`.
 
     """
-
-    det = detector.create_from_model("./big.model")  # should work for now
+    # should work for now
+    det = detector.create_from_model("./big.model")
     l_counter = 1
     matches = []
 
@@ -210,7 +209,7 @@ def prepare_log_line(**kw) -> int:
     if x := do_regex(target, _URL_REGEX):
         url = x[0][0]
 
-    # prevent printing stuff twice to the log file
+    # why TF do it even gets printed twice????
     if logged.get(path, -1) == ln:
         return count
 
@@ -233,7 +232,7 @@ def prepare_log_line(**kw) -> int:
         f"DecodedLines: \n{'-'*10}\n{target}\n{'-'*10}"
     )
 
-    if kw.pop("verbose", 0):  # Log in console.
+    if kw.pop("verbose", 0):
         print(to_log)
 
     _log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
@@ -308,15 +307,15 @@ def get_filename(output) -> str:
 
     """
     filename = f"CipherLog-{dt.now():%H-%M-%S}.txt"
-    _t = filename
+    temp_name = filename
 
     if output:
-        _t = output[0]
+        temp_name = output[0]
 
-    if _t.endswith("/"):
-        return _t + filename
+    if temp_name.endswith("/"):
+        return temp_name + filename
 
-    return _t
+    return temp_name
 
 
 def write_log_file(**kw) -> int:
@@ -478,7 +477,17 @@ def main(arg_list: list) -> int:
         help="don't start the eraser wizard after the script finishes.",
     )
 
+    parser.add_argument(
+        "--get-remote-plugins",
+        action="store_true",
+        help="Get remote plugins to your local environment.",
+    )
+
     args = parser.parse_args(arg_list)
+
+    if args.get_remote_plugins:
+        get_remote_plugins()
+        return 0
 
     if args.plug_dir:
         _plugs = load_plugs(args.plug_dir[0])
@@ -502,12 +511,12 @@ def main(arg_list: list) -> int:
     )
     local_path = args.path
     count = 0
-    
+
     # get the file everytime bc of new thingi
     get_big_model_file()
 
     for d, _, files in os.walk(local_path):
-        # skip excluded directorys
+        # skip excluded directorys, but why you skip 'em?
         if pattern and do_regex(rf"{d}", f'{"(" + pattern + ")"}'):
             continue
 
@@ -527,7 +536,6 @@ def main(arg_list: list) -> int:
         if not args.no_del:
             os.remove("big.model")
     except FileNotFoundError:
-        # Silent dropping the error because it's not a user caused one
         pass
 
     if _log:
@@ -550,7 +558,9 @@ def main(arg_list: list) -> int:
 
 
 def entry_point() -> int:
+    """Just the entry_point for find-cipher"""
     return main(sys.argv[1:])
+
 
 if __name__ == "__main__":
     sys.exit(entry_point())

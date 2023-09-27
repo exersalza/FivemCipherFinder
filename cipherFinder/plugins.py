@@ -1,6 +1,13 @@
 import os
 import sys
 import importlib
+import requests
+
+
+REMOTE_PLUGINS = [
+    "https://raw.githubusercontent.com/exersalza/"
+    "FivemCipherFinder/main/plugins/sendWebhook.py",
+]
 
 
 class PluginInterface:
@@ -65,7 +72,6 @@ def load_plugs(plug_dir: str = ".") -> dict:
         print("Given path is not a Directory or does not exist.")
         return {"error": 1}
 
-    # add the Plugins path so we can import it
     sys.path.append(os.path.abspath(plug_dir))
 
     _hooks = {}
@@ -78,12 +84,52 @@ def load_plugs(plug_dir: str = ".") -> dict:
         for item_name in dir(module):
             item = getattr(module, item_name)
 
-            # Make sure we dont add the PluginInterface to the hook list
+            # WHY TF DO I HAVE TO DO IT TWICE LINTER
             if getattr(module, item_name) == PluginInterface:
                 continue
 
-            # Check if the Hook is inhereting the PluginInterface class
+            # Check if the Hook is inhereting the PluginInterface class.
+            # looks weird. THATS THE REASON I DONT LIKE OOP
             if isinstance(item, type) and issubclass(item, PluginInterface):
                 _hooks[item.__name__] = item()
 
     return _hooks
+
+
+def get_remote_plugins() -> int:
+    """Get the prebuild plugins from github so the user just has
+    to configure them
+
+    Returns
+    -------
+    int :
+        Status code
+
+    """
+    DIR = "./_plugins"
+
+    if not os.path.exists(DIR):
+        os.mkdir(DIR)
+
+    for plug in REMOTE_PLUGINS:
+        plug_name = plug[plug.rfind("/"):]
+
+        with open(f"{DIR}{plug_name}", "wb") as _file:
+            for chunk in requests.get(
+                plug, stream=True, timeout=5
+            ).iter_content(chunk_size=8192):
+                if not chunk:
+                    continue
+
+                _file.write(chunk)
+
+    print(
+        "Configure your new gained Plugins inside the files itself.\n"
+        "After you configured your plugins, run them with "
+        f"`find-cipher --plug-dir `{DIR}`"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    get_remote_plugins()
