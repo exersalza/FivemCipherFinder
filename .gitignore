@@ -137,3 +137,4 @@ cmake-build-debug/
 cars/
 CipherLog-*.txt
 *.test.*
+_plugins/
