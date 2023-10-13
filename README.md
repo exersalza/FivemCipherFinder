@@ -34,10 +34,13 @@ To install FivemCipherFinder, follow these steps:
    ```
 
    Alternatively, you can download the latest release of FivemCipherFinder from the GitHub repository [here](https://github.com/exersalza/FivemCipherFinder/releases) and unpack it manually.
+   1. Clone the Repo with one of those 2 commands: `git clone https://github.com/exersalza/FivemCipherFinder` or `git clone git@github.com:exersalza/FivemCipherFinder`
+   2. Change into the directory you just cloned with: `cd FivemCipherFinder`
+   3. To build and run use this Command: `python3 -m build . && pip install . --user`. Alternatively create a local venv to not interfere with other project dependencies: `python3 -m venv venv`. You can activate it with `.\venv\Scripts\activate.bat` on Windows or `source venv/bin/activate` on unix-like systems.
 
    **Note:** If you are using a Windows-based system, make sure you have added Python to your environment variables. You can test this by typing `python --version` into your command prompt or terminal. If Python is not recognized, you may need to add it to your system's PATH variable. You can find instructions on how to do this [here](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
 
-3. Once installed, you can use the `find-cipher` command in your server's resources directory to start using FivemCipherFinder.
+4. Once installed, you can use the `find-cipher` command in your server's resources directory to start using FivemCipherFinder.
 
 ## Usage
 
