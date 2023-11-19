@@ -30,7 +30,7 @@ import chardet
 from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
-from cipherFinder.deleter import deleter_main, y_n_validator
+from cipherFinder.deleter import deleter_main, y_n_validator, detect_encoding
 from cipherFinder.plugins import load_plugs, _PluginDummy, get_remote_plugins
 
 _REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
@@ -95,12 +95,6 @@ def __execute_hook(hook_name: str, *args, **kw) -> int:
     _hooks.get(hook_name, _hooks["__blanc"]).execute(*args, **kw)
 
     return 0
-
-
-def detect_encoding(file_path):
-    with open(file_path, "rb") as f:
-        result = chardet.detect(f.read())
-    return result["encoding"]
 
 
 def get_big_model_file() -> int:

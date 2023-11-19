@@ -1,3 +1,11 @@
+import chardet
+
+def detect_encoding(file_path):
+    with open(file_path, "rb") as f:
+        result = chardet.detect(f.read())
+    return result["encoding"]
+
+
 def y_n_validator(x: str) -> bool:
     """Validates input if it is y or yes
 
@@ -40,12 +48,15 @@ def deleter_main(del_lines: list) -> int:
         ):
             continue
 
-        with open(path, "r", encoding="utf-8") as f:
+        print(path)
+        file_encoding = detect_encoding(f"{path}")
+
+        with open(path, "r", encoding=file_encoding) as f:
             lines = f.readlines()
 
         del lines[ln - 1]
 
-        with open(path, "w", encoding="utf-8") as f:
+        with open(path, "w", encoding=file_encoding) as f:
             f.writelines(lines)
 
     return 0
