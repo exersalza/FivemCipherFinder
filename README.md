@@ -21,6 +21,8 @@
 
 FivemCipherFinder is a tool designed to assist in the removal of Ciphers from your scripts. It is a console-based tool that can be used by anyone, regardless of their coding experience. The main purpose of FivemCipherFinder is to find and identify Ciphers in your script files.
 
+# THIS PACKAGE IS NOT YET READY FOR PYTHON 3.12
+
 ## Installation
 
 To install FivemCipherFinder, follow these steps:
