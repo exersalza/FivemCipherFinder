@@ -25,7 +25,6 @@ import sys
 import platform
 import argparse
 import requests
-import chardet
 
 from gibberish_detector import detector
 
@@ -397,6 +396,20 @@ def main(arg_list: list) -> int:
     int
         return code
     """
+
+    if sys.version_info < (3, 8):
+        print(
+            "Please use python 3.8 or above. "
+            "Python 3.7 and below are not supported."
+        )
+        sys.exit(1)
+
+    if sys.version_info < (3, 12):
+        print(
+            "Please use python 3.11 or below."
+            "Python 3.12 and above are not supported yet."
+        )
+        sys.exit(1)
 
     parser = argparse.ArgumentParser(description="validates lua files.")
 
