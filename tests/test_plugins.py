@@ -10,11 +10,11 @@ def test_load_plugs():
         with open(plugin_file, "w", encoding="utf-8") as f:
             f.write(
                 """
-                from cipherFinder.plugins import PluginInterface
+from cipherFinder.plugins import PluginInterface
 
-                class DummyPlugin(PluginInterface):
-                    def execute(self, *args, **kw):
-                        return "dummy result"
+class DummyPlugin(PluginInterface):
+    def execute(self, *args, **kw):
+        return "dummy result"
                 """
             )
 

@@ -49,7 +49,6 @@ def deleter_main(del_lines: list) -> int:
         ):
             continue
 
-        print(path)
         file_encoding = detect_encoding(f"{path}")
 
         with open(path, "r", encoding=file_encoding) as f:
