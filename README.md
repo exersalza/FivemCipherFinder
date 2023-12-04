@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.5.3)
+# FivemCipherFinder (v2.5.4)
 
 <div align="center">
     <h2> Visitors </h2>
@@ -27,7 +27,7 @@ FivemCipherFinder is a tool designed to assist in the removal of Ciphers from yo
 
 To install FivemCipherFinder, follow these steps:
 
-1. Make sure you have Python 3.8 or above installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
+1. Make sure you have a Python version between 3.8 - 3.11 installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
 
 2. Open your command prompt or terminal and run the following command to install FivemCipherFinder using pip:
 
@@ -56,6 +56,7 @@ To use FivemCipherFinder, you can run the `find-cipher` command with various opt
 - `--no-del`: Don't remove the training file.
 - `--plug-dir`: Specify a Plugin directory. See the `plugins` directory for further information. Keep in mind, that the Script needs to be able to access the choosen directory.
 - `-w|--no-wizard`: Don't run the eraser wizard after the program ran.
+- `--get-remote-plugins`: Download the latest plugins from the remote repository.
 
 Example Command: `find-cipher -v --plug-dir ~/cipherfinderPlugins`
 
