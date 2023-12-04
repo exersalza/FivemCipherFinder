@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.5.4)
+# FivemCipherFinder (v2.5.5 beta)
 
 <div align="center">
     <h2> Visitors </h2>
@@ -21,13 +21,11 @@
 
 FivemCipherFinder is a tool designed to assist in the removal of Ciphers from your scripts. It is a console-based tool that can be used by anyone, regardless of their coding experience. The main purpose of FivemCipherFinder is to find and identify Ciphers in your script files.
 
-# THIS PACKAGE IS NOT YET READY FOR PYTHON 3.12
-
 ## Installation
 
 To install FivemCipherFinder, follow these steps:
 
-1. Make sure you have a Python version between 3.8 - 3.11 installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
+1. Make sure you have Python 3.8 or above installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
 
 2. Open your command prompt or terminal and run the following command to install FivemCipherFinder using pip:
 
