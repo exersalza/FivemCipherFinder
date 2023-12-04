@@ -404,13 +404,6 @@ def main(arg_list: list) -> int:
         )
         sys.exit(1)
 
-    if sys.version_info > (3, 12):
-        print(
-            "Please use python 3.11 or below."
-            "Python 3.12 and above are not supported yet."
-        )
-        sys.exit(1)
-
     parser = argparse.ArgumentParser(description="validates lua files.")
 
     parser.add_argument(
