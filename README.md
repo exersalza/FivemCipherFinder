@@ -79,7 +79,7 @@ FivemCipherFinder logs the found ciphers in a file named `CipherLog-HH-MM-SS.txt
 
 **Keep in mind**
 - The CipherFinder can't find 100% of maybe placed ciphers.
-- Should you use a Code Formatter, it's possible when you use the Eraser function, that your scripts can fail to start because of syntax errors.
+- Should you use a Code Formatter, it's possible when you use the Eraser function, that your scripts can fail to start because of syntax errors. Read the [Disclaimer](#Disclaimer).
 - Cipher spreader can hide everywhere, consider reinstalling yarn and webpack, also make sure you changed your default ports like ssh and rdp.
 
 ## Troubleshooting
