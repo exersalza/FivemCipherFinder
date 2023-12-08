@@ -16,6 +16,7 @@
 - [Troubleshooting](#Troubleshooting)
 - [Contributing](#Contributing)
 - [Todo](#todo)
+- [Disclaimer](#Disclaimer)
 - [Contact](#Contact)
 
 
@@ -105,6 +106,9 @@ If you would like to contribute to FivemCipherFinder, you can open a pull reques
 - [ ] Detect cipher spreader
 - [x] Add deobfuscator for detected ciphers
 - [x] Find randomly generated character variable names
+
+## Disclaimer
+![DISCLAIMER.md](DISCLAIMER.md)
 
 ## Contact
 
