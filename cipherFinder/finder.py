@@ -272,7 +272,8 @@ def check_file(
             lines = f.readlines()
         except UnicodeDecodeError:
             _counter["failed"] += 1
-            print(f"Can't decode `{d}/{file}`. File has an unknown encoding or it can't be determined."
+            print(f"Can't decode `{d}/{file}`. File has an unknown encoding "
+                  f"or it can't be determined."
                   f"Consider looking into it by yourself.",
                   (f" -> Encoding: {file_encoding['encoding']!r} "
                    f"Confidence: {file_encoding['confidence'] * 100:.0f}% "
