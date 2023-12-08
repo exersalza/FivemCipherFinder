@@ -108,7 +108,7 @@ If you would like to contribute to FivemCipherFinder, you can open a pull reques
 - [x] Find randomly generated character variable names
 
 ## Disclaimer
-![DISCLAIMER.md](DISCLAIMER.md)
+[DISCLAIMER](DISCLAIMER.md)
 
 ## Contact
 
