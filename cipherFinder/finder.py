@@ -111,7 +111,7 @@ def get_big_model_file() -> int:
 
     with open("big.model", "wb") as _file:
         for chunk in requests.get(
-            _RAW_BIG_MODEL, stream=True, timeout=5
+                _RAW_BIG_MODEL, stream=True, timeout=5
         ).iter_content(chunk_size=8192):
             if not chunk:
                 continue
@@ -229,13 +229,13 @@ def prepare_log_line(**kw) -> int:
         f"File: {path}\n"
         f"LineNumber: {ln}\n"
         f"Attacker URL: {url}\n"
-        f"DecodedLines: \n{'-'*10}\n{target}\n{'-'*10}"
+        f"DecodedLines: \n{'-' * 10}\n{target}\n{'-' * 10}"
     )
 
     if kw.pop("verbose", 0):
         print(to_log)
 
-    _log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-'*15}\n")
+    _log.append(to_log + f"\nTrigger Line:\n{line!r}\n{'-' * 15}\n")
     _shadow_log.append(_shadow)
     _del_lines.append((line, ln, path))
 
@@ -245,7 +245,7 @@ def prepare_log_line(**kw) -> int:
 
 
 def check_file(
-    d: str, file: str, count: int, args: argparse.Namespace
+        d: str, file: str, count: int, args: argparse.Namespace
 ) -> tuple[int, int]:
     """Iterate over a file and check the lines
 
@@ -258,7 +258,7 @@ def check_file(
     count: int
         Give the current cipher count.
     args: argparse.Namespace
-        Give the arguments delieverd from the Cmd line.
+        Give the arguments delivered from the Cmd line.
 
     Returns
     -------
@@ -267,12 +267,17 @@ def check_file(
     """
 
     file_encoding = detect_encoding(f"{d}/{file}")
-    with open(f"{d}/{file}", "r", encoding=file_encoding) as f:
+    with open(f"{d}/{file}", "r", encoding=file_encoding['encoding']) as f:
         try:
             lines = f.readlines()
         except UnicodeDecodeError:
             _counter["failed"] += 1
-            print(f"Can't decode `{d}/{file}`. File is not utf-8")
+            print(f"Can't decode `{d}/{file}`. File has an unknown encoding or it can't be determined."
+                  f"Consider looking into it by yourself.",
+                  (f" -> Encoding: {file_encoding['encoding']!r} "
+                   f"Confidence: {file_encoding['confidence'] * 100:.0f}% "
+                   f"Lang: {file_encoding['language']!r}"
+                   if args.verbose else ""))
             return 1, count
 
         match = validate_lines(lines)
@@ -412,7 +417,7 @@ def main(arg_list: list) -> int:
         nargs="?",
         default=".",
         help="give the path to search, when no path is given"
-        ', the current working directory will be used "."',
+             ', the current working directory will be used "."',
     )
 
     parser.add_argument(
@@ -441,10 +446,10 @@ def main(arg_list: list) -> int:
         "--v2",
         action="store_true",
         help="uses an extra algorithm to find gibberish "
-        "or randomly generated variable/function/table "
-        "names. it can introduce more false-positives "
-        "because of obfuscated scripts but "
-        "can help find ciphers.",
+             "or randomly generated variable/function/table "
+             "names. it can introduce more false-positives "
+             "because of obfuscated scripts but "
+             "can help find ciphers.",
     )
 
     parser.add_argument(
@@ -452,16 +457,16 @@ def main(arg_list: list) -> int:
         "--output",
         nargs=1,
         help="define the output path/filename of the logfile. "
-        "syntax: path/[filename]. please note to add an / "
-        "to the end of the path when you don't want to use"
-        " a custom filename.",
+             "syntax: path/[filename]. please note to add an / "
+             "to the end of the path when you don't want to use"
+             " a custom filename.",
     )
 
     parser.add_argument(
         "--no-del",
         action="store_true",
         help="debug command to not delete the big.model "
-        "file after the script finishes.",
+             "file after the script finishes.",
     )
 
     parser.add_argument(
@@ -474,8 +479,8 @@ def main(arg_list: list) -> int:
         "--plug-dir",
         nargs=1,
         help="give a directory that stores plugins for the cipherfinder."
-        "read the documentation or inside the cipherfinder/plugins.py"
-        " on how to write custom plugins.",
+             "read the documentation or inside the cipherfinder/plugins.py"
+             " on how to write custom plugins.",
     )
 
     parser.add_argument(
@@ -524,7 +529,7 @@ def main(arg_list: list) -> int:
     get_big_model_file()
 
     for d, _, files in os.walk(local_path):
-        # skip excluded directorys, but why you skip 'em?
+        # skip excluded directories, but why you skip 'em?
         if pattern and do_regex(rf"{d}", f'{"(" + pattern + ")"}'):
             continue
 
@@ -553,9 +558,9 @@ def main(arg_list: list) -> int:
             return 0
 
         if y_n_validator(
-            input(  # pylint: disable=bad-builtin
-                "Do you want to start the eraser wizard? [y/N] "
-            )
+                input(  # pylint: disable=bad-builtin
+                    "Do you want to start the eraser wizard? [y/N] "
+                )
         ):
             deleter_main(_del_lines)
 
