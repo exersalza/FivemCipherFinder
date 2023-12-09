@@ -29,9 +29,11 @@ import requests
 from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
-from cipherFinder.deleter import deleter_main, y_n_validator, detect_encoding
+from cipherFinder.deleter import deleter_main, y_n_validator
 from cipherFinder.plugins import load_plugs, _PluginDummy, get_remote_plugins
+from cipherFinder.utils import detect_encoding
 
+DEBUG = False
 _REGEX = r"(((\\x|\\u)([a-fA-F0-9]{2}))+)"
 _URL_REGEX = (
     r"(https?://(www\.)?[-\w@:%.\+~#=]{2,256}\."
@@ -266,18 +268,22 @@ def check_file(
         A Tuple with the return code and the current cipher count.
     """
 
-    file_encoding = detect_encoding(f"{d}/{file}")
-    with open(f"{d}/{file}", "r", encoding=file_encoding['encoding']) as f:
+    enc, confidence = detect_encoding(f"{d}/{file}")
+
+    with open(f"{d}/{file}", "r", encoding=enc, errors="replace") as f:
         try:
             lines = f.readlines()
-        except UnicodeDecodeError:
+
+        except UnicodeDecodeError as e:
+            if DEBUG:
+                print(e)
+
             _counter["failed"] += 1
-            print(f"Can't decode `{d}/{file}`. File has an unknown encoding "
+            print(f"Can't decode `{d}/{file}`. File has an unknown encoding"
                   f"or it can't be determined."
                   f"Consider looking into it by yourself.",
-                  (f" -> Encoding: {file_encoding['encoding']!r} "
-                   f"Confidence: {file_encoding['confidence'] * 100:.0f}% "
-                   f"Lang: {file_encoding['language']!r}"
+                  (f" -> Encoding: {enc!r} "
+                   f"Confidence: {confidence * 100:.0f}%"
                    if args.verbose else ""))
             return 1, count
 
@@ -498,6 +504,7 @@ def main(arg_list: list) -> int:
     )
 
     args = parser.parse_args(arg_list)
+    os.environ["DEBUG"] = str(DEBUG)
 
     if args.get_remote_plugins:
         get_remote_plugins()

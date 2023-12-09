@@ -1,10 +1,6 @@
-import chardet
+import os
 
-
-def detect_encoding(file_path):
-    with open(file_path, "rb") as f:
-        result = chardet.detect(f.read())
-    return result
+from cipherFinder.utils import detect_encoding
 
 
 def y_n_validator(x: str) -> bool:
@@ -43,20 +39,30 @@ def deleter_main(del_lines: list) -> int:
     for cipher, ln, path in del_lines:
         if not y_n_validator(
             input(  # pylint: disable=bad-builtin
-                f"Do you want to delete the following line?: "
-                f"\n{cipher}\n[y/N]: "
+                f"Do you want to delete the following line? THIS CANNOT BE "
+                f"UNDONE: \n{cipher}\n[y/N]: "
             )
         ):
             continue
 
-        file_encoding = detect_encoding(f"{path}")
+        enc, _ = detect_encoding(f"{path}")
 
-        with open(path, "r", encoding=file_encoding) as f:
-            lines = f.readlines()
+        try:
+            with open(path, "r", encoding=enc) as f:
+                lines = f.readlines()
+        except UnicodeDecodeError as e:
+            print(os.getenv("DEBUG"), bool(os.getenv("DEBUG")))
+            if bool(os.getenv("DEBUG")):
+                print(e)
+
+            print(f"ERROR: Can't delete cipher from {path!r} due to illegal "
+                  f"characters, please delete it yourself.\nYou'll find it "
+                  f"on line: {ln}")
+            return 1
 
         del lines[ln - 1]
 
-        with open(path, "w", encoding=file_encoding) as f:
+        with open(path, "w", encoding=enc) as f:
             f.writelines(lines)
 
     return 0
