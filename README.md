@@ -18,6 +18,7 @@
 - [Todo](#todo)
 - [Disclaimer](#Disclaimer)
 - [Contact](#Contact)
+- [Credits](#Credits)
 
 
 FivemCipherFinder is a tool designed to assist in the removal of Ciphers from your scripts. It is a console-based tool that can be used by anyone, regardless of their coding experience. The main purpose of FivemCipherFinder is to find and identify Ciphers in your script files.
@@ -117,3 +118,10 @@ If you have any questions or need assistance with FivemCipherFinder, you can rea
 - Discord: exersalza / exersalza[>'-']>#1337 | [DE/EN]
 
 Feel free to contact me for any inquiries or support related to FivemCipherFinder.
+
+
+## Credits
+- exersalza -> Main Dev
+- [ZerxGit](https://github.com/ZerxGit) -> Inspiration for the whole Project
+- [Firav](https://github.com/Firav) -> Big baller in testing my stuff :D
+
