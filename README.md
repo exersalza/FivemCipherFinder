@@ -52,7 +52,7 @@ To use FivemCipherFinder, you can run the `find-cipher` command with various opt
 - `-x|--exclude`: Exclude paths that you don't want to scan.
 - `-n|--no-log`: Prevents the creation of a log file.
 - `-v|--verbose`: Show the found ciphers in the console as soon as they are found.
-- `--v2`: Enable the gibberish search mode, which can detect ciphers like `local fjdlsajfdsancu = ...`.
+- `--v2`: Enable the gibberish search mode, which can detect ciphers like `local fjdlsajfdsancu = ...`. Will soon be deprecated, only use if you want to be really sure about something. CAN THROW A LOT OF FALSE POSITIVES.
 - `--no-del`: Don't remove the training file.
 - `--plug-dir`: Specify a Plugin directory. See the `plugins` directory for further information. Keep in mind, that the Script needs to be able to access the choosen directory.
 - `-w|--no-wizard`: Don't run the eraser wizard after the program ran.
@@ -85,7 +85,7 @@ FivemCipherFinder logs the found ciphers in a file named `CipherLog-HH-MM-SS.txt
 
 ## Troubleshooting
 
-If you encounter any issues with FivemCipherFinder, here are some troubleshooting steps you can follow:
+If you encounter any issues with FivemCipherFinder, here are some troubleshooting steps you can follow, please try all of them first before you contact me or another developer:
 
 1. Read the error or warning message carefully to understand the problem.
 
@@ -107,6 +107,8 @@ If you would like to contribute to FivemCipherFinder, you can open a pull reques
 - [ ] Detect cipher spreader
 - [x] Add deobfuscator for detected ciphers
 - [x] Find randomly generated character variable names
+- [ ] Add an UI and Exe/Bin
+- [x] Hook System
 
 ## Disclaimer
 [DISCLAIMER](DISCLAIMER.md)
