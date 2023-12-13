@@ -14,7 +14,7 @@ class Init(PluginInterface):
         print("WEE WOO")
         return 0
 ```
-or when you feel fancy, you can also name the class whatever you want and add an class variable named '__name__' and give it the 
+or when you feel fancy, you can also name the class whatever you want and add an class variable named '\_\_name\_\_' and give it the 
 hook name
 
 
