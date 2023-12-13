@@ -206,7 +206,7 @@ redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=79
+max-line-length=85
 
 # Regexp for a line that is allowed to be longer than the limit.
 ignore-long-lines=^\s*(# )?<?https?://\S+>?$
@@ -507,4 +507,4 @@ check-str-concat-over-line-jumps=no
 
 
 [CODE_STYLE]
-max-line-length-suggestions=79
+max-line-length-suggestions=85

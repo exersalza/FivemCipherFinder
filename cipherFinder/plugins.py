@@ -1,6 +1,7 @@
 import os
 import sys
 import importlib
+import inspect
 import requests
 
 
@@ -8,6 +9,21 @@ REMOTE_PLUGINS = [
     "https://raw.githubusercontent.com/exersalza/"
     "FivemCipherFinder/main/plugins/sendWebhook.py",
 ]
+
+VALID_HOOKS = [
+    "Init",
+    "GetValidatedLines",
+    "GetGibberishCheckMatches",
+    "GetLoggingValues",
+    "GetFileContents",
+    "GetRawFileContents",
+    "GetLogFilename",
+]
+
+
+def is_valid_hook(item_name: str) -> bool:
+    """Returns if item_name is in VALID_HOOKS"""
+    return item_name in VALID_HOOKS
 
 
 class PluginInterface:
@@ -37,6 +53,12 @@ class PluginInterface:
 
     """
 
+    hook_name = ""
+
+    def __init__(self) -> None:
+        if not self.hook_name:
+            self.hook_name = self.__class__.__name__
+
     def execute(self, *args, **kw):
         raise NotImplementedError("Plugins must implement an 'execute' method")
 
@@ -49,7 +71,8 @@ class _PluginDummy(PluginInterface):
     """
 
     def execute(self, *args, **kw):
-        # Enter code here, I mean not here here, but should you copy it
+        # Enter code here, I mean not here here, but should you copy
+        # it and add it to your own plugin :D
         ...
 
 
@@ -84,14 +107,17 @@ def load_plugs(plug_dir: str = ".") -> dict:
         for item_name in dir(module):
             item = getattr(module, item_name)
 
-            # WHY TF DO I HAVE TO DO IT TWICE LINTER
-            if getattr(module, item_name) == PluginInterface:
+            if item_name == PluginInterface.__name__ or not inspect.isclass(
+                item
+            ):
                 continue
 
-            # Check if the Hook is inhereting the PluginInterface class.
-            # looks weird. THATS THE REASON I DONT LIKE OOP
-            if isinstance(item, type) and issubclass(item, PluginInterface):
-                _hooks[item.__name__] = item()
+            hook_name = (
+                item.hook_name if item.hook_name else item.__name__
+            )
+
+            if isinstance(item, type) and is_valid_hook(hook_name):
+                _hooks[hook_name] = item()
 
     return _hooks
 
@@ -132,4 +158,4 @@ def get_remote_plugins() -> int:
 
 
 if __name__ == "__main__":
-    get_remote_plugins()
+    print(load_plugs("../plugins"))

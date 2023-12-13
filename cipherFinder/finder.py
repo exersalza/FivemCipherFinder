@@ -113,7 +113,7 @@ def get_big_model_file() -> int:
 
     with open("big.model", "wb") as _file:
         for chunk in requests.get(
-                _RAW_BIG_MODEL, stream=True, timeout=5
+            _RAW_BIG_MODEL, stream=True, timeout=5
         ).iter_content(chunk_size=8192):
             if not chunk:
                 continue
@@ -247,7 +247,7 @@ def prepare_log_line(**kw) -> int:
 
 
 def check_file(
-        d: str, file: str, count: int, args: argparse.Namespace
+    d: str, file: str, count: int, args: argparse.Namespace
 ) -> tuple[int, int]:
     """Iterate over a file and check the lines
 
@@ -279,12 +279,17 @@ def check_file(
                 print(e)
 
             _counter["failed"] += 1
-            print(f"Can't decode `{d}/{file}`. File has an unknown encoding"
-                  f"or it can't be determined."
-                  f"Consider looking into it by yourself.",
-                  (f" -> Encoding: {enc!r} "
-                   f"Confidence: {confidence * 100:.0f}%"
-                   if args.verbose else ""))
+            print(
+                f"Can't decode `{d}/{file}`. File has an unknown encoding"
+                f"or it can't be determined."
+                f"Consider looking into it by yourself.",
+                (
+                    f" -> Encoding: {enc!r} "
+                    f"Confidence: {confidence * 100:.0f}%"
+                    if args.verbose
+                    else ""
+                ),
+            )
             return 1, count
 
         match = validate_lines(lines)
@@ -424,7 +429,7 @@ def main(arg_list: list) -> int:
         nargs="?",
         default=".",
         help="give the path to search, when no path is given"
-             ', the current working directory will be used "."',
+        ', the current working directory will be used "."',
     )
 
     parser.add_argument(
@@ -453,10 +458,10 @@ def main(arg_list: list) -> int:
         "--v2",
         action="store_true",
         help="uses an extra algorithm to find gibberish "
-             "or randomly generated variable/function/table "
-             "names. it can introduce more false-positives "
-             "because of obfuscated scripts but "
-             "can help find ciphers.",
+        "or randomly generated variable/function/table "
+        "names. it can introduce more false-positives "
+        "because of obfuscated scripts but "
+        "can help find ciphers.",
     )
 
     parser.add_argument(
@@ -464,16 +469,16 @@ def main(arg_list: list) -> int:
         "--output",
         nargs=1,
         help="define the output path/filename of the logfile. "
-             "syntax: path/[filename]. please note to add an / "
-             "to the end of the path when you don't want to use"
-             " a custom filename.",
+        "syntax: path/[filename]. please note to add an / "
+        "to the end of the path when you don't want to use"
+        " a custom filename.",
     )
 
     parser.add_argument(
         "--no-del",
         action="store_true",
         help="debug command to not delete the big.model "
-             "file after the script finishes.",
+        "file after the script finishes.",
     )
 
     parser.add_argument(
@@ -486,8 +491,8 @@ def main(arg_list: list) -> int:
         "--plug-dir",
         nargs=1,
         help="give a directory that stores plugins for the cipherfinder."
-             "read the documentation or inside the cipherfinder/plugins.py"
-             " on how to write custom plugins.",
+        "read the documentation or inside the cipherfinder/plugins.py"
+        " on how to write custom plugins.",
     )
 
     parser.add_argument(
@@ -566,9 +571,9 @@ def main(arg_list: list) -> int:
             return 0
 
         if y_n_validator(
-                input(  # pylint: disable=bad-builtin
-                    "Do you want to start the eraser wizard? [y/N] "
-                )
+            input(  # pylint: disable=bad-builtin
+                "Do you want to start the eraser wizard? [y/N] "
+            )
         ):
             deleter_main(_del_lines)
 

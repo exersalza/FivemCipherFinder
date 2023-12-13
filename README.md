@@ -14,6 +14,7 @@
 - [Installation](#installation)
 - [Usage](#Usage)
 - [Troubleshooting](#Troubleshooting)
+- [Plugins](#Plugins)
 - [Contributing](#Contributing)
 - [Todo](#todo)
 - [Disclaimer](#Disclaimer)
@@ -97,6 +98,11 @@ If you encounter any issues with FivemCipherFinder, here are some troubleshootin
 
 - `EasyAdmin`
 - Encrypted/obfuscated scripts
+
+## Plugins
+
+If you would like to have a Plugin that fetches data while the cipherfinder is running you can read into it further under [Plugins](plugins/README.md).
+If you want a Pre-Written plugin that sends a message onto an Webhook
 
 ## Contributing
 

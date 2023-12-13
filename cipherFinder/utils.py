@@ -4,9 +4,7 @@ import codecs
 
 import chardet
 
-ENCODING_TRANS = {
-    "Windows-1254": "cp"
-}
+ENCODING_TRANS = {"Windows-1254": "cp"}
 
 
 def find_encoding(name: str) -> codecs.CodecInfo | int:
@@ -22,7 +20,7 @@ def detect_encoding(file_path) -> (str, float):
     with open(file_path, "rb") as f:
         result = chardet.detect(f.read())
 
-    if enc := result['encoding']:
+    if enc := result["encoding"]:
         if x := find_encoding(enc):
             enc = x.name
 

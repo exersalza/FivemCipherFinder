@@ -12,7 +12,7 @@ def test_load_plugs():
                 """
 from cipherFinder.plugins import PluginInterface
 
-class DummyPlugin(PluginInterface):
+class Init(PluginInterface):
     def execute(self, *args, **kw):
         return "dummy result"
                 """
@@ -21,6 +21,7 @@ class DummyPlugin(PluginInterface):
         # Load the plugins from the temporary directory
         plugins = load_plugs(tmpdir)
 
+
         # Check that the DummyPlugin was loaded and returns the expected result
-        assert "DummyPlugin" in plugins
-        assert plugins["DummyPlugin"].execute() == "dummy result"
+        assert "Init" in plugins
+        assert plugins["Init"].execute() == "dummy result"

@@ -55,9 +55,11 @@ def deleter_main(del_lines: list) -> int:
             if bool(os.getenv("DEBUG")):
                 print(e)
 
-            print(f"ERROR: Can't delete cipher from {path!r} due to illegal "
-                  f"characters, please delete it yourself.\nYou'll find it "
-                  f"on line: {ln}")
+            print(
+                f"ERROR: Can't delete cipher from {path!r} due to illegal "
+                f"characters, please delete it yourself.\nYou'll find it "
+                f"on line: {ln}"
+            )
             return 1
 
         del lines[ln - 1]
