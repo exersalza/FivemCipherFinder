@@ -112,9 +112,7 @@ def load_plugs(plug_dir: str = ".") -> dict:
             ):
                 continue
 
-            hook_name = (
-                item.hook_name if item.hook_name else item.__name__
-            )
+            hook_name = item.hook_name if item.hook_name else item.__name__
 
             if isinstance(item, type) and is_valid_hook(hook_name):
                 _hooks[hook_name] = item()

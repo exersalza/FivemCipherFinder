@@ -21,7 +21,6 @@ class Init(PluginInterface):
         # Load the plugins from the temporary directory
         plugins = load_plugs(tmpdir)
 
-
         # Check that the DummyPlugin was loaded and returns the expected result
         assert "Init" in plugins
         assert plugins["Init"].execute() == "dummy result"
