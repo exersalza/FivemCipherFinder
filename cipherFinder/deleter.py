@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import os
 
-from cipherFinder.utils import detect_encoding
+from cipherFinder.utils import detect_encoding, fix_path
+
+_BACKUP_DIR = "./.fcf_remove.bak/"
 
 
 def y_n_validator(x: str) -> bool:
@@ -28,7 +32,7 @@ def deleter_main(del_lines: list) -> int:
     Parameters
     ----------
     del_lines : list
-        the shadow list thats getting created in the main file.
+        the shadow list that's getting created in the main file.
 
     Returns
     -------
@@ -40,18 +44,26 @@ def deleter_main(del_lines: list) -> int:
         if not y_n_validator(
             input(  # pylint: disable=bad-builtin
                 f"Do you want to delete the following line? THIS CANNOT BE "
-                f"UNDONE: \n{cipher}\n[y/N]: "
+                f"UNDONE {path=} {ln=}: \n{cipher}\n[y/N]: "
             )
         ):
             continue
 
         enc, _ = detect_encoding(f"{path}")
+        bak_path = _BACKUP_DIR + path[path.find("resources"):]
+        bak_path = fix_path(bak_path)
+        file = bak_path[bak_path.rfind("/" if "/" in bak_path else "\\") + 1:]
 
         try:
             with open(path, "r", encoding=enc) as f:
                 lines = f.readlines()
+                if not os.path.isfile(bak_path):
+                    os.makedirs(bak_path.replace(file, ""), exist_ok=True)
+
+                with open(bak_path, "w", encoding="utf-8") as j:
+                    j.writelines(lines)
+
         except UnicodeDecodeError as e:
-            print(os.getenv("DEBUG"), bool(os.getenv("DEBUG")))
             if bool(os.getenv("DEBUG")):
                 print(e)
 

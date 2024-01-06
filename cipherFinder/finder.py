@@ -22,14 +22,10 @@ from datetime import datetime as dt
 
 import os
 import sys
-import platform
 import argparse
-import requests
-
-from gibberish_detector import detector
 
 from cipherFinder.de_obfs import de_obfs, do_regex
-from cipherFinder.deleter import deleter_main, y_n_validator
+from cipherFinder.deleter import deleter_main, y_n_validator, _BACKUP_DIR
 from cipherFinder.plugins import load_plugs, _PluginDummy, get_remote_plugins
 from cipherFinder.utils import detect_encoding
 
@@ -40,10 +36,6 @@ _URL_REGEX = (
     r"[a-z]{2,4}\b([-\w@:%\+.~#?&//=]*))"
 )
 _COLORS = ["\033[0m", "\033[91m", "\033[92m"]
-_RAW_BIG_MODEL = (
-    "https://raw.githubusercontent.com/exersalza/"
-    "FivemCipherFinder/bd1c3898ca2617005c58cbd465fd8e2a0c3d5fad/big.model"
-)
 
 # Prevent accidental overwrites through plugins
 _log = []
@@ -98,30 +90,6 @@ def __execute_hook(hook_name: str, *args, **kw) -> int:
     return 0
 
 
-def get_big_model_file() -> int:
-    """Get the big.model file from GitHub.
-
-    Returns
-    -------
-    int :
-        status code
-
-    """
-
-    if os.path.exists("./big.model"):
-        return 0
-
-    with open("big.model", "wb") as _file:
-        for chunk in requests.get(
-            _RAW_BIG_MODEL, stream=True, timeout=5
-        ).iter_content(chunk_size=8192):
-            if not chunk:
-                continue
-
-            _file.write(chunk)
-    return 0
-
-
 def validate_lines(lines: list) -> list[tuple]:
     """Validate the lines that are given through the 'lines' parameter.
 
@@ -141,47 +109,10 @@ def validate_lines(lines: list) -> list[tuple]:
 
     for ln, line in enumerate(lines, start=1):
         if x := do_regex(line, _REGEX):
-            # hopefully prevent false positives
-            if not do_gibberish_check([line]):
-                continue
-
             ret.append((ln, line, de_obfs(x, line)))
 
     __execute_hook("GetValidatedLines", ret)
     return ret
-
-
-def do_gibberish_check(lines: list) -> list[tuple[str, int, str]]:
-    """Do a check if the given lines are making any sens.
-    Can still throw false-positives
-
-    Parameters
-    ----------
-    lines : list
-        The lines from the current read file.
-
-    Returns
-    -------
-    list[tuple[str, int, str]]
-        A Tuple List with infected lines or false positives
-        as in `validate_lines`.
-
-    """
-    # should work for now
-    det = detector.create_from_model("./big.model")
-    l_counter = 1
-    matches = []
-
-    for i in lines:
-        if "local" in i and det.is_gibberish(rf"{i}"):
-            matches.append(
-                (l_counter, i, "Can't de obfuscate due to use of --v2")
-            )
-
-        l_counter += 1
-
-    __execute_hook("GetGibberishCheckMatches", matches)
-    return matches
 
 
 def prepare_log_line(**kw) -> int:
@@ -203,7 +134,7 @@ def prepare_log_line(**kw) -> int:
     line = kw.pop("line", "")  # Trigger line
     count = kw.pop("count", 0)  # global trigger count
     target = kw.pop("target", "")  # Decoded lines
-    logged = kw.pop("logged", {})  # dont print stuff twice
+    logged = kw.pop("logged", {})  # don't print stuff twice
 
     path = d.replace("\\", "/") + f"/{file}"
     url = ""
@@ -294,9 +225,6 @@ def check_file(
 
         match = validate_lines(lines)
         logged = {}
-
-        if args.v2:
-            match += do_gibberish_check(lines)
 
         if not match:
             return 0, count
@@ -455,16 +383,6 @@ def main(arg_list: list) -> int:
     )
 
     parser.add_argument(
-        "--v2",
-        action="store_true",
-        help="uses an extra algorithm to find gibberish "
-        "or randomly generated variable/function/table "
-        "names. it can introduce more false-positives "
-        "because of obfuscated scripts but "
-        "can help find ciphers.",
-    )
-
-    parser.add_argument(
         "-o",
         "--output",
         nargs=1,
@@ -472,19 +390,6 @@ def main(arg_list: list) -> int:
         "syntax: path/[filename]. please note to add an / "
         "to the end of the path when you don't want to use"
         " a custom filename.",
-    )
-
-    parser.add_argument(
-        "--no-del",
-        action="store_true",
-        help="debug command to not delete the big.model "
-        "file after the script finishes.",
-    )
-
-    parser.add_argument(
-        "--get-train-file",
-        action="store_true",
-        help="debug command to get the big.model file",
     )
 
     parser.add_argument(
@@ -523,10 +428,7 @@ def main(arg_list: list) -> int:
 
         __update_hooks(_plugs)
 
-    if args.get_train_file:
-        get_big_model_file()
-        return 0
-
+    # Iniate hooks
     __execute_hook("Init")
 
     pattern = "".join(
@@ -537,9 +439,6 @@ def main(arg_list: list) -> int:
     )
     local_path = args.path
     count = 0
-
-    # get the file everytime bc of new thingi
-    get_big_model_file()
 
     for d, _, files in os.walk(local_path):
         # skip excluded directories, but why you skip 'em?
@@ -555,16 +454,10 @@ def main(arg_list: list) -> int:
     # Write log
     red = green = white = ""
 
-    if "linux" in platform.platform().lower():
+    if not os.name == "nt":
         white, red, green = _COLORS
 
-    try:
-        if not args.no_del:
-            os.remove("big.model")
-    except FileNotFoundError:
-        pass
-
-    if _log:
+    if _log:  # this triggers if there is a cipher
         write_log_file(white=white, red=red, count=count, args=args)
 
         if args.no_wizard:
@@ -572,9 +465,12 @@ def main(arg_list: list) -> int:
 
         if y_n_validator(
             input(  # pylint: disable=bad-builtin
-                "Do you want to start the eraser wizard? [y/N] "
+                "Do you want to start the eraser wizard? files getting backed "
+                f"up in a directory named {_BACKUP_DIR} [y/N] "
             )
         ):
+            if not os.path.isdir(_BACKUP_DIR):
+                os.mkdir(_BACKUP_DIR)
             deleter_main(_del_lines)
 
         return 0

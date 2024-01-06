@@ -138,3 +138,4 @@ cars/
 CipherLog-*.txt
 *.test.*
 _plugins/
+.fcf_remove.bak/

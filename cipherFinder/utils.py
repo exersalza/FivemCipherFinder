@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import codecs
+import os
+import re
 
 import chardet
-
-ENCODING_TRANS = {"Windows-1254": "cp"}
 
 
 def find_encoding(name: str) -> codecs.CodecInfo | int:
@@ -28,3 +28,12 @@ def detect_encoding(file_path) -> (str, float):
         enc = "utf-8"
 
     return enc, result["confidence"]
+
+
+def fix_path(path: str) -> str:
+    path = re.sub(r"\\+|//+", "/", path)
+
+    if os.name == "nt":
+        return path.replace("/", "\\").replace("~", os.getenv("userprofile"))
+
+    return path
