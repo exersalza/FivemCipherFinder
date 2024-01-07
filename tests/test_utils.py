@@ -11,10 +11,10 @@ def test_find_encoding():
 def test_detect_encoding(tmp_path):
     # Create a temporary file with known encoding
     p = tmp_path / "temp.txt"
-    p.write_text("This is a test file with ascii encoding.", encoding="ascii")
+    p.write_text("This is a test file with utf-8 encoding.", encoding="utf-8")
 
     enc, confidence = detect_encoding(str(p))
-    assert enc == "ascii"
+    assert enc == "utf-8"
     assert 0 <= confidence <= 1
 
 

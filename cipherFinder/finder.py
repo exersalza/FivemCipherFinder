@@ -44,6 +44,8 @@ _del_lines = []
 _counter = {"failed": 0}
 _hooks = {"__blanc": _PluginDummy()}
 
+_args = {"skip": False}
+
 
 def __update_hooks(new_hooks: dict) -> int:
     """Update the Hook dict because of python can't
@@ -109,7 +111,15 @@ def validate_lines(lines: list) -> list[tuple]:
 
     for ln, line in enumerate(lines, start=1):
         if x := do_regex(line, _REGEX):
-            ret.append((ln, line, de_obfs(x, line)))
+            ret.append(
+                (
+                    ln,
+                    line,
+                    de_obfs(x, line)
+                    if not _args["skip"]
+                    else "Disabled de obfuscation",
+                )
+            )
 
     __execute_hook("GetValidatedLines", ret)
     return ret
@@ -413,8 +423,19 @@ def main(arg_list: list) -> int:
         help="Get remote plugins to your local environment.",
     )
 
+    parser.add_argument(
+        "--no-deobfs",
+        action="store_true",
+        help="Don't run the De Obfuscation part, can help when "
+        "you an MemoryError",
+    )
+
     args = parser.parse_args(arg_list)
     os.environ["DEBUG"] = str(DEBUG)
+
+    if not args.path:
+        print("No Path given to argument -p")
+        sys.exit(1)
 
     if args.get_remote_plugins:
         get_remote_plugins()
@@ -438,6 +459,7 @@ def main(arg_list: list) -> int:
         ]
     )
     local_path = args.path
+    _args["skip"] = args.no_deobfs
     count = 0
 
     for d, _, files in os.walk(local_path):
