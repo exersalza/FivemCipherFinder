@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.6.0)
+# FivemCipherFinder (v2.6.1)
 
 <div align="center">
     <h2> Visitors </h2>
@@ -56,6 +56,7 @@ To use FivemCipherFinder, you can run the `find-cipher` command with various opt
 - `--plug-dir`: Specify a Plugin directory. See the `plugins` directory for further information. Keep in mind, that the Script needs to be able to access the choosen directory.
 - `-w|--no-wizard`: Don't run the eraser wizard after the program ran.
 - `--get-remote-plugins`: Download the latest plugins from the remote repository.
+- `--no-deobfs`: Skip the De Obfuscation part, can help when you get the MemoryError error.
 
 Example Command: `find-cipher -v --plug-dir ~/cipherfinderPlugins`
 
@@ -85,6 +86,8 @@ If you encounter any issues with FivemCipherFinder, here are some troubleshootin
 3. On Windows, make sure that your Python scripts folder is added to your system's PATH variable. If the folder is missing, it will be shown as a warning during the pip installation. You can find instructions on how to add something to the PATH variable [here](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
    * Please also make sure to install Python from [Download](https://python.org/downloads/) and **not** from the Microsoft store.
    * When you install Python, please tick the "add to path" checkbox.
+
+4. Should you get an error called `MemoryError` try running the same command with the `--de-obfs` argument.
 
 ## Known False Positives
 
