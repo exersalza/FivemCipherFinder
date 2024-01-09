@@ -139,3 +139,4 @@ CipherLog-*.txt
 *.test.*
 _plugins/
 .fcf_remove.bak/
+dev.ps1
