@@ -29,6 +29,10 @@ FivemCipherFinder is a tool designed to assist in the removal of Ciphers from yo
 
 To install FivemCipherFinder, follow these steps:
 
+### New version
+Get the `install.ps1` script and run it, it'll do anything for you, you just have to run the finder by itself afterward. For more information press [here](POWERSHELL_INSTALL.md)
+
+### Old Version
 1. Make sure you have Python 3.8 or above installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
 
 2. Open your command prompt or terminal and run the following command to install FivemCipherFinder using pip:
