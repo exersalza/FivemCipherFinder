@@ -143,7 +143,7 @@ Feel free to contact me for any inquiries or support related to FivemCipherFinde
 
 
 ## Credits
-- exersalza -> Main Dev
+- [exersalza](https://github.com/exersalza) -> me (Main Dev)
 - [ZerxGit](https://github.com/ZerxGit) -> Inspiration for the whole Project
 - [Firav](https://github.com/Firav) -> Big baller in testing my stuff :D
 
