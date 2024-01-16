@@ -1,5 +1,5 @@
 $python_download_url = "https://www.python.org/ftp/python/3.12.1/python-3.12.1-amd64.exe"
-$python_path = ";$env:LOCALAPPDATA\Programs\Python\Python312"
+$python_path = "$env:LOCALAPPDATA\Programs\Python\Python312"
 
 function Test-StringContains
 {
@@ -39,7 +39,7 @@ function Get-Python
 
 
     $old = [System.Environment]::GetEnvironmentVariable('PATH', 'Machine')
-    $new = $old + $python_path + $python_path + "\Scripts"
+    $new = $old + $python_path + ";" + $python_path + "\Scripts;"
     [System.Environment]::SetEnvironmentVariable('PATH', $new, 'Machine')
     Write-Output "Path set, you should now be able to start an CMD and type pip install fivemcipherfinder"
 }
