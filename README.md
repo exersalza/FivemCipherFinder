@@ -88,6 +88,7 @@ If you encounter any issues with FivemCipherFinder, here are some troubleshootin
 2. If you are installing FivemCipherFinder using pip and encounter the error code `externally-managed-environment`, try adding the `--break-system-packages` flag to the pip command. This is a change in pip's internals in newer versions.
 
 3. On Windows, make sure that your Python scripts folder is added to your system's PATH variable. If the folder is missing, it will be shown as a warning during the pip installation. You can find instructions on how to add something to the PATH variable [here](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+   * Add your python path to the env paths, the default python installation path is `C:\Program Files\Python312` and `C:\Program Files\Python312\Scripts`
    * Please also make sure to install Python from [Download](https://python.org/downloads/) and **not** from the Microsoft store.
    * When you install Python, please tick the "add to path" checkbox.
 
