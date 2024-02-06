@@ -125,15 +125,19 @@ If you would like to contribute to FivemCipherFinder, you can open a pull reques
 You can add the following URLs to your hosts file or Firewall. See [here](https://docs.rackspace.com/docs/modify-your-hosts-file) if you're not sure how to edit the hosts file.
 
 ```
-127.0.0.1      docsfivem.com
-127.0.0.1      thedreamofficeem.com
-127.0.0.1      thedreamoffivem.com
-127.0.0.1      docsfivem.com
-127.0.0.1      cipher-panel.me
-127.0.0.1      ciphercheats.com
-127.0.0.1      keyx.clubt
-127.0.0.1      dark-utilities.xyz
-127.0.0.1      rpserveur.fr
+172.0.0.1       cipher-panel.me
+172.0.0.1       ciphercheats.com
+172.0.0.1       keyx.club
+172.0.0.1       dark-utilities.xyz
+172.0.0.1       ketamin.cc
+172.0.0.1       pqzskjptss.shop
+172.0.0.1       admin-panel.sbs
+172.0.0.1       malware-panel.io
+172.0.0.1       docsfivem.com
+172.0.0.1       thedreamofficeem.com
+172.0.0.1       thedreamoffivem.com
+172.0.0.1       rpserveur.fr
+172.0.0.1       abxcgraovp.pics
 ```
 
 Change default ports like RDP (3389), Ftp (21), SSH (22) and MySql (3306)
