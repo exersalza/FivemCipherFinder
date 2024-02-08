@@ -148,6 +148,15 @@ If you have any questions or need assistance that can't be resolved with the [Tr
 
 - Discord: exersalza / exersalza[>'-']>#1337 | [DE/EN]
 
+## Star History
+<a href="https://star-history.com/#exersalza/fivemcipherfinder&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=exersalza/fivemcipherfinder&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=exersalza/fivemcipherfinder&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=exersalza/fivemcipherfinder&type=Date" />
+  </picture>
+</a>
+
 
 ## Credits
 - [exersalza](https://github.com/exersalza) -> me (Main Dev)
