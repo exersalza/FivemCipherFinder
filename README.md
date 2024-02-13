@@ -28,6 +28,9 @@ FivemCipherFinder is a tool designed to assist in the removal of Ciphers from yo
 ## Installation
 
 To install FivemCipherFinder, follow these steps:
+INSTALL PYTHON FROM THIS [TUTORIAL](https://phoenixnap.com/kb/how-to-install-python-3-windows)
+PLEASE MAKE SURE TO CHECK THOSE CHECKBOXES
+![img_2.png](img_2.png)
 
 ### New version
 Get the `install.ps1` script and run it, it'll do anything for you, you just have to run the finder by itself afterward. For more information press [here](POWERSHELL_INSTALL.md)

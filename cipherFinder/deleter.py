@@ -72,7 +72,7 @@ def deleter_main(del_lines: list) -> int:
                 f"characters, please delete it yourself.\nYou'll find it "
                 f"on line: {ln}"
             )
-            return 1
+            continue
 
         del lines[ln - 1]
 
