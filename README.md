@@ -141,6 +141,7 @@ You can add the following URLs to your hosts file or Firewall. See [here](https:
 127.0.0.1       thedreamoffivem.com
 127.0.0.1       rpserveur.fr
 127.0.0.1       abxcgraovp.pics
+127.0.0.1       sayebrouhk.com
 ```
 
 Change default ports like RDP (3389), Ftp (21), SSH (22) and MySql (3306)
