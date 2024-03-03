@@ -140,3 +140,5 @@ CipherLog-*.txt
 _plugins/
 .fcf_remove.bak/
 dev.ps1
+
+*.lock

@@ -1,5 +1,6 @@
 use std::fs;
 use std::io::Read;
+use crate::de_obfs::de_obfs;
 use crate::utils::{CIPHER_REGEX, SIMPLE_URL_REGEX, update_confidence};
 
 pub struct ScannedFile {
@@ -12,7 +13,8 @@ impl ScannedFile {
     /// Creates new ScannedFile object and Scans the file in creation
     pub fn new(path: &str) -> std::io::Result<ScannedFile> {
         let mut ret = Self { path: path.to_string(), findings: vec![] };
-        ret.scan_file()?;
+        ret.scan_file()?; // let the caller handle any errors.
+        de_obfs();
 
         Ok(ret)
     }
@@ -26,6 +28,7 @@ impl ScannedFile {
         Ok(cont.split("\n").map(str::to_string).collect())
     }
 
+    /// Scans file
     fn scan_file(&mut self) -> std::io::Result<()> {
         let contents = self.get_file_contents()?;
         let mut i = 0;

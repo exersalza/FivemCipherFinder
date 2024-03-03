@@ -8,10 +8,11 @@ use cipher_finder::files;
 //   passive
 
 #[derive(Parser, Debug)]
-#[command("0.0.1", "FivemCipherFinder finds ciphers in your scripts.", long_about=None)]
+#[clap(name = "FivemCipherFinder", about = "FivemCipherFinder finds ciphers in your scripts.", long_about=None)]
 struct Args {
-    #[arg("-m", "--mode")]
+    #[clap(short = 'm', long = "mode")]
     mode: String
+    
 }
 
 

@@ -2,7 +2,19 @@ from cipherFinder.finder import (
     prepare_log_line,
     _log,
     get_filename,
+    _hooks,
+    __update_hooks
 )
+from cipherFinder.plugins import _PluginDummy
+
+
+def test___update_hooks():
+    new_hook = {
+        "Init": _PluginDummy(),
+        "__blanc": _PluginDummy()
+    }
+    __update_hooks({"Init": _PluginDummy()})
+    assert new_hook == _hooks
 
 
 def test_validate_lines():
