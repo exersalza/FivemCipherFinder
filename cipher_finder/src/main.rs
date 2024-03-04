@@ -8,13 +8,11 @@ use cipher_finder::files;
 //   passive
 
 #[derive(Parser, Debug)]
-#[clap(name = "FivemCipherFinder", about = "FivemCipherFinder finds ciphers in your scripts.", long_about=None)]
+#[clap(name = "FivemCipherFinder", about = "FivemCipherFinder finds ciphers in your scripts.", long_about = None)]
 struct Args {
     #[clap(short = 'm', long = "mode")]
-    mode: String
-    
+    mode: String,
 }
-
 
 fn main() -> std::io::Result<()> {
     let infected = files::ScannedFile::new("../cars/server.lua");

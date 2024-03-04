@@ -1,11 +1,11 @@
 use std::fs;
 use std::io::Read;
-use crate::de_obfs::de_obfs;
+
 use crate::utils::{CIPHER_REGEX, SIMPLE_URL_REGEX, update_confidence};
 
 pub struct ScannedFile {
     path: String,
-    findings: Vec<(i32, f32)>  // line number, confidence
+    findings: Vec<(i32, f32)>,  // line number, confidence
 }
 
 
@@ -14,7 +14,6 @@ impl ScannedFile {
     pub fn new(path: &str) -> std::io::Result<ScannedFile> {
         let mut ret = Self { path: path.to_string(), findings: vec![] };
         ret.scan_file()?; // let the caller handle any errors.
-        de_obfs();
 
         Ok(ret)
     }

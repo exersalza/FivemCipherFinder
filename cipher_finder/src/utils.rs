@@ -7,15 +7,16 @@ lazy_static! {
 }
 
 /// increases or decreases the confidence if the regex finds something or not.
-pub fn update_confidence(regex: &Regex, haystack: &str, confidence: &mut f32) -> bool {
-    match regex.is_match(haystack) {
-        true => {
-            *confidence += 0.5;
-            true
+pub fn update_confidence(regex: &Regex, haystack: &str, confidence: &mut f32) -> Option<bool> {
+    for found in regex.captures_iter(haystack) {
+        let mut yeet = 0;
+        println!("{found:?}");
+
+        if haystack.contains("\\x") { // do something different if not cleartext stuff. yes
+            // yeet = 1;
         }
-        false => {
-            // *confidence -= 0.5; // we don't need this, for now
-            false
-        }
+        println!("\n--------\n")
     }
+
+    Some(true)
 }
