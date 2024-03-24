@@ -128,6 +128,8 @@ If you would like to contribute to FivemCipherFinder, you can open a pull reques
 
 You can add the following URLs to your hosts file or Firewall. See [here](https://docs.rackspace.com/docs/modify-your-hosts-file) if you're not sure how to edit the hosts file.
 
+Also read [here](https://github.com/ProjecteEndCipher/Cipher-Panel) for further information.
+
 ```
 127.0.0.1       cipher-panel.me
 127.0.0.1       ciphercheats.com
