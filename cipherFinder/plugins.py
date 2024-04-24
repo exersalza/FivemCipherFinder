@@ -13,7 +13,6 @@ REMOTE_PLUGINS = [
 VALID_HOOKS = [
     "Init",
     "GetValidatedLines",
-    "GetGibberishCheckMatches",
     "GetLoggingValues",
     "GetFileContents",
     "GetRawFileContents",

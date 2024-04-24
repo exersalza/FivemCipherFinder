@@ -9,6 +9,7 @@
 [![PyTest](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pytest.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pytest.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![](https://tokei.rs/b1/github/exersalza/fivemcipherfinder)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/fivemcipherfinder?label=pypi%20downloads)
 
 
 - [Installation](#installation)
@@ -126,6 +127,8 @@ If you would like to contribute to FivemCipherFinder, you can open a pull reques
 ## Prevention
 
 You can add the following URLs to your hosts file or Firewall. See [here](https://docs.rackspace.com/docs/modify-your-hosts-file) if you're not sure how to edit the hosts file.
+
+Also read [here](https://github.com/ProjecteEndCipher/Cipher-Panel) and [here](https://github.com/ericstolly/cipher) for further information.
 
 ```
 127.0.0.1       cipher-panel.me
