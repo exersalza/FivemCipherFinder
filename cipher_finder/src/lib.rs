@@ -1,3 +1,4 @@
 pub mod de_obfs;
-pub mod files;
+pub mod file;
+pub mod os;
 pub mod utils;

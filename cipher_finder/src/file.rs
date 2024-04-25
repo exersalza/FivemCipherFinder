@@ -1,18 +1,20 @@
 use std::fs;
 use std::io::Read;
 
-use crate::utils::{CIPHER_REGEX, SIMPLE_URL_REGEX, update_confidence};
+use crate::utils::{update_confidence, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
 pub struct ScannedFile {
     path: String,
-    findings: Vec<(i32, f32)>,  // line number, confidence
+    findings: Vec<(i32, f32)>, // line number, confidence
 }
-
 
 impl ScannedFile {
     /// Creates new ScannedFile object and Scans the file in creation
     pub fn new(path: &str) -> std::io::Result<ScannedFile> {
-        let mut ret = Self { path: path.to_string(), findings: vec![] };
+        let mut ret = Self {
+            path: path.to_string(),
+            findings: vec![],
+        };
         ret.scan_file()?; // let the caller handle any errors.
 
         Ok(ret)
@@ -62,4 +64,3 @@ impl ScannedFile {
         self.findings.to_owned()
     }
 }
-
