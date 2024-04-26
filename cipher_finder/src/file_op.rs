@@ -1,18 +1,18 @@
-use std::fs;
 use std::io::Read;
+use std::{fs, path::PathBuf};
 
-use crate::utils::{update_confidence, CIPHER_REGEX, SIMPLE_URL_REGEX};
+use crate::utils::{check_regex, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
 pub struct ScannedFile {
-    path: String,
+    path: PathBuf,
     findings: Vec<(i32, f32)>, // line number, confidence
 }
 
 impl ScannedFile {
     /// Creates new ScannedFile object and Scans the file in creation
-    pub fn new(path: &str) -> std::io::Result<ScannedFile> {
+    pub fn new(path: PathBuf) -> std::io::Result<ScannedFile> {
         let mut ret = Self {
-            path: path.to_string(),
+            path,
             findings: vec![],
         };
         ret.scan_file()?; // let the caller handle any errors.
@@ -21,10 +21,16 @@ impl ScannedFile {
     }
 
     fn get_file_contents(&self) -> std::io::Result<Vec<String>> {
-        let mut cont = String::new();
+        println!("{:?}", self.path);
         let mut file = fs::File::open(&self.path)?;
+        let mut buf = vec![];
 
-        file.read_to_string(&mut cont)?;
+        match file.read_to_end(&mut buf) {
+            Err(e) => return Err(e),
+            _ => (),
+        };
+
+        let cont = String::from_utf8_lossy(&buf);
 
         Ok(cont.split("\n").map(str::to_string).collect())
     }
@@ -32,24 +38,19 @@ impl ScannedFile {
     /// Scans file
     fn scan_file(&mut self) -> std::io::Result<()> {
         let contents = self.get_file_contents()?;
-        let mut i = 0;
+        let mut ln = 0;
 
         for line in contents {
-            i += 1;
+            ln += 1;
 
-            if line == "\n" || line == "\r\n" {
+            if line.contains("\n") {
                 continue;
             }
 
             let line = line.as_str();
-            let mut confidence: f32 = 0.0;
 
-            update_confidence(&CIPHER_REGEX, line, &mut confidence);
-            update_confidence(&SIMPLE_URL_REGEX, line, &mut confidence);
-
-            if confidence != 0.0 {
-                self.add_infected(i, confidence);
-            }
+            check_regex(&CIPHER_REGEX, line);
+            check_regex(&SIMPLE_URL_REGEX, line);
         }
 
         Ok(())
@@ -57,7 +58,7 @@ impl ScannedFile {
 
     /// Add infected lines to the lister
     fn add_infected(&mut self, ln: i32, confidence: f32) {
-        &self.findings.push((ln, confidence));
+        let _ = &self.findings.push((ln, confidence));
     }
 
     pub fn get_infected(&self) -> Vec<(i32, f32)> {

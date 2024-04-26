@@ -1,7 +1,9 @@
 use clap::Parser;
 
+use crate::file_op::ScannedFile;
+
 pub mod de_obfs;
-pub mod file;
+pub mod file_op;
 pub mod os;
 pub mod utils;
 
@@ -22,15 +24,24 @@ struct Args {
     path: String,
 
     #[clap(short = 'e', long = "exclude", default_value = "")]
-    /// Exclude given Paths from Search
+    /// Exclude given Paths from Search. Syntax: foo,bar,foobar
     exclude: String,
+
+    #[clap(long = "include-git", default_value = "false")]
+    /// includes content of .gitignore files. Maybe increases the time it needs to filter out files
+    include_git: bool,
 }
 
 fn main() -> std::io::Result<()> {
+    // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
+    let all_paths = os::get_all_files(opt.path, Some(utils::format_dir_str(opt.exclude)));
+    let paths = utils::filter_viables(all_paths);
 
-    os::get_all_files(opt.path, Some(vec!["target".to_string()]));
-    // let infected = file::ScannedFile::new("../cars/server.lua");
-    // println!("{:?}", infected?.get_infected());
+    for i in paths {
+        let infected = ScannedFile::new(i);
+        println!("{:?}", infected?.get_infected());
+    }
+
     Ok(())
 }

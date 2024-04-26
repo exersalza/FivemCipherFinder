@@ -12,7 +12,9 @@ pub fn get_all_files(path: String, exclude: Option<Vec<String>>) -> Vec<PathBuf>
 
     walk_dir(path, &mut |e| ret.push(e));
 
-    if exclude.is_some() {
+    println!("{:?} ex", exclude);
+    // Filters
+    if exclude.is_some() && !exclude.as_ref().unwrap().is_empty() {
         let s = exclude
             .unwrap()
             .iter()
@@ -30,6 +32,10 @@ pub fn get_all_files(path: String, exclude: Option<Vec<String>>) -> Vec<PathBuf>
 
     ret
 }
+
+/********************************************************************************
+ *   FILE UTILS, DON'T HAVE TO BE PUBLIC, SO WE PUT THEM HERE AND NOT IN UTILS  *
+ ********************************************************************************/
 
 /// Filters a Vector with an Regex
 fn filter_vec(haystack: Vec<PathBuf>, needles: Regex) -> Vec<PathBuf> {

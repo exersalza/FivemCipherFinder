@@ -1,3 +1,5 @@
+use std::{path, vec};
+
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -7,23 +9,29 @@ lazy_static! {
 }
 
 /// increases or decreases the confidence if the regex finds something or not.
-pub fn update_confidence(regex: &Regex, haystack: &str, confidence: &mut f32) -> Option<bool> {
+pub fn check_regex(regex: &Regex, haystack: &str) -> bool {
     for found in regex.captures_iter(haystack) {
-        let mut yeet = 0;
-        println!("{found:?}");
-
-        if haystack.contains("\\x") { // do something different if not cleartext stuff. yes
-             // yeet = 1;
-        }
-        println!("\n--------\n")
+        println!("{found:?}")
     }
-
-    Some(true)
+    false
 }
 
 /// just a shortcut to split a string for further usage
 pub fn format_dir_str(s: String) -> Vec<String> {
+    if s.is_empty() {
+        // handle default
+        return vec![];
+    }
+
     s.split(",").map(|f| f.to_string()).collect()
+}
+
+/// Filter the walk_dir list for viable files like .lua etc.
+pub fn filter_viables(haystack: Vec<path::PathBuf>) -> Vec<path::PathBuf> {
+    haystack
+        .into_iter()
+        .filter(|i| i.extension().unwrap_or_default() == "lua")
+        .collect::<Vec<path::PathBuf>>()
 }
 
 #[cfg(test)]
@@ -38,6 +46,7 @@ mod test {
                 vec!["some".to_string(), "cool".to_string(), "string".to_string()],
             ),
             (String::from("some"), vec!["some".to_string()]),
+            (String::from(""), vec![]),
         ];
 
         for (s, t) in tests {
