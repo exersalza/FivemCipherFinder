@@ -36,6 +36,12 @@ fn main() -> std::io::Result<()> {
     // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
     let all_paths = os::get_all_files(opt.path, Some(utils::format_dir_str(opt.exclude)));
+
+    if opt.include_git {
+        let git_ignores = utils::find_gitignores(all_paths);
+        // do the readout part and add to exlude thingi
+    }
+
     let paths = utils::filter_viables(all_paths);
 
     for i in paths {

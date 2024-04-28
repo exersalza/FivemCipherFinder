@@ -22,8 +22,11 @@ pub fn format_dir_str(s: String) -> Vec<String> {
         // handle default
         return vec![];
     }
+    let ret = vec![];
 
-    s.split(",").map(|f| f.to_string()).collect()
+    for i in s.split(",").into_iter() {}
+
+    ret
 }
 
 /// Filter the walk_dir list for viable files like .lua etc.
@@ -33,6 +36,16 @@ pub fn filter_viables(haystack: Vec<path::PathBuf>) -> Vec<path::PathBuf> {
         .filter(|i| i.extension().unwrap_or_default() == "lua")
         .collect::<Vec<path::PathBuf>>()
 }
+
+/// find all .gitignore files in location system
+pub fn find_gitignores(haystack: Vec<path::PathBuf>) -> Vec<path::PathBuf> {
+    haystack
+        .into_iter()
+        .filter(|i| i.file_name().unwrap_or_default() == ".gitignore")
+        .collect::<Vec<path::PathBuf>>()
+}
+
+pub fn load_gitignores(stack: Vec<path::PathBuf>) {}
 
 #[cfg(test)]
 mod test {

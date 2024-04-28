@@ -1,6 +1,8 @@
 use std::io::Read;
 use std::{fs, path::PathBuf};
 
+use alloc::alloc;
+
 use crate::utils::{check_regex, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
 pub struct ScannedFile {
@@ -61,6 +63,7 @@ impl ScannedFile {
         let _ = &self.findings.push((ln, confidence));
     }
 
+    /// getter for the vec of infected lines
     pub fn get_infected(&self) -> Vec<(i32, f32)> {
         self.findings.to_owned()
     }
