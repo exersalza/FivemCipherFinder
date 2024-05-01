@@ -38,8 +38,10 @@ fn main() -> std::io::Result<()> {
     let all_paths = os::get_all_files(opt.path, Some(utils::format_dir_str(opt.exclude)));
 
     if opt.include_git {
-        let git_ignores = utils::find_gitignores(all_paths);
+        let git_ignores = utils::find_gitignores(all_paths.clone());
         // do the readout part and add to exlude thingi
+        let ignored = utils::load_gitignores(git_ignores);
+        println!("{:?}", ignored);
     }
 
     let paths = utils::filter_viables(all_paths);

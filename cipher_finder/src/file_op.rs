@@ -1,8 +1,6 @@
 use std::io::Read;
 use std::{fs, path::PathBuf};
 
-use alloc::alloc;
-
 use crate::utils::{check_regex, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
 pub struct ScannedFile {

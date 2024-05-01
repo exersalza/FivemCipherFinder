@@ -1,4 +1,9 @@
-use std::{path, vec};
+use std::{
+    collections::{HashMap, HashSet},
+    fs::OpenOptions,
+    io::Read,
+    path, vec,
+};
 
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -13,6 +18,7 @@ pub fn check_regex(regex: &Regex, haystack: &str) -> bool {
     for found in regex.captures_iter(haystack) {
         println!("{found:?}")
     }
+
     false
 }
 
@@ -22,9 +28,12 @@ pub fn format_dir_str(s: String) -> Vec<String> {
         // handle default
         return vec![];
     }
-    let ret = vec![];
 
-    for i in s.split(",").into_iter() {}
+    let mut ret = vec![];
+
+    for i in s.split(",").into_iter() {
+        ret.push(prepare_for_regex(i.to_string()));
+    }
 
     ret
 }
@@ -45,7 +54,62 @@ pub fn find_gitignores(haystack: Vec<path::PathBuf>) -> Vec<path::PathBuf> {
         .collect::<Vec<path::PathBuf>>()
 }
 
-pub fn load_gitignores(stack: Vec<path::PathBuf>) {}
+pub fn load_gitignores(stack: Vec<path::PathBuf>) -> HashSet<String> {
+    let mut ret = vec![];
+
+    for path in stack {
+        let mut file = match OpenOptions::new().read(true).open(path) {
+            Ok(f) => f,
+            Err(e) => panic!(
+                "Panicked while trying to open gitignore file with error: {}",
+                e
+            ),
+        };
+
+        let mut buf = vec![];
+        let _ = file.read_to_end(&mut buf);
+
+        let conts = String::from_utf8_lossy(&buf).into_owned().replace("\r", "");
+
+        for l in conts.split("\n") {
+            let comment_ind = l.find("#");
+            let mut t = l;
+
+            if comment_ind.is_some() {
+                t = &l[..comment_ind.unwrap()];
+            }
+
+            if t.is_empty() {
+                continue;
+            }
+
+            ret.push(prepare_for_regex(t.to_string()));
+        }
+    }
+
+    HashSet::from_iter(ret)
+}
+
+/// Prepares a string to be used in regex
+/// we want to replace stuff like "." with "\\." because in regex terms the dot is a wildcard
+/// for every character, that can break search results
+fn prepare_for_regex(s: String) -> String {
+    let mut s = s;
+    let translate_list: Vec<(&str, &str)> = vec![
+        (".", "\\."),
+        ("[", "\\["),
+        ("]", "\\]"),
+        ("(", "\\("),
+        (")", "\\)"),
+        ("*", ".*"),
+    ];
+
+    for (k, v) in translate_list.iter() {
+        s = s.replace(k, v);
+    }
+
+    s
+}
 
 #[cfg(test)]
 mod test {
@@ -65,5 +129,18 @@ mod test {
         for (s, t) in tests {
             assert!(format_dir_str(s) == t);
         }
+    }
+
+    #[test]
+    fn test_prepare_for_regex() {
+        assert!(prepare_for_regex(String::from("Testing.")) == String::from("Testing\\."));
+        assert!(prepare_for_regex(String::from("Testing.*")) == String::from("Testing\\..*"));
+        assert!(prepare_for_regex(String::from("*Testing.*")) == String::from(".*Testing\\..*"));
+        assert!(
+            prepare_for_regex(String::from("*[Testing].*")) == String::from(".*\\[Testing\\]\\..*")
+        );
+        assert!(
+            prepare_for_regex(String::from("*(Testing).*")) == String::from(".*\\(Testing\\)\\..*")
+        );
     }
 }
