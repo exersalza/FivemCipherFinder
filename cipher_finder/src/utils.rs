@@ -67,28 +67,35 @@ pub fn load_gitignores(stack: Vec<path::PathBuf>) -> HashSet<String> {
         let conts = String::from_utf8_lossy(&buf).into_owned().replace('\r', "");
 
         for l in conts.split('\n') {
-            let comment_ind = match l.find('#') {
-                Some(v) => v,
-                None => usize::max_value(),
-            };
-            let mut t = l;
-
-            // check if found index has no \ before it
-            if comment_ind != usize::max_value()
-                && !(comment_ind > 0 && l.chars().nth(comment_ind - 1).unwrap() == '\\')
-            {
-                t = &l[..comment_ind];
-            }
-
-            if t.is_empty() {
-                continue;
-            }
-
-            ret.push(prepare_for_regex(t.to_string()));
+            remove_comments(l, &mut ret);
         }
     }
 
     HashSet::from_iter(ret)
+}
+
+/// filters comments from a .gitignore line, also prepares the line
+/// for use in regex
+fn remove_comments(line: &str, target: &mut Vec<String>) {
+    let comment_ind = match line.find('#') {
+        Some(v) => v,
+        None => usize::max_value(),
+    };
+    let mut t = line;
+
+    // check if found index has no \ before it
+    if comment_ind != usize::max_value()
+        && !(comment_ind > 0 && line.chars().nth(comment_ind - 1).unwrap() == '\\')
+    {
+        t = &line[..comment_ind];
+    }
+
+    // empty lines wont be used in filter
+    if t.is_empty() {
+        return;
+    }
+
+    target.push(prepare_for_regex(t.trim().to_string()));
 }
 
 /// Prepares a string to be used in regex
@@ -147,5 +154,22 @@ mod test {
     }
 
     #[test]
-    fn test_load_gitignores() {}
+    fn test_load_gitignores() {
+        let input = vec![
+            "# test",
+            "",
+            r"\#remove_me",
+            "some_dir/ # this directy has stuff in it",
+        ];
+        let should = vec!["\\#remove_me", "some_dir/"];
+        let mut target = vec![];
+
+        for i in input {
+            remove_comments(i, &mut target);
+        }
+
+        for (i, v) in target.iter().enumerate() {
+            assert!(should[i] == v)
+        }
+    }
 }
