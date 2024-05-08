@@ -41,7 +41,7 @@ pub fn get_all_files(path: String, exclude: Option<Vec<String>>) -> Vec<PathBuf>
 fn filter_vec(haystack: Vec<PathBuf>, needles: Regex) -> Vec<PathBuf> {
     haystack
         .into_iter()
-        .filter(|buf| !needles.is_match(&buf.to_str().unwrap().to_string()))
+        .filter(|buf| !needles.is_match(buf.to_str().unwrap()))
         .collect::<Vec<PathBuf>>()
 }
 

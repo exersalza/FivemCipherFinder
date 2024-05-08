@@ -25,25 +25,19 @@ impl ScannedFile {
         let mut file = fs::File::open(&self.path)?;
         let mut buf = vec![];
 
-        match file.read_to_end(&mut buf) {
-            Err(e) => return Err(e),
-            _ => (),
-        };
+        file.read_to_end(&mut buf)?;
 
         let cont = String::from_utf8_lossy(&buf);
 
-        Ok(cont.split("\n").map(str::to_string).collect())
+        Ok(cont.split('\n').map(str::to_string).collect())
     }
 
     /// Scans file
     fn scan_file(&mut self) -> std::io::Result<()> {
         let contents = self.get_file_contents()?;
-        let mut ln = 0;
 
-        for line in contents {
-            ln += 1;
-
-            if line.contains("\n") {
+        for (ln, line) in contents.into_iter().enumerate() {
+            if line.contains('\n') {
                 continue;
             }
 

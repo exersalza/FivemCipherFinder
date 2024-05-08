@@ -1,9 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    fs::OpenOptions,
-    io::Read,
-    path, vec,
-};
+use std::{collections::HashSet, fs::OpenOptions, io::Read, path, usize, vec};
 
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -31,7 +26,7 @@ pub fn format_dir_str(s: String) -> Vec<String> {
 
     let mut ret = vec![];
 
-    for i in s.split(",").into_iter() {
+    for i in s.split(',') {
         ret.push(prepare_for_regex(i.to_string()));
     }
 
@@ -69,14 +64,20 @@ pub fn load_gitignores(stack: Vec<path::PathBuf>) -> HashSet<String> {
         let mut buf = vec![];
         let _ = file.read_to_end(&mut buf);
 
-        let conts = String::from_utf8_lossy(&buf).into_owned().replace("\r", "");
+        let conts = String::from_utf8_lossy(&buf).into_owned().replace('\r', "");
 
-        for l in conts.split("\n") {
-            let comment_ind = l.find("#");
+        for l in conts.split('\n') {
+            let comment_ind = match l.find('#') {
+                Some(v) => v,
+                None => usize::max_value(),
+            };
             let mut t = l;
 
-            if comment_ind.is_some() {
-                t = &l[..comment_ind.unwrap()];
+            // check if found index has no \ before it
+            if comment_ind != usize::max_value()
+                && !(comment_ind > 0 && l.chars().nth(comment_ind - 1).unwrap() == '\\')
+            {
+                t = &l[..comment_ind];
             }
 
             if t.is_empty() {
@@ -95,6 +96,7 @@ pub fn load_gitignores(stack: Vec<path::PathBuf>) -> HashSet<String> {
 /// for every character, that can break search results
 fn prepare_for_regex(s: String) -> String {
     let mut s = s;
+    // translate list to parse characters for regex
     let translate_list: Vec<(&str, &str)> = vec![
         (".", "\\."),
         ("[", "\\["),
@@ -143,4 +145,7 @@ mod test {
             prepare_for_regex(String::from("*(Testing).*")) == String::from(".*\\(Testing\\)\\..*")
         );
     }
+
+    #[test]
+    fn test_load_gitignores() {}
 }

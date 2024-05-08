@@ -16,5 +16,5 @@ pub fn de_obfuscate_char() -> Vec<char> {
 }
 
 pub fn de_obfuscate(line: String) {
-    let mut name_count: i32 = 0;
+    let mut _name_count: i32 = 0;
 }
