@@ -138,7 +138,7 @@ def de_obfs_code(line: str, ret: list) -> str:
         line = line.replace(t.strip('"'), v)
 
     # Prevent false positives, at least we hope it does
-    if not (table := get_table_contents(line)):
+    if not (table := get_table_contents(line)) or not names:
         return line
 
     t_re = rf"({names[0]}\[\d+\])"
@@ -173,7 +173,9 @@ def de_obfs_char(found: list) -> list:
             if not i:
                 continue
 
-            t += chr(int(i, 16))
+            if i not in ["u20"]:
+                t += chr(int(i, 16))
+
         temp.append((t, j[0]))
 
     return temp
