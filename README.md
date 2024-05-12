@@ -1,4 +1,4 @@
-# FivemCipherFinder (v2.6.2)
+# FivemCipherFinder (v2.6.3)
 
 <div align="center">
     <h2> Visitors </h2>
@@ -12,16 +12,21 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/fivemcipherfinder?label=pypi%20downloads)
 
 
-- [Installation](#installation)
-- [Usage](#Usage)
-- [Troubleshooting](#Troubleshooting)
-- [Plugins](#Plugins)
-- [Contributing](#Contributing)
-- [Todo](#todo)
-- [Disclaimer](#Disclaimer)
-- [Prevention](#Prevention)
-- [Contact](#Contact)
-- [Credits](#Credits)
+- [FivemCipherFinder (v2.6.3)](#fivemcipherfinder-v263)
+  - [Installation](#installation)
+    - [New version](#new-version)
+    - [Old Version](#old-version)
+  - [Usage](#usage)
+  - [Troubleshooting](#troubleshooting)
+  - [Known False Positives](#known-false-positives)
+  - [Plugins](#plugins)
+  - [Contributing](#contributing)
+  - [Todo](#todo)
+  - [Disclaimer](#disclaimer)
+  - [Prevention](#prevention)
+  - [Contact](#contact)
+  - [Star History](#star-history)
+  - [Credits](#credits)
 
 
 FivemCipherFinder is a tool designed to assist in the removal of Ciphers from your scripts. It is a console-based tool that can be used by anyone, regardless of their coding experience. The main purpose of FivemCipherFinder is to find and identify Ciphers in your script files.
