@@ -6,6 +6,14 @@ use regex::Regex;
 lazy_static! {
     pub static ref CIPHER_REGEX: Regex = Regex::new(r"(((\\[xu])([a-fA-F0-9]{2}))+)").unwrap();
     pub static ref SIMPLE_URL_REGEX: Regex = Regex::new(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)").unwrap();
+    static ref TRANSLATE_LIST: Vec<(String, String)> = Vec::from_iter([
+        (".".to_string(), "\\.".to_string()),
+        ("[".to_string(), "\\[".to_string()),
+        ("]".to_string(), "\\]".to_string()),
+        ("(".to_string(), "\\(".to_string()),
+        (")".to_string(), "\\)".to_string()),
+        ("*".to_string(), ".*".to_string()),
+    ]);
 }
 
 /// checks a regex
@@ -105,16 +113,7 @@ fn remove_comments(line: &str, target: &mut Vec<String>) {
 fn prepare_for_regex(s: String) -> String {
     let mut s = s;
     // translate list to parse characters for regex
-    let translate_list: Vec<(&str, &str)> = vec![
-        (".", "\\."),
-        ("[", "\\["),
-        ("]", "\\]"),
-        ("(", "\\("),
-        (")", "\\)"),
-        ("*", ".*"),
-    ];
-
-    for (k, v) in translate_list.iter() {
+    for (k, v) in TRANSLATE_LIST.iter() {
         s = s.replace(k, v);
     }
 

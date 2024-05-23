@@ -33,8 +33,9 @@ impl ScannedFile {
     }
 
     /// Scans file
-    fn scan_file(&mut self) -> std::io::Result<()> {
+    fn scan_file(&mut self) -> std::io::Result<Vec<(Vec<String>, usize)>> {
         let contents = self.get_file_contents()?;
+        let mut ret = vec![];
 
         for (ln, line) in contents.into_iter().enumerate() {
             if line.contains('\n') {
@@ -43,11 +44,11 @@ impl ScannedFile {
 
             let line = line.as_str();
 
-            println!("{:?}", check_regex(&CIPHER_REGEX, line));
-            check_regex(&SIMPLE_URL_REGEX, line);
+            ret.push((check_regex(&CIPHER_REGEX, line), ln));
+            ret.push((check_regex(&SIMPLE_URL_REGEX, line), ln));
         }
 
-        Ok(())
+        Ok(ret)
     }
 
     /// Add infected lines to the lister
