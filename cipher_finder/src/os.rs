@@ -1,5 +1,7 @@
+use core::panic;
 use std::{
-    fs::{self},
+    collections::HashSet,
+    fs,
     path::{self, PathBuf},
     str::FromStr,
 };
@@ -7,7 +9,7 @@ use std::{
 use regex::Regex;
 
 /// Gets all files in subdirectories
-pub fn get_all_files(path: String, exclude: Option<Vec<String>>) -> Vec<PathBuf> {
+pub fn get_all_files(path: String, exclude: Option<HashSet<String>>) -> Vec<PathBuf> {
     let mut ret = Vec::new();
 
     walk_dir(path, &mut |e| ret.push(e));
@@ -47,7 +49,18 @@ fn filter_vec(haystack: Vec<PathBuf>, needles: Regex) -> Vec<PathBuf> {
 
 /// Walks through the given directory
 fn walk_dir(path: String, cb: &mut impl FnMut(path::PathBuf)) {
-    for i in fs::read_dir(path).unwrap() {
+    let f = match fs::read_dir(&path) {
+        Err(e) => {
+            println!("Can't open {} {}", path, e.kind());
+            return;
+        }
+        Ok(v) => {
+            println!("{v:?}");
+            v
+        }
+    };
+
+    for i in f {
         match i {
             Ok(dir) => {
                 // we dont want to return here, also dont remove the else ples

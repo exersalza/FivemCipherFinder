@@ -20,8 +20,8 @@ impl ScannedFile {
         Ok(ret)
     }
 
+    /// gets the file contents, converts it to an utf8 but lossy
     fn get_file_contents(&self) -> std::io::Result<Vec<String>> {
-        println!("{:?}", self.path);
         let mut file = fs::File::open(&self.path)?;
         let mut buf = vec![];
 
@@ -43,7 +43,7 @@ impl ScannedFile {
 
             let line = line.as_str();
 
-            check_regex(&CIPHER_REGEX, line);
+            println!("{:?}", check_regex(&CIPHER_REGEX, line));
             check_regex(&SIMPLE_URL_REGEX, line);
         }
 

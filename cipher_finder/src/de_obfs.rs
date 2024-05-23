@@ -7,7 +7,7 @@ lazy_static! {
         "towlie", "things",
     ];
     static ref TABLE_REGEX: Regex = Regex::new(r"(\{([^{}]+)\})").unwrap();
-    static ref VAR_REGEX: Regex = Regex::new(r"((local(\s+)?(\w+)))").unwrap();
+    static ref VAR_REGEX: Regex = Regex::new(r"(((local(\s+)?)?(=\w?)(\w+)))").unwrap();
     static ref FUNC_REGEX: Regex = Regex::new(r"(function\s*\(((\w+(,(\s?))?)*)\))").unwrap();
 }
 

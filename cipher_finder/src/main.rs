@@ -35,16 +35,20 @@ struct Args {
 fn main() -> std::io::Result<()> {
     // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
-    let all_paths = os::get_all_files(opt.path, Some(utils::format_dir_str(opt.exclude)));
+    let exludes = utils::format_dir_str(opt.exclude);
+    let mut all_paths = os::get_all_files(opt.path.clone(), Some(exludes.clone()));
+    // let mut ignores = opt.exclude;
 
     if opt.include_git {
-        let git_ignores = utils::find_gitignores(all_paths.clone());
+        let git_ignores = utils::filter_viables(all_paths.clone(), "gitignore");
+
         // do the readout part and add to exlude thingi
-        let ignored = utils::load_gitignores(git_ignores);
-        println!("{:?}", ignored);
+        let mut ignored = utils::parse_gitignores(git_ignores);
+        ignored.extend(exludes);
+        all_paths = os::get_all_files(opt.path, Some(ignored));
     }
 
-    let paths = utils::filter_viables(all_paths);
+    let paths = utils::filter_viables(all_paths, "lua");
 
     for i in paths {
         let infected = ScannedFile::new(i);

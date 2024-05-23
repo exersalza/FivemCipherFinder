@@ -8,48 +8,49 @@ lazy_static! {
     pub static ref SIMPLE_URL_REGEX: Regex = Regex::new(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)").unwrap();
 }
 
-/// increases or decreases the confidence if the regex finds something or not.
-pub fn check_regex(regex: &Regex, haystack: &str) -> bool {
-    for found in regex.captures_iter(haystack) {
-        println!("{found:?}")
-    }
+/// checks a regex
+pub fn check_regex(regex: &Regex, haystack: &str) -> Vec<String> {
+    let f: Vec<String> = regex
+        .captures_iter(haystack)
+        .filter_map(|found| found.get(0).map(|j| j.as_str().to_string()))
+        .collect();
 
-    false
+    f
 }
 
 /// just a shortcut to split a string for further usage
-pub fn format_dir_str(s: String) -> Vec<String> {
+pub fn format_dir_str(s: String) -> HashSet<String> {
     if s.is_empty() {
         // handle default
-        return vec![];
+        return HashSet::new();
     }
 
-    let mut ret = vec![];
-
-    for i in s.split(',') {
-        ret.push(prepare_for_regex(i.to_string()));
-    }
-
-    ret
+    s.split(',')
+        .into_iter()
+        .map(|i| prepare_for_regex(i.to_string()))
+        .collect()
 }
 
-/// Filter the walk_dir list for viable files like .lua etc.
-pub fn filter_viables(haystack: Vec<path::PathBuf>) -> Vec<path::PathBuf> {
+/// Filter the walk_dir list for viable files like "lua" etc.
+///
+/// Scans the PathBuf vector for the needle, the needle doesn't have to have a [dot] infront of it.
+pub fn filter_viables(haystack: Vec<path::PathBuf>, needle: &str) -> Vec<path::PathBuf> {
     haystack
         .into_iter()
-        .filter(|i| i.extension().unwrap_or_default() == "lua")
-        .collect::<Vec<path::PathBuf>>()
+        .filter(|i| {
+            // rust things
+            let f = i
+                .file_name()
+                .unwrap_or_default()
+                .to_str()
+                .unwrap_or_default();
+            f.split('.').last().unwrap_or_default() == needle
+        })
+        .collect()
 }
 
-/// find all .gitignore files in location system
-pub fn find_gitignores(haystack: Vec<path::PathBuf>) -> Vec<path::PathBuf> {
-    haystack
-        .into_iter()
-        .filter(|i| i.file_name().unwrap_or_default() == ".gitignore")
-        .collect::<Vec<path::PathBuf>>()
-}
-
-pub fn load_gitignores(stack: Vec<path::PathBuf>) -> HashSet<String> {
+/// Get the contents of gitignore files based on the input vector
+pub fn parse_gitignores(stack: Vec<path::PathBuf>) -> HashSet<String> {
     let mut ret = vec![];
 
     for path in stack {
@@ -129,10 +130,17 @@ mod test {
         let tests = vec![
             (
                 String::from("some,cool,string"),
-                vec!["some".to_string(), "cool".to_string(), "string".to_string()],
+                HashSet::from_iter(vec![
+                    "some".to_string(),
+                    "cool".to_string(),
+                    "string".to_string(),
+                ]),
             ),
-            (String::from("some"), vec!["some".to_string()]),
-            (String::from(""), vec![]),
+            (
+                String::from("some"),
+                HashSet::from_iter(vec!["some".to_string()]),
+            ),
+            (String::from(""), HashSet::new()),
         ];
 
         for (s, t) in tests {
