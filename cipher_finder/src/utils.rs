@@ -14,17 +14,25 @@ lazy_static! {
         (")".to_string(), "\\)".to_string()),
         ("*".to_string(), ".*".to_string()),
     ]);
-    pub static ref SCAN_LEVEL: Mutex<Vec<String>> = Mutex::new(vec![]);
+    pub static ref SCAN_LEVEL: Mutex<ScanLevel> = Mutex::new(ScanLevel::Standard);
+}
+
+/// Defines the Scanlevel
+/// Standard -> Uses the default regexes -> URL, HexCode
+/// Aggressive -> Uses more regexes, but yields more false positives -> Lua IO Operations
+#[derive(clap::ValueEnum, Debug, Clone)]
+pub enum ScanLevel {
+    /// Standard scan
+    Standard,
+    Aggressive,
 }
 
 /// checks a regex
 pub fn check_regex(regex: &Regex, haystack: &str) -> Vec<String> {
-    let f: Vec<String> = regex
+    regex
         .captures_iter(haystack)
         .filter_map(|found| found.get(0).map(|j| j.as_str().to_string()))
-        .collect();
-
-    f
+        .collect()
 }
 
 /// just a shortcut to split a string for further usage

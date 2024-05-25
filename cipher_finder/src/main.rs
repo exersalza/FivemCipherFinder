@@ -1,4 +1,5 @@
 use clap::Parser;
+use utils::ScanLevel;
 
 use crate::file_op::ScannedFile;
 
@@ -11,13 +12,12 @@ pub mod utils;
 //  scan modes: // defines how many patterns will be used to scan one file
 //   aggressive // all
 //   passive // main patterns, hex detection
-
 #[derive(Parser, Debug)]
 #[clap(name = "FivemCipherFinder", about = "FivemCipherFinder finds ciphers in your scripts.", long_about = None)]
 struct Args {
-    #[clap(short = 'm', long = "mode", default_value = "aggressive")]
+    #[clap(short = 'm', long = "mode", default_value = "standard")]
     /// Scan mode
-    mode: String,
+    mode: ScanLevel,
 
     #[clap(short = 'p', long = "path", default_value = ".")]
     /// Paht to the Directory where your server is located
@@ -35,9 +35,13 @@ struct Args {
 fn main() -> std::io::Result<()> {
     // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
+    match utils::SCAN_LEVEL.try_lock() {
+        Ok(mut l) => *l = opt.mode,
+        Err(f) => panic!("Couldn't get SCAN_LEVEL lock -> {f:?}"),
+    };
+
     let exludes = utils::format_dir_str(opt.exclude);
     let mut all_paths = os::get_all_files(opt.path.clone(), Some(exludes.clone()));
-    // let mut ignores = opt.exclude;
 
     if opt.include_git {
         let git_ignores = utils::filter_viables(all_paths.clone(), "gitignore");
