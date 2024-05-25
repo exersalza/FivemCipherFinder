@@ -5,7 +5,7 @@ use crate::utils::{check_regex, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
 pub struct ScannedFile {
     path: PathBuf,
-    findings: Vec<(i32, f32)>, // line number, confidence
+    findings: Vec<(usize, Vec<String>)>, // line number, confidence
 }
 
 impl ScannedFile {
@@ -33,9 +33,8 @@ impl ScannedFile {
     }
 
     /// Scans file
-    fn scan_file(&mut self) -> std::io::Result<Vec<(Vec<String>, usize)>> {
+    fn scan_file(&mut self) -> std::io::Result<()> {
         let contents = self.get_file_contents()?;
-        let mut ret = vec![];
 
         for (ln, line) in contents.into_iter().enumerate() {
             if line.contains('\n') {
@@ -44,20 +43,24 @@ impl ScannedFile {
 
             let line = line.as_str();
 
-            ret.push((check_regex(&CIPHER_REGEX, line), ln));
-            ret.push((check_regex(&SIMPLE_URL_REGEX, line), ln));
+            self.add_infected(ln, check_regex(&CIPHER_REGEX, line));
+            self.add_infected(ln, check_regex(&SIMPLE_URL_REGEX, line));
         }
 
-        Ok(ret)
+        Ok(())
     }
 
     /// Add infected lines to the lister
-    fn add_infected(&mut self, ln: i32, confidence: f32) {
-        let _ = &self.findings.push((ln, confidence));
+    fn add_infected(&mut self, ln: usize, trigger: Vec<String>) {
+        if trigger.is_empty() {
+            return;
+        }
+
+        let _ = self.findings.push((ln, trigger));
     }
 
     /// getter for the vec of infected lines
-    pub fn get_infected(&self) -> Vec<(i32, f32)> {
-        self.findings.to_owned()
+    pub fn get_infected(&self) -> &Vec<(usize, Vec<String>)> {
+        self.findings.as_ref()
     }
 }

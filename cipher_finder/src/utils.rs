@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fs::OpenOptions, io::Read, path, usize, vec};
+use std::{collections::HashSet, fs::OpenOptions, io::Read, path, sync::Mutex, usize, vec};
 
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -14,6 +14,7 @@ lazy_static! {
         (")".to_string(), "\\)".to_string()),
         ("*".to_string(), ".*".to_string()),
     ]);
+    pub static ref SCAN_LEVEL: Mutex<Vec<String>> = Mutex::new(vec![]);
 }
 
 /// checks a regex
