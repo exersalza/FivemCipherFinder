@@ -1,0 +1,37 @@
+name: Rust test and stuff
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  clientTest:
+    strategy:
+      matrix: 
+        os: ["ubuntu-latest", "windows-latest"]
+
+    name: Testing on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Cache   
+      uses: actions/cache@v4.0.2
+      with:
+        path: |
+          ./client/target/debug/
+          ./client/target/release/
+          ~/.cargo/
+        restore-keys: |
+          cargo-cache-${{ matrix.os }}
+        key: cargo-cache-${{ matrix.os }}
+      
+    - name: Build
+      run: | 
+        cd cipher_finder
+        cargo build --release
+    - name: Test
+      run: |
+        cd cipher_finder
+        cargo test
