@@ -1,7 +1,7 @@
 use std::io::Read;
 use std::{fs, path::PathBuf};
 
-use crate::utils::{check_regex, CIPHER_REGEX, SIMPLE_URL_REGEX};
+use crate::utils::{self, check_regex, ScanLevel, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
 pub struct ScannedFile {
     path: PathBuf,
@@ -35,6 +35,10 @@ impl ScannedFile {
     /// Scans file
     fn scan_file(&mut self) -> std::io::Result<()> {
         let contents = self.get_file_contents()?;
+        let _scan_mode = match utils::SCAN_LEVEL.try_lock() {
+            Ok(v) => v.clone(),
+            Err(_) => ScanLevel::Standard,
+        };
 
         for (ln, line) in contents.into_iter().enumerate() {
             if line.contains('\n') {
@@ -42,7 +46,7 @@ impl ScannedFile {
             }
 
             let line = line.as_str();
-
+            //todo implement modes here somehow
             self.add_infected(ln, check_regex(&CIPHER_REGEX, line));
             self.add_infected(ln, check_regex(&SIMPLE_URL_REGEX, line));
         }
@@ -50,7 +54,7 @@ impl ScannedFile {
         Ok(())
     }
 
-    /// Add infected lines to the lister
+    /// add infected lines to the lister
     fn add_infected(&mut self, ln: usize, trigger: Vec<String>) {
         if trigger.is_empty() {
             return;

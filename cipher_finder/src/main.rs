@@ -23,13 +23,25 @@ struct Args {
     /// Paht to the Directory where your server is located
     path: String,
 
-    #[clap(short = 'e', long = "exclude", default_value = "")]
+    #[clap(short = 'x', long = "exclude", default_value = "")]
     /// Exclude given Paths from Search. Syntax: foo,bar,foobar
     exclude: String,
 
     #[clap(long = "include-git", default_value = "false")]
     /// includes content of .gitignore files. Maybe increases the time it needs to filter out files
     include_git: bool,
+
+    /// Prevents logs from being created
+    #[clap(short = 'n', long = "no-log", default_value = "false")]
+    no_log: bool,
+
+    /// Prints some information
+    #[clap(short = 'v', default_value = "false")]
+    simple_verbose: bool,
+
+    /// Prints even more information
+    #[clap(long = "verbose", default_value = "false")]
+    verbose: bool,
 }
 
 fn main() -> std::io::Result<()> {

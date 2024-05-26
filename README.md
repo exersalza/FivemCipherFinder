@@ -5,12 +5,6 @@
     <img src="https://profile-counter.glitch.me/FivemCipherFinder/count.svg" />
 </div>
 
-[![Pylint and Flake8](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pylint.yml)
-[![PyTest](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pytest.yml/badge.svg)](https://github.com/exersalza/FivemCipherFinder/actions/workflows/pytest.yml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-![](https://tokei.rs/b1/github/exersalza/fivemcipherfinder)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/fivemcipherfinder?label=pypi%20downloads)
-
 
 - [Installation](#installation)
 - [Usage](#Usage)
@@ -27,31 +21,6 @@
 FivemCipherFinder is a tool designed to assist in the removal of Ciphers from your scripts. It is a console-based tool that can be used by anyone, regardless of their coding experience. The main purpose of FivemCipherFinder is to find and identify Ciphers in your script files.
 
 ## Installation
-
-To install FivemCipherFinder, follow these steps:
-INSTALL PYTHON FROM THIS [TUTORIAL](https://phoenixnap.com/kb/how-to-install-python-3-windows)
-PLEASE MAKE SURE TO CHECK THOSE CHECKBOXES
-![img_2.png](img_2.png)
-
-### New version
-Get the `install.ps1` script and run it, it'll do anything for you, you just have to run the finder by itself afterward. For more information press [here](POWERSHELL_INSTALL.md)
-
-### Old Version
-1. Make sure you have Python 3.8 or above installed on your system. If not, you can download the latest version of Python from the official website [here](https://python.org/downloads/).
-
-2. Open your command prompt or terminal and run the following command to install FivemCipherFinder using pip:
-   ```
-   pip install FivemCipherFinder
-   ```
-
-   Alternatively, you can download the latest release of FivemCipherFinder from the GitHub repository [here](https://github.com/exersalza/FivemCipherFinder/releases) and unpack it manually.
-   1. Clone the Repo with one of those 2 commands: `git clone https://github.com/exersalza/FivemCipherFinder` or `git clone git@github.com:exersalza/FivemCipherFinder`
-   2. Change into the directory you just cloned with: `cd FivemCipherFinder`
-   3. To build and run use this Command: `python3 -m build . && pip install . --user`. Alternatively create a local venv to not interfere with other project dependencies: `python3 -m venv venv`. You can activate it with `.\venv\Scripts\activate.bat` on Windows or `source venv/bin/activate` on unix-like systems.
-
-   **Note:** If you are using a Windows-based system, make sure you have added Python to your environment variables. You can test this by typing `python --version` into your command prompt or terminal. If Python is not recognized, you may need to add it to your system's PATH variable. You can find instructions on how to do this [here](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
-
-3. Once installed, you can use the `find-cipher` command in your server's resources directory to start using FivemCipherFinder.
 
 ## Usage
 

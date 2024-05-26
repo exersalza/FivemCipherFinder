@@ -20,7 +20,7 @@ lazy_static! {
 /// Defines the Scanlevel
 /// Standard -> Uses the default regexes -> URL, HexCode
 /// Aggressive -> Uses more regexes, but yields more false positives -> Lua IO Operations
-#[derive(clap::ValueEnum, Debug, Clone)]
+#[derive(clap::ValueEnum, Debug, Clone, PartialEq)]
 pub enum ScanLevel {
     /// Standard scan
     Standard,
