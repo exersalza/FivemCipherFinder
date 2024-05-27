@@ -35,7 +35,7 @@ impl ScannedFile {
     /// Scans file
     fn scan_file(&mut self) -> std::io::Result<()> {
         let contents = self.get_file_contents()?;
-        let _scan_mode = match utils::SCAN_LEVEL.try_lock() {
+        let scan_mode = match utils::SCAN_LEVEL.try_lock() {
             Ok(v) => v.clone(),
             Err(_) => ScanLevel::Standard,
         };
@@ -47,6 +47,9 @@ impl ScannedFile {
 
             let line = line.as_str();
             //todo implement modes here somehow
+            if scan_mode.eq(&ScanLevel::Aggressive) {
+                println!("aggressive mode active");
+            }
             self.add_infected(ln, check_regex(&CIPHER_REGEX, line));
             self.add_infected(ln, check_regex(&SIMPLE_URL_REGEX, line));
         }
