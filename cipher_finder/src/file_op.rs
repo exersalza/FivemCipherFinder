@@ -3,9 +3,10 @@ use std::{fs, path::PathBuf};
 
 use crate::utils::{self, check_regex, ScanLevel, CIPHER_REGEX, SIMPLE_URL_REGEX};
 
+#[derive(Debug)]
 pub struct ScannedFile {
     path: PathBuf,
-    findings: Vec<(usize, Vec<String>)>, // line number, confidence
+    findings: Vec<(usize, String, Vec<String>)>, // line number, confidence
 }
 
 impl ScannedFile {
@@ -50,24 +51,24 @@ impl ScannedFile {
             if scan_mode.eq(&ScanLevel::Aggressive) {
                 println!("aggressive mode active");
             }
-            self.add_infected(ln, check_regex(&CIPHER_REGEX, line));
-            self.add_infected(ln, check_regex(&SIMPLE_URL_REGEX, line));
+            self.add_infected(ln, line, check_regex(&CIPHER_REGEX, line));
+            self.add_infected(ln, line, check_regex(&SIMPLE_URL_REGEX, line));
         }
 
         Ok(())
     }
 
     /// add infected lines to the lister
-    fn add_infected(&mut self, ln: usize, trigger: Vec<String>) {
+    fn add_infected(&mut self, ln: usize, line: &str, trigger: Vec<String>) {
         if trigger.is_empty() {
             return;
         }
 
-        let _ = self.findings.push((ln, trigger));
+        let _ = self.findings.push((ln, line.to_string(), trigger));
     }
 
     /// getter for the vec of infected lines
-    pub fn get_infected(&self) -> &Vec<(usize, Vec<String>)> {
+    pub fn get_infected(&self) -> &Vec<(usize, String, Vec<String>)> {
         self.findings.as_ref()
     }
 }

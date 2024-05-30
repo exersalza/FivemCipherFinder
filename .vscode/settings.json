@@ -2,5 +2,6 @@
     "python.testing.pytestArgs": ["tests"],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "intel-corporation.oneapi-analysis-configurator.binary-path": "e:\\development\\python\\fivemcipherfinder\\cipher_finder\\target\\debug\\cipher_finder.exe"
+    "intel-corporation.oneapi-analysis-configurator.binary-path": "e:\\development\\python\\fivemcipherfinder\\cipher_finder\\target\\debug\\cipher_finder.exe",
+    "discord.enabled": true
 }

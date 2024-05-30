@@ -1,3 +1,5 @@
+//!
+#[warn(missing_debug_implementations, missing_docs)]
 use clap::Parser;
 use utils::ScanLevel;
 
@@ -47,6 +49,7 @@ struct Args {
 fn main() -> std::io::Result<()> {
     // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
+
     match utils::SCAN_LEVEL.try_lock() {
         Ok(mut l) => *l = opt.mode,
         Err(f) => panic!("Couldn't get SCAN_LEVEL lock -> {f:?}"),
