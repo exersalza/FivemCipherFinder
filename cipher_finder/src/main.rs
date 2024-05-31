@@ -7,6 +7,7 @@ use crate::file_op::ScannedFile;
 
 pub mod de_obfs;
 pub mod file_op;
+pub mod log;
 pub mod os;
 pub mod utils;
 

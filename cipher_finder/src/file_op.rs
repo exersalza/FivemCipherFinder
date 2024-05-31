@@ -51,6 +51,7 @@ impl ScannedFile {
             if scan_mode.eq(&ScanLevel::Aggressive) {
                 println!("aggressive mode active");
             }
+
             self.add_infected(ln, line, check_regex(&CIPHER_REGEX, line));
             self.add_infected(ln, line, check_regex(&SIMPLE_URL_REGEX, line));
         }
