@@ -54,10 +54,7 @@ fn walk_dir(path: String, cb: &mut impl FnMut(path::PathBuf)) {
             println!("Can't open {} {}", path, e.kind());
             return;
         }
-        Ok(v) => {
-            println!("{v:?}");
-            v
-        }
+        Ok(v) => v,
     };
 
     for i in f {

@@ -16,7 +16,7 @@ impl ScannedFile {
             path,
             findings: vec![],
         };
-        ret.scan_file()?; // let the caller handle any errors.
+        ret.scan_file()?;
 
         Ok(ret)
     }

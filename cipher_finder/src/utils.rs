@@ -56,14 +56,19 @@ pub fn filter_viables(haystack: Vec<path::PathBuf>, needle: &str) -> Vec<path::P
         .into_iter()
         .filter(|i| {
             // rust things
-            let f = i
-                .file_name()
-                .unwrap_or_default()
-                .to_str()
-                .unwrap_or_default();
-            f.split('.').last().unwrap_or_default() == needle
+            get_ext(i).unwrap_or_default() == needle
         })
         .collect()
+}
+
+/// Gets the Extension of a file
+pub fn get_ext(file: &path::PathBuf) -> Option<&str> {
+    let f = file
+        .file_name()
+        .unwrap_or_default()
+        .to_str()
+        .unwrap_or_default();
+    f.split('.').last()
 }
 
 /// Get the contents of gitignore files based on the input vector

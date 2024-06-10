@@ -1,6 +1,7 @@
 //!
-#[warn(missing_debug_implementations, missing_docs)]
+#[warn(missing_debug_implementations, missing_docs, clippy::all)]
 use clap::Parser;
+use log::Logging;
 use utils::ScanLevel;
 
 use crate::file_op::ScannedFile;
@@ -40,16 +41,18 @@ struct Args {
 
     /// Prints some information
     #[clap(short = 'v', default_value = "false")]
-    simple_verbose: bool,
+    verbose: bool,
 
     /// Prints even more information
     #[clap(long = "verbose", default_value = "false")]
-    verbose: bool,
+    very_verbose: bool,
 }
 
 fn main() -> std::io::Result<()> {
     // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
+    let log = Logging::new(opt.verbose, opt.very_verbose);
+    let _ = log.write();
 
     match utils::SCAN_LEVEL.try_lock() {
         Ok(mut l) => *l = opt.mode,
