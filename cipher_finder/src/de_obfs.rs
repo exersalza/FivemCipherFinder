@@ -15,6 +15,12 @@ pub fn de_obfuscate_char() -> Vec<char> {
     todo!()
 }
 
-pub fn de_obfuscate(_line: String) {
-    let mut _name_count: i32 = 0;
+pub fn de_obfuscate(
+    infected: Vec<(usize, String, Vec<String>)>,
+) -> Vec<(usize, String, Vec<String>)> {
+    for (ln, line, trigger) in infected.iter() {
+        println!("{ln}");
+    }
+
+    infected
 }

@@ -1,9 +1,11 @@
 use std::fmt;
 use std::fs;
 use std::io;
+use std::io::Write;
 
 use crate::utils::get_ext;
 
+#[derive(Debug, PartialEq)]
 pub enum Verbosity {
     None,
     Verbose,
@@ -45,37 +47,55 @@ impl Logging {
     /// ## Returns
     /// Returns an Result with the written bytes on success
     pub fn write(&self) -> io::Result<usize> {
-        let mut id = 0;
+        if self.mode.eq(&Verbosity::None) {
+            return Ok(0);
+        }
 
-        for i in fs::read_dir(".").unwrap() {
-            if let Ok(j) = i {
-                let p = j.path();
-                let tp = p.to_str().unwrap_or("whyisliamnothere.txt");
+        let id = get_last_id();
+        let mut written_bytes: usize = 0;
 
-                if !tp.starts_with("CipherLog-") || !j.path().is_file() {
-                    continue;
-                };
+        let mut handle = fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(format!("./CipherLog-{id}.txt"))?;
 
-                let f = tp.replace(get_ext(&p).unwrap_or(".txt"), "");
-                let f = f.replace("./CipherLog-", "");
-
-                println!("{f}");
-
-                id = if let Ok(g) = f.parse::<i32>() {
-                    println!("ok");
-                    g + 1
-                } else {
-                    println!("not ok");
-                    0
-                }
+        for msg in &self.log {
+            if let Ok(v) = handle.write(msg.as_bytes()) {
+                written_bytes = written_bytes + v;
+            } else {
             }
         }
 
-        let _handle = fs::OpenOptions::new()
-            .write(true)
-            .create(true)
-            .open(format!("./CipherLog-{id}.txt"));
-
-        Ok(0)
+        Ok(written_bytes)
     }
+}
+
+/// Gets the highest CipherLog id that can be found in the current directory
+fn get_last_id() -> i32 {
+    let mut id = 0;
+
+    for i in fs::read_dir(".").unwrap() {
+        if let Ok(j) = i {
+            let p = j.path();
+            let tp = p.to_str().unwrap_or("whyisliamnothere.txt");
+
+            if !tp.starts_with("./CipherLog-") || !j.path().is_file() {
+                continue;
+            };
+
+            let f = tp.replace(&(".".to_string() + get_ext(&p).unwrap_or("txt")), "");
+            let f = f.replace("./CipherLog-", "");
+
+            match f.parse::<i32>() {
+                Ok(g) => {
+                    if (g + 1) > id {
+                        id = g + 1
+                    }
+                }
+                _ => (),
+            }
+        }
+    }
+
+    id
 }

@@ -51,8 +51,7 @@ struct Args {
 fn main() -> std::io::Result<()> {
     // i kissed a girl and i liked it https://images.app.goo.gl/ynuCJ85rmxJFVNBs5
     let opt = Args::parse();
-    let log = Logging::new(opt.verbose, opt.very_verbose);
-    let _ = log.write();
+    let mut log = Logging::new(opt.verbose, opt.very_verbose);
 
     match utils::SCAN_LEVEL.try_lock() {
         Ok(mut l) => *l = opt.mode,
@@ -75,8 +74,9 @@ fn main() -> std::io::Result<()> {
 
     for i in paths {
         let infected = ScannedFile::new(i);
-        println!("{:?}", infected?.get_infected());
+        de_obfs::de_obfuscate(infected?.get_infected().to_vec());
     }
 
+    let _ = log.write();
     Ok(())
 }
